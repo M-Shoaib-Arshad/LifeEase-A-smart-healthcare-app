@@ -87,6 +87,9 @@ All 14 patient screens are complete with full UI/UX:
 1. **Agora App ID Configuration**
    - Update `lib/services/telemedicine_service.dart`
    - Replace `YOUR_AGORA_APP_ID` with actual App ID
+   - ⚠️ **Security Note**: Use environment variables or secure configuration management
+   - Never commit API keys or credentials to version control
+   - Consider using Flutter's `--dart-define` for sensitive values
 
 2. **Firebase Security Rules**
    - Configure rules for notifications collection
@@ -135,9 +138,24 @@ All 14 patient screens are complete with full UI/UX:
 
 ## 📝 Notes
 
-- All screens use mock data where Firebase isn't configured
-- Real-time features require active Firebase connection
-- Video calls require Agora App ID
+### Mock Data Limitations
+- **Doctor lists** use hardcoded sample data in `doctor_list_screen.dart`
+- **Medical records** use mock data in `medical_records_screen.dart`
+- **Health tracking** screens display sample data until Firebase is configured
+- Once Firebase is properly configured with security rules, all mock data will be replaced with real-time Firestore data
+
+### Firebase Configuration
+To enable full functionality:
+1. Ensure `firebase_options.dart` is properly configured for your Firebase project
+2. Set up Firestore security rules (see PR2_IMPLEMENTATION_SUMMARY.md)
+3. Enable required Firebase services: Authentication, Firestore, Cloud Messaging, Storage
+4. Test authentication flow before testing patient features
+
+### Development vs Production
+- **Development**: Screens work with mock data for UI testing
+- **Testing**: Requires Firebase configuration for data persistence
+- **Production**: Requires both Firebase and Agora configuration plus security rules
+
 - All code follows Flutter conventions and is production-ready
 
 ## 🎉 Summary
