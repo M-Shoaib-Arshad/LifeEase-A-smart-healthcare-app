@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "188575701098",
+    "project_id": "lifeease-smart-healthcare",
+    "storage_bucket": "lifeease-smart-healthcare.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188575701098:android:0d1aa7f5376919d5135213",
+        "android_client_info": {
+          "package_name": "com.shoaib.lifeease"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188575701098-826cbbocf8d622mkldlk2du11tt8p70k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE2wuVwFjkjE37Y0qH96GH3mqbdaB0I_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188575701098-826cbbocf8d622mkldlk2du11tt8p70k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "188575701098-kp9oipe84tndc5v418cjr0bdsfodk322.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.shoaib.lifeease"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
