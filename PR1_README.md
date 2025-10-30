@@ -36,12 +36,12 @@ All screens are fully implemented with animations, validation, and error handlin
 - ✅ **Firebase Options** - Auto-generated Firebase config
 
 ### 5. Comprehensive Documentation (This PR)
+- ✅ **PR1_README.md** - This document (overview and quick reference)
 - ✅ **PR_ORGANIZATION_PLAN.md** - Development roadmap for entire project
 - ✅ **PR1_IMPLEMENTATION_GUIDE.md** - Detailed implementation documentation
 - ✅ **DEVELOPER_QUICK_START.md** - Setup and development guide
 - ✅ **TESTING_GUIDE_PR1.md** - Complete testing procedures
 - ✅ **FIREBASE_SETUP.md** - Firebase configuration guide
-- ✅ **PR1_README.md** - This document
 
 ---
 
@@ -118,7 +118,7 @@ All screens are fully implemented with animations, validation, and error handlin
 
 1. **Clone and Install**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/M-Shoaib-Arshad/LifeEase-A-smart-healthcare-app.git
    cd LifeEase-A-smart-healthcare-app
    flutter pub get
    ```
@@ -294,9 +294,12 @@ All screens feature:
 ## 🐛 Known Issues & Limitations
 
 ### Current Limitations
-1. **OTP Verification** - Placeholder implementation
+1. **OTP Verification** - UI implemented but non-functional
+   - Currently displays OTP input screen with countdown timer
+   - Does not actually send or verify OTP codes
    - Need Firebase Phone Authentication setup
    - Need actual SMS sending integration
+   - Testing can proceed by entering any 4-digit code (currently no validation)
 
 2. **Avatar Upload** - Commented out
    - Need StorageService.uploadUserAvatar() implementation
@@ -411,7 +414,7 @@ This PR represents the foundational authentication system for LifeEase, a compre
 
 ## 📊 PR Statistics
 
-- **Files Changed**: 5 documentation files added
+- **Files Changed**: 6 documentation files added
 - **Lines Added**: ~5,500 lines of documentation
 - **Test Cases**: 50+ comprehensive test cases
 - **Code Screens**: 5 fully functional authentication screens
