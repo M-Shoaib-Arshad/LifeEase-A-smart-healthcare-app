@@ -37,4 +37,11 @@ class UserProvider extends ChangeNotifier {
     _profile = await _userService.getUserProfile(_firebaseUser!.uid);
     notifyListeners();
   }
+
+  Future<void> logout() async {
+    await _auth.signOut();
+    _firebaseUser = null;
+    _profile = null;
+    notifyListeners();
+  }
 }
