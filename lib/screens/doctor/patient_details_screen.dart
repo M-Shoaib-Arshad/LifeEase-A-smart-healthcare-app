@@ -3,11 +3,17 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/health_record_provider.dart';
+import '../../services/user_service.dart';
+import '../../models/user.dart' as model;
+import '../../models/health_record.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
-  const PatientDetailsScreen({super.key});
+  final String? patientId;
+  
+  const PatientDetailsScreen({super.key, this.patientId});
 
   @override
   State<PatientDetailsScreen> createState() => _PatientDetailsScreenState();
@@ -19,85 +25,11 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-
-  // Sample patient data - in a real app, this would come from a provider or API
-  final Map<String, dynamic> _patientData = {
-    'id': 'P001',
-    'name': 'John Doe',
-    'age': 35,
-    'gender': 'Male',
-    'dateOfBirth': DateTime(1989, 5, 15),
-    'phone': '+1 (555) 987-6543',
-    'email': 'john.doe@email.com',
-    'address': '123 Main Street, New York, NY 10001',
-    'emergencyContact': {
-      'name': 'Jane Doe',
-      'relationship': 'Spouse',
-      'phone': '+1 (555) 987-6544',
-    },
-    'profileImage': 'https://randomuser.me/api/portraits/men/32.jpg',
-    'bloodType': 'O+',
-    'height': '5\'10"',
-    'weight': '175 lbs',
-    'allergies': ['Penicillin', 'Shellfish'],
-    'chronicConditions': ['Hypertension', 'Type 2 Diabetes'],
-    'currentMedications': [
-      {
-        'name': 'Lisinopril',
-        'dosage': '10mg',
-        'frequency': 'Once daily',
-        'prescribedDate': DateTime(2024, 1, 15),
-      },
-      {
-        'name': 'Metformin',
-        'dosage': '500mg',
-        'frequency': 'Twice daily',
-        'prescribedDate': DateTime(2024, 2, 10),
-      },
-    ],
-    'medicalHistory': [
-      {
-        'condition': 'Hypertension',
-        'diagnosedDate': DateTime(2022, 3, 20),
-        'status': 'Ongoing',
-        'notes': 'Well controlled with medication',
-      },
-      {
-        'condition': 'Type 2 Diabetes',
-        'diagnosedDate': DateTime(2023, 1, 10),
-        'status': 'Ongoing',
-        'notes': 'Diet controlled, monitoring required',
-      },
-    ],
-    'familyMedicalHistory': [
-      {
-        'relation': 'Father',
-        'condition': 'Coronary Artery Disease',
-        'ageOfOnset': 55,
-        'status': 'Deceased',
-        'notes': 'Myocardial infarction at age 62',
-      },
-      {
-        'relation': 'Mother',
-        'condition': 'Type 2 Diabetes',
-        'ageOfOnset': 48,
-        'status': 'Living',
-        'notes': 'Well controlled with medication',
-      },
-      {
-        'relation': 'Paternal Grandfather',
-        'condition': 'Hypertension',
-        'ageOfOnset': 45,
-        'status': 'Deceased',
-        'notes': 'Stroke at age 70',
-      },
-      {
-        'relation': 'Maternal Grandmother',
-        'condition': 'Breast Cancer',
-        'ageOfOnset': 52,
-        'status': 'Deceased',
-        'notes': 'Stage II, treated successfully',
-      },
+  
+  final UserService _userService = UserService();
+  model.User? _patientUser;
+  bool _isLoading = true;
+  String? _error;
     ],
     'medicalImages': [
       {
