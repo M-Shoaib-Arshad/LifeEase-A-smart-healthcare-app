@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/appointment_provider.dart';
+import '../../models/appointment.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
@@ -18,59 +20,36 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-
-  // Sample data - in a real app, this would come from a provider or API
-  final Map<String, dynamic> _dashboardData = {
-    'todayAppointments': 8,
-    'pendingAppointments': 3,
-    'totalPatients': 156,
-    'completedToday': 5,
-    'upcomingAppointments': [
-      {
-        'patientName': 'John Doe',
-        'time': '10:00 AM',
-        'type': 'Check-up',
-        'isUrgent': false,
-      },
-      {
-        'patientName': 'Alice Smith',
-        'time': '2:00 PM',
-        'type': 'Consultation',
-        'isUrgent': true,
-      },
-      {
-        'patientName': 'Robert Johnson',
-        'time': '3:30 PM',
-        'type': 'Follow-up',
-        'isUrgent': false,
-      },
-    ],
-    'recentActivities': [
-      {
-        'action': 'Completed appointment with Emily Davis',
-        'time': '30 minutes ago',
-        'icon': Icons.check_circle,
-        'color': Colors.green,
-      },
-      {
-        'action': 'New patient registration: Michael Wilson',
-        'time': '1 hour ago',
-        'icon': Icons.person_add,
-        'color': Colors.blue,
-      },
-      {
-        'action': 'Prescription updated for Sarah Brown',
-        'time': '2 hours ago',
-        'icon': Icons.medication,
-        'color': Colors.orange,
-      },
-    ],
-  };
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _setupAnimations();
+    _loadDoctorData();
+  }
+
+  Future<void> _loadDoctorData() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
+    
+    if (userProvider.id != null) {
+      try {
+        await appointmentProvider.loadForDoctor(userProvider.id!);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error loading appointments: $e')),
+          );
+        }
+      }
+    }
+    
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _setupAnimations() {
@@ -107,6 +86,46 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
+
+    if (_isLoading) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.blue.shade50,
+                Colors.white,
+              ],
+            ),
+          ),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    final today = DateTime.now();
+    final todayStart = DateTime(today.year, today.month, today.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+    
+    final allAppointments = appointmentProvider.appointments;
+    final todayAppointments = allAppointments
+        .where((a) => a.dateTime.isAfter(todayStart) && a.dateTime.isBefore(todayEnd))
+        .toList();
+    final upcomingAppointments = allAppointments
+        .where((a) => a.dateTime.isAfter(DateTime.now()))
+        .take(5)
+        .toList();
+    final completedToday = todayAppointments
+        .where((a) => a.status == 'completed')
+        .length;
+    final pendingAppointments = allAppointments
+        .where((a) => a.status == 'scheduled' || a.status == 'pending')
+        .length;
 
     return Scaffold(
       body: Container(
@@ -129,22 +148,24 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   opacity: _fadeAnimation,
                   child: SlideTransition(
                     position: _slideAnimation,
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildWelcomeSection(userProvider),
-                          const SizedBox(height: 24),
-                          _buildStatsCards(),
-                          const SizedBox(height: 24),
-                          _buildQuickActions(),
-                          const SizedBox(height: 24),
-                          _buildUpcomingAppointments(),
-                          const SizedBox(height: 24),
-                          _buildRecentActivity(),
-                          const SizedBox(height: 100), // Bottom padding for FAB
-                        ],
+                    child: RefreshIndicator(
+                      onRefresh: _loadDoctorData,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildWelcomeSection(userProvider, todayAppointments.length),
+                            const SizedBox(height: 24),
+                            _buildStatsCards(todayAppointments.length, pendingAppointments, completedToday),
+                            const SizedBox(height: 24),
+                            _buildQuickActions(),
+                            const SizedBox(height: 24),
+                            _buildUpcomingAppointments(upcomingAppointments),
+                            const SizedBox(height: 100), // Bottom padding for FAB
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -264,7 +285,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 
-  Widget _buildWelcomeSection(UserProvider userProvider) {
+  Widget _buildWelcomeSection(UserProvider userProvider, int todayAppointmentsCount) {
     final now = DateTime.now();
     final greeting = now.hour < 12
         ? 'Good Morning'
@@ -297,7 +318,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$greeting, Dr. ${userProvider.role}!',
+                      '$greeting, Dr. ${userProvider.role ?? 'Doctor'}!',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -314,7 +335,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'You have ${_dashboardData['todayAppointments']} appointments today',
+                      'You have $todayAppointmentsCount appointments today',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white.withOpacity(0.8),
@@ -342,35 +363,35 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 
-  Widget _buildStatsCards() {
+  Widget _buildStatsCards(int todayAppointments, int pendingAppointments, int completedToday) {
     final stats = [
       {
         'title': 'Today\'s Appointments',
-        'value': _dashboardData['todayAppointments'].toString(),
+        'value': todayAppointments.toString(),
         'icon': Icons.calendar_today,
         'color': Colors.blue,
-        'change': '+2 from yesterday',
+        'change': 'Scheduled for today',
       },
       {
         'title': 'Pending',
-        'value': _dashboardData['pendingAppointments'].toString(),
+        'value': pendingAppointments.toString(),
         'icon': Icons.pending_actions,
         'color': Colors.orange,
-        'change': 'Needs attention',
-      },
-      {
-        'title': 'Total Patients',
-        'value': _dashboardData['totalPatients'].toString(),
-        'icon': Icons.people,
-        'color': Colors.green,
-        'change': '+5 this week',
+        'change': pendingAppointments > 0 ? 'Needs attention' : 'All clear',
       },
       {
         'title': 'Completed Today',
-        'value': _dashboardData['completedToday'].toString(),
+        'value': completedToday.toString(),
         'icon': Icons.check_circle,
+        'color': Colors.green,
+        'change': '$completedToday consultations done',
+      },
+      {
+        'title': 'Total Appointments',
+        'value': Provider.of<AppointmentProvider>(context, listen: false).appointments.length.toString(),
+        'icon': Icons.people,
         'color': Colors.purple,
-        'change': '62% completion rate',
+        'change': 'All time',
       },
     ];
 
@@ -577,9 +598,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 
-  Widget _buildUpcomingAppointments() {
-    final appointments = _dashboardData['upcomingAppointments'] as List;
-
+  Widget _buildUpcomingAppointments(List<Appointment> upcomingAppointments) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -601,212 +620,157 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
           ],
         ),
         const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: appointments.asMap().entries.map((entry) {
-              final index = entry.key;
-              final appointment = entry.value;
-              final isLast = index == appointments.length - 1;
-
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: isLast
-                      ? null
-                      : Border(
-                    bottom: BorderSide(
-                      color: Colors.grey.shade200,
-                      width: 1,
+        if (upcomingAppointments.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No upcoming appointments',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
                     ),
                   ),
+                ],
+              ),
+            ),
+          )
+        else
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 4,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: appointment['isUrgent']
-                            ? Colors.red
-                            : Colors.blue,
-                        borderRadius: BorderRadius.circular(2),
+              ],
+            ),
+            child: Column(
+              children: upcomingAppointments.asMap().entries.map((entry) {
+                final index = entry.key;
+                final appointment = entry.value;
+                final isLast = index == upcomingAppointments.length - 1;
+
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: isLast
+                        ? null
+                        : Border(
+                      bottom: BorderSide(
+                        color: Colors.grey.shade200,
+                        width: 1,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                appointment['patientName'],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: appointment.status == 'scheduled'
+                              ? Colors.blue
+                              : Colors.orange,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Patient ID: ${appointment.patientId}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              if (appointment['isUrgent'])
-                                Container(
-                                  margin: const EdgeInsets.only(left: 8),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.shade100,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    'URGENT',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red.shade700,
+                                if (appointment.status != 'scheduled')
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.shade100,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      appointment.status.toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange.shade700,
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            appointment['type'],
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 14,
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          appointment['time'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                            const SizedBox(height: 4),
+                            Text(
+                              appointment.notes ?? 'No notes',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 12,
-                          color: Colors.grey.shade400,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRecentActivity() {
-    final activities = _dashboardData['recentActivities'] as List;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Recent Activity',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: activities.asMap().entries.map((entry) {
-              final index = entry.key;
-              final activity = entry.value;
-              final isLast = index == activities.length - 1;
-
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: isLast
-                      ? null
-                      : Border(
-                    bottom: BorderSide(
-                      color: Colors.grey.shade200,
-                      width: 1,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: (activity['color'] as Color).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(
-                        activity['icon'] as IconData,
-                        color: activity['color'] as Color,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            activity['action'],
+                            DateFormat('MMM d, h:mm a').format(appointment.dateTime),
                             style: const TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            activity['time'],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
-                            ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 12,
+                            color: Colors.grey.shade400,
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
           ),
-        ),
       ],
     );
   }
