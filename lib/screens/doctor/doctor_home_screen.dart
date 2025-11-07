@@ -158,7 +158,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                           children: [
                             _buildWelcomeSection(userProvider, todayAppointments.length),
                             const SizedBox(height: 24),
-                            _buildStatsCards(todayAppointments.length, pendingAppointments, completedToday),
+                            _buildStatsCards(todayAppointments.length, pendingAppointments, completedToday, allAppointments.length),
                             const SizedBox(height: 24),
                             _buildQuickActions(),
                             const SizedBox(height: 24),
@@ -318,7 +318,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$greeting, Dr.!',
+                      '$greeting, Doctor!',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -363,7 +363,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 
-  Widget _buildStatsCards(int todayAppointments, int pendingAppointments, int completedToday) {
+  Widget _buildStatsCards(int todayAppointments, int pendingAppointments, int completedToday, int totalAppointments) {
     final stats = [
       {
         'title': 'Today\'s Appointments',
@@ -388,7 +388,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
       },
       {
         'title': 'Total Appointments',
-        'value': Provider.of<AppointmentProvider>(context, listen: false).appointments.length.toString(),
+        'value': totalAppointments.toString(),
         'icon': Icons.people,
         'color': Colors.purple,
         'change': 'All time',

@@ -16,6 +16,8 @@ class AppointmentManagementScreen extends StatefulWidget {
 }
 
 class _AppointmentManagementScreenState extends State<AppointmentManagementScreen> with TickerProviderStateMixin {
+  static const int _maxPatientIdDisplayLength = 8;
+  
   String _selectedFilter = 'All';
   String _searchQuery = '';
   bool _isCalendarView = false;
@@ -414,7 +416,6 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
@@ -764,7 +765,7 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Patient: ${appointment.patientId.length > 8 ? appointment.patientId.substring(0, 8) + '...' : appointment.patientId}',
+                            'Patient: ${appointment.patientId.length > _maxPatientIdDisplayLength ? appointment.patientId.substring(0, _maxPatientIdDisplayLength) + '...' : appointment.patientId}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
