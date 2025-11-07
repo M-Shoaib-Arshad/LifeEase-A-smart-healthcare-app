@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/appointment_provider.dart';
+import '../../models/appointment.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
@@ -18,73 +20,39 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
   String _searchQuery = '';
   bool _isCalendarView = false;
   DateTime _selectedDate = DateTime.now();
+  bool _isLoading = true;
 
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
-
-  // Sample appointment data - in a real app, this would come from a provider or API
-  final List<Map<String, dynamic>> _appointments = [
-    {
-      'id': '1',
-      'patientName': 'John Doe',
-      'patientImage': 'https://randomuser.me/api/portraits/men/32.jpg',
-      'dateTime': DateTime(2025, 1, 15, 10, 0),
-      'status': 'Confirmed',
-      'type': 'Check-up',
-      'duration': 30,
-      'notes': 'Follow-up on previous treatment',
-      'isNew': false,
-    },
-    {
-      'id': '2',
-      'patientName': 'Alice Smith',
-      'patientImage': 'https://randomuser.me/api/portraits/women/44.jpg',
-      'dateTime': DateTime(2025, 1, 16, 14, 0),
-      'status': 'Pending',
-      'type': 'Consultation',
-      'duration': 45,
-      'notes': 'Initial consultation for knee pain',
-      'isNew': true,
-    },
-    {
-      'id': '3',
-      'patientName': 'Robert Johnson',
-      'patientImage': 'https://randomuser.me/api/portraits/men/22.jpg',
-      'dateTime': DateTime(2025, 1, 15, 13, 30),
-      'status': 'Completed',
-      'type': 'Follow-up',
-      'duration': 20,
-      'notes': 'Medication review',
-      'isNew': false,
-    },
-    {
-      'id': '4',
-      'patientName': 'Emily Davis',
-      'patientImage': 'https://randomuser.me/api/portraits/women/67.jpg',
-      'dateTime': DateTime(2025, 1, 17, 9, 15),
-      'status': 'Cancelled',
-      'type': 'Surgery Consultation',
-      'duration': 60,
-      'notes': 'Pre-surgery discussion',
-      'isNew': false,
-    },
-    {
-      'id': '5',
-      'patientName': 'Michael Wilson',
-      'patientImage': 'https://randomuser.me/api/portraits/men/91.jpg',
-      'dateTime': DateTime(2025, 1, 18, 11, 0),
-      'status': 'Confirmed',
-      'type': 'Check-up',
-      'duration': 30,
-      'notes': 'Annual physical examination',
-      'isNew': true,
-    },
-  ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _loadAppointments();
+  }
+
+  Future<void> _loadAppointments() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
+    
+    if (userProvider.id != null) {
+      try {
+        await appointmentProvider.loadForDoctor(userProvider.id!);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error loading appointments: $e')),
+          );
+        }
+      }
+    }
+    
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -94,29 +62,35 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
     super.dispose();
   }
 
-  List<Map<String, dynamic>> get _filteredAppointments {
-    return _appointments.where((appointment) {
-      // Filter by status
-      if (_selectedFilter != 'All' && appointment['status'] != _selectedFilter) {
-        return false;
+  List<Appointment> _getFilteredAppointments(List<Appointment> appointments) {
+    return appointments.where((appointment) {
+      // Filter by status - normalize both filter and status to lowercase
+      if (_selectedFilter != 'All') {
+        final normalizedFilter = _selectedFilter.toLowerCase();
+        final normalizedStatus = appointment.status.toLowerCase();
+        // Handle common filter variations
+        if (normalizedFilter == 'confirmed' && normalizedStatus != 'scheduled' && normalizedStatus != 'confirmed') {
+          return false;
+        } else if (normalizedFilter != 'confirmed' && normalizedStatus != normalizedFilter) {
+          return false;
+        }
       }
 
       // Filter by search query
       if (_searchQuery.isNotEmpty) {
-        final name = appointment['patientName'].toString().toLowerCase();
-        final type = appointment['type'].toString().toLowerCase();
+        final patientId = appointment.patientId.toLowerCase();
+        final notes = (appointment.notes ?? '').toLowerCase();
         final query = _searchQuery.toLowerCase();
-        if (!name.contains(query) && !type.contains(query)) {
+        if (!patientId.contains(query) && !notes.contains(query)) {
           return false;
         }
       }
 
       // Filter by selected date in calendar view
       if (_isCalendarView) {
-        final appointmentDate = appointment['dateTime'] as DateTime;
-        if (appointmentDate.year != _selectedDate.year ||
-            appointmentDate.month != _selectedDate.month ||
-            appointmentDate.day != _selectedDate.day) {
+        if (appointment.dateTime.year != _selectedDate.year ||
+            appointment.dateTime.month != _selectedDate.month ||
+            appointment.dateTime.day != _selectedDate.day) {
           return false;
         }
       }
@@ -126,21 +100,22 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
   }
 
   Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Confirmed':
+    switch (status.toLowerCase()) {
+      case 'scheduled':
+      case 'confirmed':
         return Colors.green;
-      case 'Pending':
+      case 'pending':
         return Colors.orange;
-      case 'Cancelled':
+      case 'cancelled':
         return Colors.red;
-      case 'Completed':
+      case 'completed':
         return Colors.blue;
       default:
         return Colors.grey;
     }
   }
 
-  void _showAppointmentDetails(Map<String, dynamic> appointment) {
+  void _showAppointmentDetails(Appointment appointment) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -149,7 +124,67 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
     );
   }
 
-  Widget _buildAppointmentDetailsSheet(Map<String, dynamic> appointment) {
+  void _showAppointmentActions(Appointment appointment) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.check_circle, color: Colors.green),
+                title: const Text('Mark as Completed'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _updateAppointmentStatus(appointment, 'completed');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.cancel, color: Colors.red),
+                title: const Text('Cancel Appointment'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _updateAppointmentStatus(appointment, 'cancelled');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.schedule, color: Colors.orange),
+                title: const Text('Reschedule'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // TODO: Implement reschedule functionality
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _updateAppointmentStatus(Appointment appointment, String newStatus) async {
+    try {
+      final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
+      final updatedAppointment = appointment.copyWith(status: newStatus);
+      await appointmentProvider.update(updatedAppointment);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Appointment status updated to $newStatus')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating appointment: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _buildAppointmentDetailsSheet(Appointment appointment) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
