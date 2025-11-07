@@ -318,7 +318,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$greeting, Dr. ${userProvider.role ?? 'Doctor'}!',
+                      '$greeting, Dr.!',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

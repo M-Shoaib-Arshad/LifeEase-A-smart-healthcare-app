@@ -64,9 +64,16 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
 
   List<Appointment> _getFilteredAppointments(List<Appointment> appointments) {
     return appointments.where((appointment) {
-      // Filter by status
-      if (_selectedFilter != 'All' && appointment.status != _selectedFilter.toLowerCase()) {
-        return false;
+      // Filter by status - normalize both filter and status to lowercase
+      if (_selectedFilter != 'All') {
+        final normalizedFilter = _selectedFilter.toLowerCase();
+        final normalizedStatus = appointment.status.toLowerCase();
+        // Handle common filter variations
+        if (normalizedFilter == 'confirmed' && normalizedStatus != 'scheduled' && normalizedStatus != 'confirmed') {
+          return false;
+        } else if (normalizedFilter != 'confirmed' && normalizedStatus != normalizedFilter) {
+          return false;
+        }
       }
 
       // Filter by search query
@@ -843,7 +850,7 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Patient: ${appointment.patientId.substring(0, 8)}...',
+                            'Patient: ${appointment.patientId.length > 8 ? appointment.patientId.substring(0, 8) + '...' : appointment.patientId}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
