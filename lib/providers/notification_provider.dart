@@ -129,9 +129,9 @@ class NotificationProvider with ChangeNotifier {
   /// Subscribe to real-time notification updates
   void subscribeToNotifications() {
     _notificationService.getUserNotificationsStream().listen(
-      (notifications) {
+      (notifications) async {
         _notifications = notifications;
-        _updateUnreadCount();
+        await _updateUnreadCount();
         notifyListeners();
       },
       onError: (error) {
