@@ -93,21 +93,22 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
   }
 
   Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Confirmed':
+    switch (status.toLowerCase()) {
+      case 'scheduled':
+      case 'confirmed':
         return Colors.green;
-      case 'Pending':
+      case 'pending':
         return Colors.orange;
-      case 'Cancelled':
+      case 'cancelled':
         return Colors.red;
-      case 'Completed':
+      case 'completed':
         return Colors.blue;
       default:
         return Colors.grey;
     }
   }
 
-  void _showAppointmentDetails(Map<String, dynamic> appointment) {
+  void _showAppointmentDetails(Appointment appointment) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -116,7 +117,67 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
     );
   }
 
-  Widget _buildAppointmentDetailsSheet(Map<String, dynamic> appointment) {
+  void _showAppointmentActions(Appointment appointment) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.check_circle, color: Colors.green),
+                title: const Text('Mark as Completed'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _updateAppointmentStatus(appointment, 'completed');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.cancel, color: Colors.red),
+                title: const Text('Cancel Appointment'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _updateAppointmentStatus(appointment, 'cancelled');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.schedule, color: Colors.orange),
+                title: const Text('Reschedule'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // TODO: Implement reschedule functionality
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _updateAppointmentStatus(Appointment appointment, String newStatus) async {
+    try {
+      final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
+      final updatedAppointment = appointment.copyWith(status: newStatus);
+      await appointmentProvider.update(updatedAppointment);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Appointment status updated to $newStatus')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating appointment: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _buildAppointmentDetailsSheet(Appointment appointment) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -150,7 +211,12 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundImage: NetworkImage(appointment['patientImage']),
+                  backgroundColor: Colors.blue.shade100,
+                  child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: Colors.blue.shade700,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -158,17 +224,17 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        appointment['patientName'],
+                        'Patient ID: ${appointment.patientId}',
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        appointment['type'],
+                        appointment.notes ?? 'No notes available',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.grey.shade700,
                         ),
                       ),
@@ -178,17 +244,17 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(appointment['status']).withOpacity(0.1),
+                    color: _getStatusColor(appointment.status).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: _getStatusColor(appointment['status']),
+                      color: _getStatusColor(appointment.status),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    appointment['status'],
+                    appointment.status.toUpperCase(),
                     style: TextStyle(
-                      color: _getStatusColor(appointment['status']),
+                      color: _getStatusColor(appointment.status),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -207,14 +273,96 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                   _buildDetailItem(
                     Icons.calendar_today,
                     'Date',
-                    DateFormat('EEEE, MMMM d, yyyy').format(appointment['dateTime']),
+                    DateFormat('EEEE, MMMM d, yyyy').format(appointment.dateTime),
                   ),
                   _buildDetailItem(
                     Icons.access_time,
                     'Time',
-                    DateFormat('h:mm a').format(appointment['dateTime']),
+                    DateFormat('h:mm a').format(appointment.dateTime),
                   ),
                   _buildDetailItem(
+                    Icons.person,
+                    'Patient ID',
+                    appointment.patientId,
+                  ),
+                  _buildDetailItem(
+                    Icons.medical_services,
+                    'Doctor ID',
+                    appointment.doctorId,
+                  ),
+                  if (appointment.notes != null)
+                    _buildDetailItem(
+                      Icons.note,
+                      'Notes',
+                      appointment.notes!,
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          // Action buttons
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                if (appointment.status != 'completed' && appointment.status != 'cancelled')
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _updateAppointmentStatus(appointment, 'completed');
+                      },
+                      icon: const Icon(Icons.check_circle),
+                      label: const Text('Complete'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (appointment.status != 'completed' && appointment.status != 'cancelled')
+                  const SizedBox(width: 12),
+                if (appointment.status == 'scheduled' || appointment.status == 'pending')
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _updateAppointmentStatus(appointment, 'cancelled');
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text('Cancel'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
                     Icons.timelapse,
                     'Duration',
                     '${appointment['duration']} minutes',
@@ -348,6 +496,22 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Appointments'),
+          elevation: 0,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final appointments = appointmentProvider.appointments;
+    final filteredAppointments = _getFilteredAppointments(appointments);
 
     return Scaffold(
       appBar: AppBar(
@@ -374,24 +538,27 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
         ],
       ),
       drawer: const SideDrawer(),
-      body: Column(
-        children: [
-          _buildSearchAndFilterSection(),
-          _isCalendarView ? _buildCalendarView() : _buildTabBar(),
-          Expanded(
-            child: _isCalendarView
-                ? _buildAppointmentList()
-                : TabBarView(
-              controller: _tabController,
-              children: [
-                _buildAppointmentList(),
-                _buildAppointmentList(filter: 'Confirmed'),
-                _buildAppointmentList(filter: 'Pending'),
-                _buildAppointmentList(filter: 'Completed'),
-              ],
+      body: RefreshIndicator(
+        onRefresh: _loadAppointments,
+        child: Column(
+          children: [
+            _buildSearchAndFilterSection(),
+            _isCalendarView ? _buildCalendarView() : _buildTabBar(),
+            Expanded(
+              child: _isCalendarView
+                  ? _buildAppointmentList(filteredAppointments, null)
+                  : TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildAppointmentList(filteredAppointments, null),
+                  _buildAppointmentList(filteredAppointments, 'scheduled'),
+                  _buildAppointmentList(filteredAppointments, 'pending'),
+                  _buildAppointmentList(filteredAppointments, 'completed'),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: 0,
@@ -616,10 +783,10 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
     );
   }
 
-  Widget _buildAppointmentList({String? filter}) {
+  Widget _buildAppointmentList(List<Appointment> allAppointments, String? filter) {
     final appointments = filter == null
-        ? _filteredAppointments
-        : _filteredAppointments.where((a) => a['status'] == filter).toList();
+        ? allAppointments
+        : allAppointments.where((a) => a.status == filter).toList();
 
     if (appointments.isEmpty) {
       return _buildEmptyState();
@@ -627,6 +794,7 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
+      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         final appointment = appointments[index];
@@ -635,7 +803,7 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
     );
   }
 
-  Widget _buildAppointmentCard(Map<String, dynamic> appointment) {
+  Widget _buildAppointmentCard(Appointment appointment) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -661,27 +829,13 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
               children: [
                 Row(
                   children: [
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundImage: NetworkImage(appointment['patientImage']),
-                        ),
-                        if (appointment['isNew'])
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Container(
-                              width: 16,
-                              height: 16,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
-                              ),
-                            ),
-                          ),
-                      ],
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.blue.shade100,
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.blue.shade700,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -689,7 +843,7 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            appointment['patientName'],
+                            'Patient: ${appointment.patientId.substring(0, 8)}...',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -697,11 +851,13 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            appointment['type'],
+                            appointment.notes ?? 'No notes',
                             style: TextStyle(
                               color: Colors.grey.shade600,
                               fontSize: 14,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -709,15 +865,60 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(appointment['status']).withOpacity(0.1),
+                        color: _getStatusColor(appointment.status).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        appointment['status'],
+                        appointment.status.toUpperCase(),
                         style: TextStyle(
-                          color: _getStatusColor(appointment['status']),
+                          color: _getStatusColor(appointment.status),
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('MMM d, yyyy').format(appointment.dateTime),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('h:mm a').format(appointment.dateTime),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.more_vert, size: 20),
+                      onPressed: () => _showAppointmentActions(appointment),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
                         ),
                       ),
                     ),
