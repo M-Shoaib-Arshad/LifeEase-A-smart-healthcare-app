@@ -258,4 +258,5 @@ All screens feature:
 
 ## Contact
 
+For questions about this implementation, please review the code or create an issue in the repository.
 For questions or suggestions about this plan, please create an issue or contact the development team.
