@@ -1,0 +1,85 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check file size (in MB)
+    function isValidSize(maxSizeMB) {
+      return request.resource.size < maxSizeMB * 1024 * 1024;
+    }
+    
+    // Helper function to check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // Helper function to check if file is a PDF
+    function isPDF() {
+      return request.resource.contentType == 'application/pdf';
+    }
+    
+    // User avatars - publicly readable, only owner can write
+    match /avatars/{userId}/{fileName} {
+      // Anyone can read avatars (for displaying doctor/patient profiles)
+      allow read: if true;
+      
+      // Users can only upload their own avatar
+      allow write: if isSignedIn() && 
+                      request.auth.uid == userId &&
+                      isImage() &&
+                      isValidSize(5); // 5MB max
+    }
+    
+    // Medical records - private, only accessible by owner and assigned doctors
+    match /medical_records/{userId}/{fileName} {
+      // Users can read their own medical records
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      
+      // Doctors can read patient medical records (simplified - in production add appointment check)
+      allow read: if isSignedIn();
+      
+      // Users can upload their own medical records
+      allow write: if isSignedIn() && 
+                      request.auth.uid == userId &&
+                      (isImage() || isPDF()) &&
+                      isValidSize(10); // 10MB max
+    }
+    
+    // Prescriptions - only doctors can create, patients can read their own
+    match /prescriptions/{prescriptionId}/{fileName} {
+      // Only authenticated users can read prescriptions
+      allow read: if isSignedIn();
+      
+      // Only authenticated users can write prescriptions (doctors only in production)
+      allow write: if isSignedIn() &&
+                      (isImage() || isPDF()) &&
+                      isValidSize(5); // 5MB max
+    }
+    
+    // Health data exports/reports
+    match /health_data/{userId}/{fileName} {
+      // Users can read their own health data exports
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      
+      // Users can create their own health data exports
+      allow write: if isSignedIn() && 
+                      request.auth.uid == userId &&
+                      isValidSize(20); // 20MB max for data exports
+    }
+    
+    // Appointment attachments
+    match /appointments/{appointmentId}/{fileName} {
+      // Authenticated users can read appointment attachments
+      allow read: if isSignedIn();
+      
+      // Authenticated users can upload appointment attachments
+      allow write: if isSignedIn() &&
+                      (isImage() || isPDF()) &&
+                      isValidSize(10); // 10MB max
+    }
+  }
+}

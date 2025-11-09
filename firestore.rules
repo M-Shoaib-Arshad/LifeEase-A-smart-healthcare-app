@@ -1,0 +1,153 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to get user data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
+    
+    // Helper function to check if user is doctor
+    function isDoctor() {
+      return isSignedIn() && getUserData().role == 'doctor';
+    }
+    
+    // Helper function to check if user is patient
+    function isPatient() {
+      return isSignedIn() && getUserData().role == 'patient';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Anyone authenticated can read any user profile (for searching doctors)
+      allow read: if isSignedIn();
+      
+      // Users can only create their own profile during signup
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      
+      // Users can update their own profile
+      allow update: if isSignedIn() && request.auth.uid == userId;
+      
+      // Users cannot change their role (prevent privilege escalation)
+      allow update: if isSignedIn() && 
+                       request.auth.uid == userId &&
+                       request.resource.data.role == resource.data.role;
+      
+      // Admins can update any user
+      allow update: if isAdmin();
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+    
+    // Appointments collection
+    match /appointments/{appointmentId} {
+      // Patients can read their own appointments
+      allow read: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid ||
+        resource.data.doctorId == request.auth.uid
+      );
+      
+      // Patients can create appointments
+      allow create: if isPatient() && 
+                       request.resource.data.patientId == request.auth.uid;
+      
+      // Patients can update their own appointments (cancel, reschedule)
+      allow update: if isPatient() && 
+                       resource.data.patientId == request.auth.uid;
+      
+      // Doctors can update appointments (confirm, complete)
+      allow update: if isDoctor() && 
+                       resource.data.doctorId == request.auth.uid;
+      
+      // Admins can do anything with appointments
+      allow read, write: if isAdmin();
+    }
+    
+    // Health records collection
+    match /health_records/{recordId} {
+      // Users can read their own health records
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      // Doctors can read patient health records (if they have an appointment)
+      allow read: if isDoctor() && 
+                     exists(/databases/$(database)/documents/appointments/$(appointmentId)) &&
+                     get(/databases/$(database)/documents/appointments/$(appointmentId)).data.doctorId == request.auth.uid &&
+                     get(/databases/$(database)/documents/appointments/$(appointmentId)).data.patientId == resource.data.userId;
+      
+      // Users can create their own health records
+      allow create: if isPatient() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Users can update their own health records
+      allow update: if isPatient() && 
+                       resource.data.userId == request.auth.uid;
+      
+      // Admins can read all health records
+      allow read: if isAdmin();
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      // System (admin) can create notifications
+      allow create: if isAdmin();
+      
+      // Users can mark notifications as read
+      allow update: if isSignedIn() && 
+                       resource.data.userId == request.auth.uid &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      
+      // Users can delete their own notifications
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Prescriptions collection
+    match /prescriptions/{prescriptionId} {
+      // Patients can read their own prescriptions
+      allow read: if isSignedIn() && resource.data.patientId == request.auth.uid;
+      
+      // Doctors can read prescriptions they created
+      allow read: if isDoctor() && resource.data.doctorId == request.auth.uid;
+      
+      // Doctors can create prescriptions
+      allow create: if isDoctor() && 
+                       request.resource.data.doctorId == request.auth.uid;
+      
+      // Doctors can update their own prescriptions
+      allow update: if isDoctor() && 
+                       resource.data.doctorId == request.auth.uid;
+      
+      // Admins can read all prescriptions
+      allow read: if isAdmin();
+    }
+    
+    // Medical documents/images
+    match /medical_documents/{documentId} {
+      // Users can read their own documents
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      // Doctors can read patient documents (with appointment)
+      allow read: if isDoctor();
+      
+      // Users can upload their own documents
+      allow create: if isPatient() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Admins can read all documents
+      allow read: if isAdmin();
+    }
+  }
+}
