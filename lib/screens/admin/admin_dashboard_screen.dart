@@ -132,7 +132,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        userProvider.role.toUpperCase() ?? 'ADMIN',
+                        // Call toUpperCase only when role is non-null, otherwise fall back to 'ADMIN'
+                        userProvider.role?.toUpperCase() ?? 'ADMIN',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,
