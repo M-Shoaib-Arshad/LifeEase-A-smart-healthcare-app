@@ -53,7 +53,16 @@ class NotificationProvider with ChangeNotifier {
       // Update local state
       final index = _notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
-        _notifications[index] = _notifications[index].copyWith(isRead: true);
+        _notifications[index] = app_notification.Notification(
+          id: _notifications[index].id,
+          userId: _notifications[index].userId,
+          title: _notifications[index].title,
+          message: _notifications[index].message,
+          type: _notifications[index].type,
+          isRead: true,
+          createdAt: _notifications[index].createdAt,
+          data: _notifications[index].data,
+        );
       }
 
       await _updateUnreadCount();
@@ -70,7 +79,18 @@ class NotificationProvider with ChangeNotifier {
       await _notificationService.markAllAsRead();
 
       // Update local state
-      _notifications = _notifications.map((n) => n.copyWith(isRead: true)).toList();
+      _notifications = _notifications.map((n) {
+        return app_notification.Notification(
+          id: n.id,
+          userId: n.userId,
+          title: n.title,
+          message: n.message,
+          type: n.type,
+          isRead: true,
+          createdAt: n.createdAt,
+          data: n.data,
+        );
+      }).toList();
 
       _unreadCount = 0;
       notifyListeners();
@@ -129,9 +149,9 @@ class NotificationProvider with ChangeNotifier {
   /// Subscribe to real-time notification updates
   void subscribeToNotifications() {
     _notificationService.getUserNotificationsStream().listen(
-      (notifications) async {
+      (notifications) {
         _notifications = notifications;
-        await _updateUnreadCount();
+        _updateUnreadCount();
         notifyListeners();
       },
       onError: (error) {

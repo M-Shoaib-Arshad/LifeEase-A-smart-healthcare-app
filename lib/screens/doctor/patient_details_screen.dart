@@ -3,11 +3,17 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/health_record_provider.dart';
+import '../../services/user_service.dart';
+import '../../models/user.dart' as model;
+import '../../models/health_record.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
-  const PatientDetailsScreen({super.key});
+  final String? patientId;
+  
+  const PatientDetailsScreen({super.key, this.patientId});
 
   @override
   State<PatientDetailsScreen> createState() => _PatientDetailsScreenState();
@@ -19,233 +25,49 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  
+  final UserService _userService = UserService();
+  model.User? _patientUser;
+  bool _isLoading = true;
+  String? _error;
 
-  // Sample patient data - in a real app, this would come from a provider or API
-  final Map<String, dynamic> _patientData = {
-    'id': 'P001',
-    'name': 'John Doe',
-    'age': 35,
-    'gender': 'Male',
-    'dateOfBirth': DateTime(1989, 5, 15),
-    'phone': '+1 (555) 987-6543',
-    'email': 'john.doe@email.com',
-    'address': '123 Main Street, New York, NY 10001',
-    'emergencyContact': {
-      'name': 'Jane Doe',
-      'relationship': 'Spouse',
-      'phone': '+1 (555) 987-6544',
-    },
-    'profileImage': 'https://randomuser.me/api/portraits/men/32.jpg',
-    'bloodType': 'O+',
-    'height': '5\'10"',
-    'weight': '175 lbs',
-    'allergies': ['Penicillin', 'Shellfish'],
-    'chronicConditions': ['Hypertension', 'Type 2 Diabetes'],
-    'currentMedications': [
-      {
-        'name': 'Lisinopril',
-        'dosage': '10mg',
-        'frequency': 'Once daily',
-        'prescribedDate': DateTime(2024, 1, 15),
-      },
-      {
-        'name': 'Metformin',
-        'dosage': '500mg',
-        'frequency': 'Twice daily',
-        'prescribedDate': DateTime(2024, 2, 10),
-      },
-    ],
-    'medicalHistory': [
-      {
-        'condition': 'Hypertension',
-        'diagnosedDate': DateTime(2022, 3, 20),
-        'status': 'Ongoing',
-        'notes': 'Well controlled with medication',
-      },
-      {
-        'condition': 'Type 2 Diabetes',
-        'diagnosedDate': DateTime(2023, 1, 10),
-        'status': 'Ongoing',
-        'notes': 'Diet controlled, monitoring required',
-      },
-    ],
-    'familyMedicalHistory': [
-      {
-        'relation': 'Father',
-        'condition': 'Coronary Artery Disease',
-        'ageOfOnset': 55,
-        'status': 'Deceased',
-        'notes': 'Myocardial infarction at age 62',
-      },
-      {
-        'relation': 'Mother',
-        'condition': 'Type 2 Diabetes',
-        'ageOfOnset': 48,
-        'status': 'Living',
-        'notes': 'Well controlled with medication',
-      },
-      {
-        'relation': 'Paternal Grandfather',
-        'condition': 'Hypertension',
-        'ageOfOnset': 45,
-        'status': 'Deceased',
-        'notes': 'Stroke at age 70',
-      },
-      {
-        'relation': 'Maternal Grandmother',
-        'condition': 'Breast Cancer',
-        'ageOfOnset': 52,
-        'status': 'Deceased',
-        'notes': 'Stage II, treated successfully',
-      },
-    ],
-    'medicalImages': [
-      {
-        'id': 'IMG001',
-        'type': 'Chest X-Ray',
-        'date': DateTime(2024, 12, 10),
-        'description': 'Routine chest examination',
-        'findings': 'Normal cardiac silhouette, clear lung fields',
-        'imageUrl': 'https://via.placeholder.com/400x300/E3F2FD/1976D2?text=Chest+X-Ray',
-        'status': 'Normal',
-        'radiologist': 'Dr. Sarah Wilson',
-      },
-      {
-        'id': 'IMG002',
-        'type': 'ECG',
-        'date': DateTime(2024, 12, 15),
-        'description': 'Cardiac rhythm assessment',
-        'findings': 'Normal sinus rhythm, no ST changes',
-        'imageUrl': 'https://via.placeholder.com/400x200/E8F5E8/4CAF50?text=ECG+Reading',
-        'status': 'Normal',
-        'radiologist': 'Dr. Michael Chen',
-      },
-      {
-        'id': 'IMG003',
-        'type': 'Blood Sugar Chart',
-        'date': DateTime(2024, 12, 18),
-        'description': 'Glucose monitoring trends',
-        'findings': 'Elevated morning glucose levels',
-        'imageUrl': 'https://via.placeholder.com/400x250/FFF3E0/FF9800?text=Glucose+Chart',
-        'status': 'Abnormal',
-        'radiologist': 'Dr. Emily Rodriguez',
-      },
-    ],
-    'messages': [
-      {
-        'id': 'MSG001',
-        'sender': 'patient',
-        'message': 'Doctor, I\'ve been experiencing some chest discomfort after taking my medication. Should I be concerned?',
-        'timestamp': DateTime(2024, 12, 18, 14, 30),
-        'isRead': true,
-        'priority': 'medium',
-      },
-      {
-        'id': 'MSG002',
-        'sender': 'doctor',
-        'message': 'Thank you for reaching out. Chest discomfort can be concerning. Can you describe the type of discomfort and when it occurs? Please monitor your symptoms and let me know if they worsen.',
-        'timestamp': DateTime(2024, 12, 18, 15, 45),
-        'isRead': true,
-        'priority': 'medium',
-      },
-      {
-        'id': 'MSG003',
-        'sender': 'patient',
-        'message': 'It\'s a mild burning sensation that happens about 30 minutes after taking Lisinopril. It lasts for about an hour.',
-        'timestamp': DateTime(2024, 12, 18, 16, 20),
-        'isRead': true,
-        'priority': 'medium',
-      },
-      {
-        'id': 'MSG004',
-        'sender': 'doctor',
-        'message': 'This could be related to the medication. I\'d like to schedule a follow-up appointment to discuss alternative options. In the meantime, take the medication with food.',
-        'timestamp': DateTime(2024, 12, 18, 17, 10),
-        'isRead': false,
-        'priority': 'high',
-      },
-    ],
-    'clinicalAlerts': [
-      {
-        'id': 'ALERT001',
-        'type': 'Drug Interaction',
-        'severity': 'High',
-        'message': 'Potential interaction between Lisinopril and patient\'s shellfish allergy. Monitor for angioedema.',
-        'recommendation': 'Consider alternative ACE inhibitor or ARB. Educate patient on signs of allergic reaction.',
-        'source': 'Clinical Decision Support System',
-        'timestamp': DateTime(2024, 12, 18, 9, 0),
-        'isAcknowledged': false,
-      },
-      {
-        'id': 'ALERT002',
-        'type': 'Risk Assessment',
-        'severity': 'Medium',
-        'message': 'Patient has strong family history of cardiovascular disease. Current HbA1c levels indicate suboptimal diabetes control.',
-        'recommendation': 'Consider intensifying diabetes management. Schedule cardiology consultation for risk stratification.',
-        'source': 'AI Risk Calculator',
-        'timestamp': DateTime(2024, 12, 17, 11, 30),
-        'isAcknowledged': true,
-      },
-      {
-        'id': 'ALERT003',
-        'type': 'Preventive Care',
-        'severity': 'Low',
-        'message': 'Patient is due for annual eye examination and diabetic foot screening.',
-        'recommendation': 'Schedule ophthalmology and podiatry referrals. Order HbA1c and lipid panel.',
-        'source': 'Preventive Care Guidelines',
-        'timestamp': DateTime(2024, 12, 16, 8, 15),
-        'isAcknowledged': true,
-      },
-    ],
-    'appointments': [
-      {
-        'date': DateTime(2024, 12, 20, 10, 0),
-        'type': 'Follow-up',
-        'status': 'Scheduled',
-        'notes': 'Blood pressure check',
-      },
-      {
-        'date': DateTime(2024, 12, 15, 14, 30),
-        'type': 'Consultation',
-        'status': 'Completed',
-        'notes': 'Diabetes management review',
-      },
-    ],
-    'labResults': [
-      {
-        'testName': 'HbA1c',
-        'result': '7.2%',
-        'normalRange': '< 7.0%',
-        'date': DateTime(2024, 12, 10),
-        'status': 'Elevated',
-      },
-      {
-        'testName': 'Blood Pressure',
-        'result': '135/85 mmHg',
-        'normalRange': '< 120/80 mmHg',
-        'date': DateTime(2024, 12, 15),
-        'status': 'Elevated',
-      },
-    ],
-    'vitalSigns': [
-      {
-        'date': DateTime(2024, 12, 15),
-        'bloodPressure': '135/85',
-        'heartRate': 72,
-        'temperature': 98.6,
-        'weight': 175,
-        'height': 70,
-      },
-    ],
-    'insuranceInfo': {
-      'provider': 'Blue Cross Blue Shield',
-      'policyNumber': 'BC123456789',
-      'groupNumber': 'GRP001',
-      'expiryDate': DateTime(2025, 12, 31),
-    },
-    'lastVisit': DateTime(2024, 12, 15),
-    'nextAppointment': DateTime(2024, 12, 20, 10, 0),
-  };
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _setupAnimations();
+    _loadPatientData();
+  }
+
+  Future<void> _loadPatientData() async {
+    if (widget.patientId == null) {
+      setState(() {
+        _error = 'No patient ID provided';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final user = await _userService.getUserProfile(widget.patientId!);
+      final healthRecordProvider = Provider.of<HealthRecordProvider>(context, listen: false);
+      await healthRecordProvider.loadForPatient(widget.patientId!);
+      
+      if (mounted) {
+        setState(() {
+          _patientUser = user;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Error loading patient data: $e';
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {

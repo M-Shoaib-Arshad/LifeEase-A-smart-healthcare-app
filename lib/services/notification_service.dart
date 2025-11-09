@@ -221,12 +221,7 @@ class NotificationService {
 
   /// Format time for display
   String _formatTime(DateTime dateTime) {
-    int hour = dateTime.hour;
-    if (hour == 0) {
-      hour = 12;
-    } else if (hour > 12) {
-      hour = hour - 12;
-    }
+    final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
     final minute = dateTime.minute.toString().padLeft(2, '0');
     final period = dateTime.hour >= 12 ? 'PM' : 'AM';
     return '$hour:$minute $period';
