@@ -220,7 +220,12 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundImage: NetworkImage(appointment['patientImage']),
+                  backgroundColor: Colors.blue.shade100,
+                  child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: Colors.blue.shade700,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -228,17 +233,17 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        appointment['patientName'],
+                        'Patient ID: ${appointment.patientId}',
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        appointment['type'],
+                        appointment.notes ?? 'No notes available',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.grey.shade700,
                         ),
                       ),
@@ -248,17 +253,17 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(appointment['status']).withOpacity(0.1),
+                    color: _getStatusColor(appointment.status).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: _getStatusColor(appointment['status']),
+                      color: _getStatusColor(appointment.status),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    appointment['status'],
+                    appointment.status.toUpperCase(),
                     style: TextStyle(
-                      color: _getStatusColor(appointment['status']),
+                      color: _getStatusColor(appointment.status),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -277,14 +282,96 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                   _buildDetailItem(
                     Icons.calendar_today,
                     'Date',
-                    DateFormat('EEEE, MMMM d, yyyy').format(appointment['dateTime']),
+                    DateFormat('EEEE, MMMM d, yyyy').format(appointment.dateTime),
                   ),
                   _buildDetailItem(
                     Icons.access_time,
                     'Time',
-                    DateFormat('h:mm a').format(appointment['dateTime']),
+                    DateFormat('h:mm a').format(appointment.dateTime),
                   ),
                   _buildDetailItem(
+                    Icons.person,
+                    'Patient ID',
+                    appointment.patientId,
+                  ),
+                  _buildDetailItem(
+                    Icons.medical_services,
+                    'Doctor ID',
+                    appointment.doctorId,
+                  ),
+                  if (appointment.notes != null)
+                    _buildDetailItem(
+                      Icons.note,
+                      'Notes',
+                      appointment.notes!,
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          // Action buttons
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                if (appointment.status != 'completed' && appointment.status != 'cancelled')
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _updateAppointmentStatus(appointment, 'completed');
+                      },
+                      icon: const Icon(Icons.check_circle),
+                      label: const Text('Complete'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (appointment.status != 'completed' && appointment.status != 'cancelled')
+                  const SizedBox(width: 12),
+                if (appointment.status == 'scheduled' || appointment.status == 'pending')
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _updateAppointmentStatus(appointment, 'cancelled');
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text('Cancel'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
                     Icons.timelapse,
                     'Duration',
                     '${appointment['duration']} minutes',
@@ -765,7 +852,7 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Patient: ${appointment.patientId.length > _maxPatientIdDisplayLength ? appointment.patientId.substring(0, _maxPatientIdDisplayLength) + '...' : appointment.patientId}',
+                            'Patient: ${appointment.patientId.length > 8 ? appointment.patientId.substring(0, 8) + '...' : appointment.patientId}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -804,6 +891,93 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                 const SizedBox(height: 12),
                 const Divider(height: 1),
                 const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('MMM d, yyyy').format(appointment.dateTime),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('h:mm a').format(appointment.dateTime),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.more_vert, size: 20),
+                      onPressed: () => _showAppointmentActions(appointment),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.blue.shade700,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        DateFormat('MMM d, yyyy').format(appointment['dateTime']),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.blue.shade700,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        DateFormat('h:mm a').format(appointment['dateTime']),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        Icons.timelapse,
+                        size: 16,
+                        color: Colors.blue.shade700,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${appointment['duration']} min',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),

@@ -69,6 +69,44 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _setupAnimations();
+    _loadPatientData();
+  }
+
+  Future<void> _loadPatientData() async {
+    if (widget.patientId == null) {
+      setState(() {
+        _error = 'No patient ID provided';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final user = await _userService.getUserProfile(widget.patientId!);
+      final healthRecordProvider = Provider.of<HealthRecordProvider>(context, listen: false);
+      await healthRecordProvider.loadForPatient(widget.patientId!);
+      
+      if (mounted) {
+        setState(() {
+          _patientUser = user;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Error loading patient data: $e';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   void _setupAnimations() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
