@@ -16,6 +16,8 @@ class AppointmentManagementScreen extends StatefulWidget {
 }
 
 class _AppointmentManagementScreenState extends State<AppointmentManagementScreen> with TickerProviderStateMixin {
+  static const int _maxPatientIdDisplayLength = 8;
+  
   String _selectedFilter = 'All';
   String _searchQuery = '';
   bool _isCalendarView = false;
@@ -978,34 +980,31 @@ class _AppointmentManagementScreenState extends State<AppointmentManagementScree
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // Handle reschedule
-                        },
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text('Reschedule'),
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('MMM d, yyyy').format(appointment.dateTime),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.go('/doctor/patient-details');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text('View Details'),
+                    const SizedBox(width: 16),
+                    Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('h:mm a').format(appointment.dateTime),
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
                       ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.more_vert, size: 20),
+                      onPressed: () => _showAppointmentActions(appointment),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),

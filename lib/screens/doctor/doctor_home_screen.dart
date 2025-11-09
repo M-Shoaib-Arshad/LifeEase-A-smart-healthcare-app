@@ -775,3 +775,4 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 }
+}
