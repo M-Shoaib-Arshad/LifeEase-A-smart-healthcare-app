@@ -11,7 +11,7 @@ class TelemedicineService {
   
   // Agora configuration
   // TODO: Replace with actual Agora App ID from environment variables
-  static const String appId = 'YOUR_AGORA_APP_ID';
+  static const String appId = 'd723eb9e0ee8491ba78045780251d140';
   
   // Call state
   int? _remoteUid;

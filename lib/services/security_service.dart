@@ -2,6 +2,30 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+/// Role-based access control levels
+/// (Moved out of class to comply with Dart: enums must be top-level)
+enum UserRole {
+  patient,
+  doctor,
+  admin,
+  guest,
+}
+
+/// Permission types (top-level enum for same reason)
+enum Permission {
+  viewPatientRecords,
+  editPatientRecords,
+  createAppointments,
+  cancelAppointments,
+  viewDoctorSchedule,
+  manageDoctors,
+  managePatients,
+  viewAnalytics,
+  manageContent,
+  sendNotifications,
+  accessTelemedicine,
+}
+
 /// Service for managing security, encryption, and access control
 /// Handles secure storage, role-based access, and data protection
 class SecurityService {
@@ -10,33 +34,9 @@ class SecurityService {
 
   // Storage keys
   static const String _userRoleKey = 'user_role';
-  static const String _userPermissionsKey = 'user_permissions';
-  static const String _sessionTokenKey = 'session_token';
+  // Removed unused keys _userPermissionsKey and _sessionTokenKey to satisfy linter.
 
-  /// Role-based access control levels
-  enum UserRole {
-    patient,
-    doctor,
-    admin,
-    guest,
-  }
-
-  /// Permission types
-  enum Permission {
-    viewPatientRecords,
-    editPatientRecords,
-    createAppointments,
-    cancelAppointments,
-    viewDoctorSchedule,
-    manageDoctors,
-    managePatients,
-    viewAnalytics,
-    manageContent,
-    sendNotifications,
-    accessTelemedicine,
-  }
-
-  /// Get current user role
+  /// Get current user role (null if not set). Falls back to guest if stored value invalid.
   Future<UserRole?> getUserRole() async {
     try {
       final roleString = await _secureStorage.read(key: _userRoleKey);
@@ -137,7 +137,9 @@ class SecurityService {
     return _auth.currentUser?.uid;
   }
 
-  /// Check if current user can access patient data
+  /// Check if current user can access patient data.
+  /// NOTE: Doctor access currently only checks permission flag; consider adding
+  /// a Firestore lookup to verify doctor-patient relationship via appointments.
   Future<bool> canAccessPatientData(String patientId) async {
     final role = await getUserRole();
     final currentUserId = getCurrentUserId();
@@ -161,7 +163,8 @@ class SecurityService {
     return false;
   }
 
-  /// Check if current user can access doctor data
+  /// Check if current user can access doctor data.
+  /// Patients are allowed basic access for booking purposes.
   Future<bool> canAccessDoctorData(String doctorId) async {
     final role = await getUserRole();
     final currentUserId = getCurrentUserId();
@@ -297,15 +300,17 @@ class SecurityService {
   }
 
   /// Log security event (for audit trail)
-  Future<void> logSecurityEvent(String event, Map<String, dynamic> details) async {
+  Future<void> logSecurityEvent(
+      String event, Map<String, dynamic> details) async {
     // In a production app, this would log to a secure backend
     // For now, we'll just print to debug console
     final userId = getCurrentUserId() ?? 'anonymous';
     final timestamp = DateTime.now().toIso8601String();
-    
+
     // ignore: avoid_print
-    print('Security Event [$timestamp]: $event - User: $userId - Details: $details');
-    
+    print(
+        'Security Event [$timestamp]: $event - User: $userId - Details: $details');
+
     // TODO: Implement proper logging to Firestore or analytics service
   }
 }

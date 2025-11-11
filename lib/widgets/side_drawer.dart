@@ -10,11 +10,11 @@ class SideDrawer extends StatefulWidget {
   State<SideDrawer> createState() => _SideDrawerState();
 }
 
-class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateMixin {
+class _SideDrawerState extends State<SideDrawer>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  final bool _isExpanded = false;
 
   // Sample user data - in real app, this would come from UserProvider
   final Map<String, dynamic> _userData = {
@@ -147,7 +147,7 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final String role = userProvider.role;
+    final String role = userProvider.role ?? 'guest';
 
     return Drawer(
       backgroundColor: Colors.transparent,
@@ -238,7 +238,8 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
                         ),
                         child: CircleAvatar(
                           radius: 35,
-                          backgroundImage: NetworkImage(_userData['profileImage']),
+                          backgroundImage:
+                              NetworkImage(_userData['profileImage']),
                         ),
                       ),
                       if (_userData['isVerified'])
@@ -308,7 +309,8 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildHeaderStat('Rating', '${_userData['rating']}⭐'),
-                        _buildHeaderStat('Patients', '${_userData['totalPatients']}+'),
+                        _buildHeaderStat(
+                            'Patients', '${_userData['totalPatients']}+'),
                         _buildHeaderStat('Experience', _userData['experience']),
                       ],
                     ),
@@ -415,7 +417,8 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildQuickStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildQuickStatItem(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -457,36 +460,46 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
         _buildDrawerItem(
           Icons.home_rounded,
           'Home',
-              () => context.go(role == 'patient' ? '/patient/home' : role == 'doctor' ? '/doctor/home' : '/admin/dashboard'),
+          () => context.go(role == 'patient'
+              ? '/patient/home'
+              : role == 'doctor'
+                  ? '/doctor/home'
+                  : '/admin/dashboard'),
         ),
         _buildDrawerItem(
           Icons.person_rounded,
           'Profile',
-              () => context.go(role == 'patient' ? '/patient/profile' : role == 'doctor' ? '/doctor/profile' : '/admin/dashboard'),
-          badge: _userData['notifications'] > 0 ? _userData['notifications'] : null,
+          () => context.go(role == 'patient'
+              ? '/patient/profile'
+              : role == 'doctor'
+                  ? '/doctor/profile'
+                  : '/admin/dashboard'),
+          badge: _userData['notifications'] > 0
+              ? _userData['notifications']
+              : null,
         ),
         if (role == 'doctor') ...[
           _buildDrawerItem(
             Icons.people_rounded,
             'Patients',
-                () => context.go('/doctor/patients'),
+            () => context.go('/doctor/patients'),
           ),
           _buildDrawerItem(
             Icons.calendar_today_rounded,
             'Schedule',
-                () => context.go('/doctor/schedule'),
+            () => context.go('/doctor/schedule'),
           ),
         ],
         if (role == 'patient') ...[
           _buildDrawerItem(
             Icons.calendar_today_rounded,
             'Appointments',
-                () => context.go('/patient/appointments'),
+            () => context.go('/patient/appointments'),
           ),
           _buildDrawerItem(
             Icons.medical_services_rounded,
             'Medical Records',
-                () => context.go('/patient/medical-records'),
+            () => context.go('/patient/medical-records'),
           ),
         ],
       ],
@@ -503,45 +516,45 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
           _buildDrawerItem(
             Icons.video_call_rounded,
             'Telemedicine',
-                () => context.go('/doctor/telemedicine'),
+            () => context.go('/doctor/telemedicine'),
           ),
           _buildDrawerItem(
             Icons.medication_rounded,
             'Prescriptions',
-                () => context.go('/doctor/prescriptions'),
+            () => context.go('/doctor/prescriptions'),
           ),
           _buildDrawerItem(
             Icons.science_rounded,
             'Lab Results',
-                () => context.go('/doctor/lab-results'),
+            () => context.go('/doctor/lab-results'),
           ),
           _buildDrawerItem(
             Icons.image_rounded,
             'Medical Imaging',
-                () => context.go('/doctor/imaging'),
+            () => context.go('/doctor/imaging'),
           ),
         ],
         if (role == 'patient') ...[
           _buildDrawerItem(
             Icons.medication_rounded,
             'My Medications',
-                () => context.go('/patient/medications'),
+            () => context.go('/patient/medications'),
           ),
           _buildDrawerItem(
             Icons.favorite_rounded,
             'Vital Signs',
-                () => context.go('/patient/vitals'),
+            () => context.go('/patient/vitals'),
           ),
           _buildDrawerItem(
             Icons.chat_rounded,
             'Messages',
-                () => context.go('/patient/messages'),
+            () => context.go('/patient/messages'),
           ),
         ],
         _buildDrawerItem(
           Icons.health_and_safety_rounded,
           'Health Records',
-              () => context.go('/health-records'),
+          () => context.go('/health-records'),
         ),
       ],
     );
@@ -556,28 +569,30 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
         _buildDrawerItem(
           Icons.settings_rounded,
           'Settings',
-              () => context.go('/settings'),
+          () => context.go('/settings'),
         ),
         _buildDrawerItem(
           Icons.notifications_rounded,
           'Notifications',
-              () => context.go('/notifications'),
-          badge: _userData['notifications'] > 0 ? _userData['notifications'] : null,
+          () => context.go('/notifications'),
+          badge: _userData['notifications'] > 0
+              ? _userData['notifications']
+              : null,
         ),
         _buildDrawerItem(
           Icons.help_rounded,
           'Help & Support',
-              () => context.go('/support'),
+          () => context.go('/support'),
         ),
         _buildDrawerItem(
           Icons.privacy_tip_rounded,
           'Privacy Policy',
-              () => context.go('/privacy'),
+          () => context.go('/privacy'),
         ),
         _buildDrawerItem(
           Icons.info_rounded,
           'About',
-              () => context.go('/about'),
+          () => context.go('/about'),
         ),
       ],
     );
@@ -598,20 +613,21 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
         _buildDrawerItem(
           Icons.local_hospital_rounded,
           'Emergency Contacts',
-              () => context.go('/emergency-contacts'),
+          () => context.go('/emergency-contacts'),
           textColor: Colors.red[700],
         ),
         _buildDrawerItem(
           Icons.warning_rounded,
           'Safety Guidelines',
-              () => context.go('/safety-guidelines'),
+          () => context.go('/safety-guidelines'),
           textColor: Colors.red[700],
         ),
       ],
     );
   }
 
-  Widget _buildSection(String title, IconData icon, Color color, List<Widget> children) {
+  Widget _buildSection(
+      String title, IconData icon, Color color, List<Widget> children) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -631,7 +647,8 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
               children: [
@@ -655,12 +672,12 @@ class _SideDrawerState extends State<SideDrawer> with SingleTickerProviderStateM
   }
 
   Widget _buildDrawerItem(
-      IconData icon,
-      String title,
-      VoidCallback onTap, {
-        int? badge,
-        Color? textColor,
-      }) {
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    int? badge,
+    Color? textColor,
+  }) {
     return ListTile(
       leading: Icon(
         icon,

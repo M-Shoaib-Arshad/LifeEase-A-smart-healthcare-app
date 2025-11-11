@@ -24,7 +24,10 @@ class RealTimeService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data()))
+          .map((doc) => Appointment.fromMap({
+                'id': doc.id,
+                ...doc.data(),
+              }))
           .toList();
     });
   }
@@ -39,7 +42,10 @@ class RealTimeService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data()))
+          .map((doc) => Appointment.fromMap({
+                'id': doc.id,
+                ...doc.data(),
+              }))
           .toList();
     });
   }
@@ -53,7 +59,8 @@ class RealTimeService {
         .snapshots()
         .map((doc) {
       if (!doc.exists) return null;
-      return Appointment.fromMap(doc.data()!);
+      final data = doc.data()!;
+      return Appointment.fromMap({'id': doc.id, ...data});
     });
   }
 
@@ -66,9 +73,18 @@ class RealTimeService {
         .orderBy('date', descending: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => HealthRecord.fromMap(doc.data()))
-          .toList();
+      return snapshot.docs.map((doc) {
+        final raw = doc.data();
+        final mapped = {
+          ...raw,
+          'id': raw['id'] ?? doc.id,
+          // Ensure string date for HealthRecord model if Firestore stores Timestamp
+          'date': raw['date'] is Timestamp
+              ? (raw['date'] as Timestamp).toDate().toIso8601String()
+              : raw['date'],
+        };
+        return HealthRecord.fromMap(mapped);
+      }).toList();
     });
   }
 
@@ -79,9 +95,8 @@ class RealTimeService {
     DateTime? startDate,
     DateTime? endDate,
   }) {
-    Query query = _db
-        .collection(_healthDataCol)
-        .where('patientId', isEqualTo: patientId);
+    Query<Map<String, dynamic>> query =
+        _db.collection(_healthDataCol).where('patientId', isEqualTo: patientId);
 
     if (startDate != null) {
       query = query.where('date', isGreaterThanOrEqualTo: startDate);
@@ -95,7 +110,7 @@ class RealTimeService {
 
     return query.snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) => HealthData.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) => HealthData.fromMap(doc.data()))
           .toList();
     });
   }
@@ -129,7 +144,10 @@ class RealTimeService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data()))
+          .map((doc) => Appointment.fromMap({
+                'id': doc.id,
+                ...doc.data(),
+              }))
           .toList();
     });
   }
@@ -137,11 +155,7 @@ class RealTimeService {
   /// Stream of user profile data
   /// Useful for real-time profile updates across the app
   Stream<Map<String, dynamic>?> getUserProfileStream(String userId) {
-    return _db
-        .collection(_usersCol)
-        .doc(userId)
-        .snapshots()
-        .map((doc) {
+    return _db.collection(_usersCol).doc(userId).snapshots().map((doc) {
       if (!doc.exists) return null;
       return doc.data();
     });
@@ -156,7 +170,10 @@ class RealTimeService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data()))
+          .map((doc) => Appointment.fromMap({
+                'id': doc.id,
+                ...doc.data(),
+              }))
           .toList();
     });
   }
@@ -176,7 +193,10 @@ class RealTimeService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data()))
+          .map((doc) => Appointment.fromMap({
+                'id': doc.id,
+                ...doc.data(),
+              }))
           .toList();
     });
   }
@@ -192,7 +212,7 @@ class RealTimeService {
         .snapshots()
         .map((snapshot) {
       if (snapshot.docs.isEmpty) return null;
-      return HealthData.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+      return HealthData.fromMap(snapshot.docs.first.data());
     });
   }
 

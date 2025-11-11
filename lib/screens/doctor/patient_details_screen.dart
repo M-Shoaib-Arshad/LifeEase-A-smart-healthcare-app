@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../../providers/user_provider.dart';
 import '../../providers/health_record_provider.dart';
 import '../../services/user_service.dart';
 import '../../models/user.dart' as model;
-import '../../models/health_record.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
   final String? patientId;
-  
+
   const PatientDetailsScreen({super.key, this.patientId});
 
   @override
@@ -25,16 +23,20 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
+
   final UserService _userService = UserService();
   model.User? _patientUser;
   bool _isLoading = true;
   String? _error;
+  // Temporary local patient data store; in production replace with real models/providers.
+  late Map<String, dynamic> _patientData;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    // Must match number of tabs (8)
+    _tabController = TabController(length: 8, vsync: this);
+    _initializePatientData();
     _setupAnimations();
     _loadPatientData();
   }
@@ -50,12 +52,14 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
 
     try {
       final user = await _userService.getUserProfile(widget.patientId!);
-      final healthRecordProvider = Provider.of<HealthRecordProvider>(context, listen: false);
+      final healthRecordProvider =
+          Provider.of<HealthRecordProvider>(context, listen: false);
       await healthRecordProvider.loadForPatient(widget.patientId!);
-      
+
       if (mounted) {
         setState(() {
           _patientUser = user;
+          _hydratePatientDataFromProfile();
           _isLoading = false;
         });
       }
@@ -69,42 +73,75 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _setupAnimations();
-    _loadPatientData();
+  void _initializePatientData() {
+    // Placeholder scaffold data used by UI components to avoid null errors before real integration.
+    final now = DateTime.now();
+    _patientData = {
+      'id': widget.patientId ?? 'UNKNOWN',
+      'profileImage': 'https://via.placeholder.com/150',
+      'name': 'Loading...',
+      'age': 0,
+      'gender': 'N/A',
+      'lastVisit': now.subtract(const Duration(days: 7)),
+      'bloodType': 'O+',
+      'allergies': <String>[],
+      'vitalSigns': [
+        {
+          'date': now,
+          'bloodPressure': '120/80',
+          'heartRate': 72,
+          'temperature': 98.6,
+          'weight': 160,
+        }
+      ],
+      'dateOfBirth': now.subtract(const Duration(days: 365 * 30)),
+      'phone': 'N/A',
+      'email': 'N/A',
+      'address': 'N/A',
+      'height': 'N/A',
+      'weight': 'N/A',
+      'chronicConditions': <String>[],
+      'emergencyContact': {
+        'name': 'N/A',
+        'relationship': 'N/A',
+        'phone': 'N/A',
+      },
+      'insuranceInfo': {
+        'provider': 'N/A',
+        'policyNumber': 'N/A',
+        'groupNumber': 'N/A',
+        'expiryDate': now.add(const Duration(days: 365)),
+      },
+      'medicalHistory': <Map<String, dynamic>>[],
+      'familyMedicalHistory': <Map<String, dynamic>>[],
+      'currentMedications': <Map<String, dynamic>>[],
+      'labResults': <Map<String, dynamic>>[],
+      'medicalImages': <Map<String, dynamic>>[],
+      'messages': <Map<String, dynamic>>[],
+      'clinicalAlerts': <Map<String, dynamic>>[],
+    };
   }
 
-  Future<void> _loadPatientData() async {
-    if (widget.patientId == null) {
-      setState(() {
-        _error = 'No patient ID provided';
-        _isLoading = false;
-      });
-      return;
-    }
-
-    try {
-      final user = await _userService.getUserProfile(widget.patientId!);
-      final healthRecordProvider = Provider.of<HealthRecordProvider>(context, listen: false);
-      await healthRecordProvider.loadForPatient(widget.patientId!);
-      
-      if (mounted) {
-        setState(() {
-          _patientUser = user;
-          _isLoading = false;
-        });
+  void _hydratePatientDataFromProfile() {
+    if (_patientUser == null) return;
+    _patientData['name'] = _patientUser!.name;
+    _patientData['email'] = _patientUser!.email;
+    _patientData['id'] = _patientUser!.id;
+    if (_patientUser!.dateOfBirth != null) {
+      _patientData['dateOfBirth'] = _patientUser!.dateOfBirth!;
+      final now = DateTime.now();
+      var age = now.year - _patientUser!.dateOfBirth!.year;
+      final hadBirthdayThisYear =
+          (now.month > _patientUser!.dateOfBirth!.month) ||
+              (now.month == _patientUser!.dateOfBirth!.month &&
+                  now.day >= _patientUser!.dateOfBirth!.day);
+      if (!hadBirthdayThisYear) {
+        age -= 1;
       }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = 'Error loading patient data: $e';
-          _isLoading = false;
-        });
-      }
+      _patientData['age'] = age;
     }
+    _patientData['phone'] = _patientUser!.phone ?? 'N/A';
+    _patientData['address'] = _patientUser!.address ?? 'N/A';
   }
 
   void _setupAnimations() {
@@ -158,7 +195,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 child: Row(
                   children: [
@@ -236,7 +274,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: image['status'] == 'Normal'
                                   ? Colors.green.shade100
@@ -312,7 +351,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
               ),
               items: const [
                 DropdownMenuItem(value: 'low', child: Text('Low Priority')),
-                DropdownMenuItem(value: 'medium', child: Text('Medium Priority')),
+                DropdownMenuItem(
+                    value: 'medium', child: Text('Medium Priority')),
                 DropdownMenuItem(value: 'high', child: Text('High Priority')),
                 DropdownMenuItem(value: 'urgent', child: Text('Urgent')),
               ],
@@ -373,7 +413,23 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
+    // final userProvider = Provider.of<UserProvider>(context);
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Patient Details')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(_error!, style: const TextStyle(color: Colors.red)),
+          ),
+        ),
+      );
+    }
     final unreadMessages = (_patientData['messages'] as List)
         .where((msg) => msg['sender'] == 'patient' && !msg['isRead'])
         .length;
@@ -649,7 +705,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -665,7 +722,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
               const SizedBox(height: 8),
               if (_patientData['allergies'].isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.red.shade400,
                     borderRadius: BorderRadius.circular(12),
@@ -835,7 +893,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
     );
   }
 
-  Widget _buildVitalItem(String label, String value, IconData icon, Color color) {
+  Widget _buildVitalItem(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -912,16 +971,20 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _buildInfoRow('Date of Birth', DateFormat('MMM d, yyyy').format(_patientData['dateOfBirth'])),
+          _buildInfoRow('Date of Birth',
+              DateFormat('MMM d, yyyy').format(_patientData['dateOfBirth'])),
           _buildInfoRow('Phone', _patientData['phone']),
           _buildInfoRow('Email', _patientData['email']),
           _buildInfoRow('Address', _patientData['address']),
           _buildInfoRow('Height', _patientData['height']),
           _buildInfoRow('Weight', _patientData['weight']),
           if (_patientData['allergies'].isNotEmpty)
-            _buildInfoRow('Allergies', _patientData['allergies'].join(', '), isAlert: true),
+            _buildInfoRow('Allergies', _patientData['allergies'].join(', '),
+                isAlert: true),
           if (_patientData['chronicConditions'].isNotEmpty)
-            _buildInfoRow('Chronic Conditions', _patientData['chronicConditions'].join(', '), isAlert: true),
+            _buildInfoRow('Chronic Conditions',
+                _patientData['chronicConditions'].join(', '),
+                isAlert: true),
         ],
       ),
     );
@@ -1060,7 +1123,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
           _buildInfoRow('Provider', insurance['provider']),
           _buildInfoRow('Policy Number', insurance['policyNumber']),
           _buildInfoRow('Group Number', insurance['groupNumber']),
-          _buildInfoRow('Expiry Date', DateFormat('MMM d, yyyy').format(insurance['expiryDate'])),
+          _buildInfoRow('Expiry Date',
+              DateFormat('MMM d, yyyy').format(insurance['expiryDate'])),
         ],
       ),
     );
@@ -1094,7 +1158,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: condition['status'] == 'Ongoing'
                           ? Colors.orange.shade100
@@ -1114,7 +1179,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                   ),
                   const Spacer(),
                   Text(
-                    DateFormat('MMM d, yyyy').format(condition['diagnosedDate']),
+                    DateFormat('MMM d, yyyy')
+                        .format(condition['diagnosedDate']),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
@@ -1210,7 +1276,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: condition['status'] == 'Living'
                           ? Colors.green.shade100
@@ -1392,9 +1459,12 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isNormal ? Colors.green.shade100 : Colors.red.shade100,
+                      color: isNormal
+                          ? Colors.green.shade100
+                          : Colors.red.shade100,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -1402,7 +1472,9 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: isNormal ? Colors.green.shade700 : Colors.red.shade700,
+                        color: isNormal
+                            ? Colors.green.shade700
+                            : Colors.red.shade700,
                       ),
                     ),
                   ),
@@ -1423,7 +1495,9 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: isNormal ? Colors.green.shade700 : Colors.red.shade700,
+                      color: isNormal
+                          ? Colors.green.shade700
+                          : Colors.red.shade700,
                     ),
                   ),
                 ],
@@ -1474,7 +1548,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                 onPressed: () {
                   // Add new image functionality
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Upload new image functionality')),
+                    const SnackBar(
+                        content: Text('Upload new image functionality')),
                   );
                 },
                 icon: const Icon(Icons.add, size: 16),
@@ -1482,7 +1557,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
               ),
             ],
@@ -1522,11 +1598,13 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12)),
                             color: Colors.grey.shade100,
                           ),
                           child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12)),
                             child: Image.network(
                               image['imageUrl'],
                               fit: BoxFit.cover,
@@ -1563,7 +1641,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
                                       color: image['status'] == 'Normal'
                                           ? Colors.green.shade100
@@ -1652,7 +1731,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
               ),
             ],
@@ -1674,7 +1754,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                     if (!isFromDoctor) ...[
                       CircleAvatar(
                         radius: 16,
-                        backgroundImage: NetworkImage(_patientData['profileImage']),
+                        backgroundImage:
+                            NetworkImage(_patientData['profileImage']),
                       ),
                       const SizedBox(width: 8),
                     ],
@@ -1682,10 +1763,14 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: isFromDoctor ? Colors.blue.shade50 : Colors.grey.shade100,
+                          color: isFromDoctor
+                              ? Colors.blue.shade50
+                              : Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isFromDoctor ? Colors.blue.shade200 : Colors.grey.shade300,
+                            color: isFromDoctor
+                                ? Colors.blue.shade200
+                                : Colors.grey.shade300,
                           ),
                         ),
                         child: Column(
@@ -1698,13 +1783,17 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: isFromDoctor ? Colors.blue.shade700 : Colors.grey.shade700,
+                                    color: isFromDoctor
+                                        ? Colors.blue.shade700
+                                        : Colors.grey.shade700,
                                   ),
                                 ),
                                 const Spacer(),
-                                if (message['priority'] == 'high' || message['priority'] == 'urgent')
+                                if (message['priority'] == 'high' ||
+                                    message['priority'] == 'urgent')
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
                                       color: message['priority'] == 'urgent'
                                           ? Colors.red.shade100
@@ -1724,7 +1813,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                                   ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  DateFormat('MMM d, h:mm a').format(message['timestamp']),
+                                  DateFormat('MMM d, h:mm a')
+                                      .format(message['timestamp']),
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey.shade500,
@@ -1743,7 +1833,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                             if (!message['isRead'] && !isFromDoctor) ...[
                               const SizedBox(height: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: Colors.blue.shade100,
                                   borderRadius: BorderRadius.circular(8),
@@ -1840,8 +1931,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
               final severityColor = alert['severity'] == 'High'
                   ? Colors.red
                   : alert['severity'] == 'Medium'
-                  ? Colors.orange
-                  : Colors.blue;
+                      ? Colors.orange
+                      : Colors.blue;
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -1876,8 +1967,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                             alert['type'] == 'Drug Interaction'
                                 ? Icons.medication
                                 : alert['type'] == 'Risk Assessment'
-                                ? Icons.assessment
-                                : Icons.health_and_safety,
+                                    ? Icons.assessment
+                                    : Icons.health_and_safety,
                             color: severityColor.shade700,
                             size: 20,
                           ),
@@ -1896,7 +1987,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                                 ),
                               ),
                               Text(
-                                DateFormat('MMM d, yyyy • h:mm a').format(alert['timestamp']),
+                                DateFormat('MMM d, yyyy • h:mm a')
+                                    .format(alert['timestamp']),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -1906,7 +1998,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: severityColor.shade100,
                             borderRadius: BorderRadius.circular(12),
@@ -2009,7 +2102,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: severityColor,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               minimumSize: Size.zero,
                             ),
                             child: const Text(
@@ -2019,7 +2113,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
                           )
                         else
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(8),

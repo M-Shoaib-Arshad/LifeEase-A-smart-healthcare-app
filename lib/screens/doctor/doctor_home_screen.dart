@@ -31,11 +31,13 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
 
   Future<void> _loadDoctorData() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
-    
-    if (userProvider.id != null) {
+    final appointmentProvider =
+        Provider.of<AppointmentProvider>(context, listen: false);
+
+    // Load appointments for this doctor (uses Firebase UID). Guard if uid null.
+    if (userProvider.uid != null) {
       try {
-        await appointmentProvider.loadForDoctor(userProvider.id!);
+        await appointmentProvider.loadForDoctor(userProvider.uid!);
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +46,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
         }
       }
     }
-    
+
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -111,18 +113,18 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     final today = DateTime.now();
     final todayStart = DateTime(today.year, today.month, today.day);
     final todayEnd = todayStart.add(const Duration(days: 1));
-    
+
     final allAppointments = appointmentProvider.appointments;
     final todayAppointments = allAppointments
-        .where((a) => a.dateTime.isAfter(todayStart) && a.dateTime.isBefore(todayEnd))
+        .where((a) =>
+            a.dateTime.isAfter(todayStart) && a.dateTime.isBefore(todayEnd))
         .toList();
     final upcomingAppointments = allAppointments
         .where((a) => a.dateTime.isAfter(DateTime.now()))
         .take(5)
         .toList();
-    final completedToday = todayAppointments
-        .where((a) => a.status == 'completed')
-        .length;
+    final completedToday =
+        todayAppointments.where((a) => a.status == 'completed').length;
     final pendingAppointments = allAppointments
         .where((a) => a.status == 'scheduled' || a.status == 'pending')
         .length;
@@ -156,14 +158,17 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildWelcomeSection(userProvider, todayAppointments.length),
+                            _buildWelcomeSection(
+                                userProvider, todayAppointments.length),
                             const SizedBox(height: 24),
-                            _buildStatsCards(todayAppointments.length, pendingAppointments, completedToday),
+                            _buildStatsCards(todayAppointments.length,
+                                pendingAppointments, completedToday),
                             const SizedBox(height: 24),
                             _buildQuickActions(),
                             const SizedBox(height: 24),
                             _buildUpcomingAppointments(upcomingAppointments),
-                            const SizedBox(height: 100), // Bottom padding for FAB
+                            const SizedBox(
+                                height: 100), // Bottom padding for FAB
                           ],
                         ),
                       ),
@@ -285,13 +290,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 
-  Widget _buildWelcomeSection(UserProvider userProvider, int todayAppointmentsCount) {
+  Widget _buildWelcomeSection(
+      UserProvider userProvider, int todayAppointmentsCount) {
     final now = DateTime.now();
     final greeting = now.hour < 12
         ? 'Good Morning'
         : now.hour < 17
-        ? 'Good Afternoon'
-        : 'Good Evening';
+            ? 'Good Afternoon'
+            : 'Good Evening';
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -318,7 +324,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$greeting, Dr.!',
+                      '$greeting, ${userProvider.profile?.name ?? 'Doctor'}!',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -363,7 +369,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     );
   }
 
-  Widget _buildStatsCards(int todayAppointments, int pendingAppointments, int completedToday) {
+  Widget _buildStatsCards(
+      int todayAppointments, int pendingAppointments, int completedToday) {
     final stats = [
       {
         'title': 'Today\'s Appointments',
@@ -388,7 +395,10 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
       },
       {
         'title': 'Total Appointments',
-        'value': Provider.of<AppointmentProvider>(context, listen: false).appointments.length.toString(),
+        'value': Provider.of<AppointmentProvider>(context, listen: false)
+            .appointments
+            .length
+            .toString(),
         'icon': Icons.people,
         'color': Colors.purple,
         'change': 'All time',
@@ -679,11 +689,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                     border: isLast
                         ? null
                         : Border(
-                      bottom: BorderSide(
-                        color: Colors.grey.shade200,
-                        width: 1,
-                      ),
-                    ),
+                            bottom: BorderSide(
+                              color: Colors.grey.shade200,
+                              width: 1,
+                            ),
+                          ),
                   ),
                   child: Row(
                     children: [
@@ -750,7 +760,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            DateFormat('MMM d, h:mm a').format(appointment.dateTime),
+                            DateFormat('MMM d, h:mm a')
+                                .format(appointment.dateTime),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -774,5 +785,4 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
       ],
     );
   }
-}
 }

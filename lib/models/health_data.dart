@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class HealthData {
   final DateTime date;
   final String type;
@@ -12,6 +14,55 @@ class HealthData {
     required this.unit,
     required this.status,
   });
+
+  HealthData copyWith({
+    DateTime? date,
+    String? type,
+    dynamic value,
+    String? unit,
+    String? status,
+  }) {
+    return HealthData(
+      date: date ?? this.date,
+      type: type ?? this.type,
+      value: value ?? this.value,
+      unit: unit ?? this.unit,
+      status: status ?? this.status,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      // Store as Firestore Timestamp for proper range queries & ordering
+      'date': Timestamp.fromDate(date),
+      'type': type,
+      'value': value,
+      'unit': unit,
+      'status': status,
+    };
+  }
+
+  factory HealthData.fromMap(Map<String, dynamic> map) {
+    final rawDate = map['date'];
+    DateTime parsedDate;
+    if (rawDate is Timestamp) {
+      parsedDate = rawDate.toDate();
+    } else if (rawDate is String) {
+      parsedDate = DateTime.tryParse(rawDate) ?? DateTime.now();
+    } else if (rawDate is DateTime) {
+      parsedDate = rawDate;
+    } else {
+      parsedDate = DateTime.now();
+    }
+
+    return HealthData(
+      date: parsedDate,
+      type: (map['type'] ?? '') as String,
+      value: map['value'],
+      unit: (map['unit'] ?? '') as String,
+      status: (map['status'] ?? '') as String,
+    );
+  }
 }
 
 class BloodPressureData {
@@ -124,7 +175,10 @@ class HealthGoal {
   });
 
   double get progressPercentage {
-    if (type == 'steps' || type == 'calories' || type == 'distance' || type == 'activeMinutes') {
+    if (type == 'steps' ||
+        type == 'calories' ||
+        type == 'distance' ||
+        type == 'activeMinutes') {
       return (current as num) / (target as num);
     } else if (type == 'weight') {
       // For weight loss goals, the progress is inverse
