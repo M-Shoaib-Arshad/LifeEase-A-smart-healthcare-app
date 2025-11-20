@@ -44,4 +44,26 @@ class UserService {
       return model.User.fromMap(snap.data()!);
     });
   }
+
+  Future<void> updateUserProfile({
+    required String uid,
+    String? name,
+    String? phone,
+    DateTime? dateOfBirth,
+    String? address,
+    String? photoURL,
+  }) async {
+    final doc = _db.collection(usersCollection).doc(uid);
+    final Map<String, dynamic> updates = {
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+
+    if (name != null) updates['name'] = name;
+    if (phone != null) updates['phone'] = phone;
+    if (dateOfBirth != null) updates['dateOfBirth'] = dateOfBirth.toIso8601String();
+    if (address != null) updates['address'] = address;
+    if (photoURL != null) updates['photoURL'] = photoURL;
+
+    await doc.update(updates);
+  }
 }

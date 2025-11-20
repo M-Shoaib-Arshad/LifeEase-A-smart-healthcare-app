@@ -38,6 +38,28 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateProfile({
+    String? name,
+    String? phone,
+    DateTime? dateOfBirth,
+    String? address,
+  }) async {
+    if (_firebaseUser == null) {
+      throw Exception('No user is currently signed in');
+    }
+
+    await _userService.updateUserProfile(
+      uid: _firebaseUser!.uid,
+      name: name,
+      phone: phone,
+      dateOfBirth: dateOfBirth,
+      address: address,
+    );
+
+    // Refresh profile to get updated data
+    await refreshProfile();
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
     _firebaseUser = null;
