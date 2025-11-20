@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/settings/change_password_dialog.dart';
+import '../../widgets/settings/notification_settings_widget.dart';
+import '../../widgets/settings/theme_selector_widget.dart';
+import '../../widgets/settings/language_selector_widget.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,6 +16,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -82,7 +88,10 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Change Password',
                     subtitle: 'Update your account password',
                     onTap: () {
-                      // Implement password change logic
+                      showDialog(
+                        context: context,
+                        builder: (context) => const ChangePasswordDialog(),
+                      );
                     },
                   ),
                   _buildSettingsTile(
@@ -91,7 +100,11 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Profile Settings',
                     subtitle: 'Manage your personal information',
                     onTap: () {
-                      // Navigate to profile settings
+                      context.go(userProvider.role == 'patient'
+                          ? '/patient/profile'
+                          : userProvider.role == 'doctor'
+                          ? '/doctor/profile'
+                          : '/admin/user-management');
                     },
                   ),
                 ],
@@ -110,7 +123,12 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Notifications',
                     subtitle: 'Configure notification preferences',
                     onTap: () {
-                      // Implement notification settings
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationSettingsWidget(),
+                        ),
+                      );
                     },
                   ),
                   _buildSettingsTile(
@@ -119,13 +137,18 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Language',
                     subtitle: 'Choose your preferred language',
                     trailing: Text(
-                      'English',
+                      _getLanguageName(settingsProvider.language),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                     onTap: () {
-                      // Implement language selection
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LanguageSelectorWidget(),
+                        ),
+                      );
                     },
                   ),
                   _buildSettingsTile(
@@ -134,7 +157,12 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Theme',
                     subtitle: 'Customize app appearance',
                     onTap: () {
-                      // Implement theme selection
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ThemeSelectorWidget(),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -313,10 +341,34 @@ class SettingsScreen extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             FilledButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                // Implement logout logic
-                context.go('/login');
+                
+                // Get providers
+                final userProvider = Provider.of<UserProvider>(context, listen: false);
+                final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                
+                try {
+                  // Clear settings
+                  await settingsProvider.clearSettings();
+                  
+                  // Logout user
+                  await userProvider.logout();
+                  
+                  // Navigate to login
+                  if (context.mounted) {
+                    context.go('/login');
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to logout: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
               child: const Text('Sign Out'),
             ),
@@ -324,5 +376,16 @@ class SettingsScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _getLanguageName(String code) {
+    const languageNames = {
+      'en': 'English',
+      'es': 'Español',
+      'ar': 'العربية',
+      'ur': 'اردو',
+      'hi': 'हिन्दी',
+    };
+    return languageNames[code] ?? 'English';
   }
 }
