@@ -4,8 +4,13 @@
 **Last Updated**: November 26, 2024  
 **Based On**: Missing Features Analysis Document  
 **Current Completion**: ~35% (Updated after PR #4)
+  - Base completion: ~29% (PRs #1, #2, #3)
+  - PR #4 Patient Screens: +6% (major screens and 3 core services implemented)
+  - Note: Percentage is estimated based on features completed vs. total planned features in this document
 
 ## Recent Updates
+
+**Important Note on PR Numbering**: The GitHub PR #4 (Patient Screens Implementation) differs from the "PR #4" described in this planning document (Environment Configuration & Security). The actual GitHub PR sequence has been: PR #1 (Auth), PR #2 (Doctor Screens), PR #3 (Settings), and PR #4 (Patient Screens). The features described as "PR #4" and beyond in this document are still pending implementation.
 
 ### PR #4 - Patient Screens Implementation (Completed ✅)
 **Merged**: November 8, 2024  
@@ -17,7 +22,13 @@
 - ✅ 14 Patient Screens - All patient-facing screens made fully functional
 - ✅ Enhanced Notification Model - Added title, type, and data fields
 
-**Note**: While this PR implemented core notification and telemedicine infrastructure, full FCM (Firebase Cloud Messaging) push notifications and advanced features outlined in PR #7 below still need configuration and enhancement.
+**Note**: While this PR implemented core notification and telemedicine infrastructure, full FCM (Firebase Cloud Messaging) push notifications and advanced features outlined in PR #7 below still need:
+- Firebase Cloud Messaging SDK integration
+- Background message handling for iOS and Android
+- APNs (Apple Push Notification service) configuration for iOS
+- FCM token management and device registration
+- Rich notification support (images, actions)
+- Notification click handling and deep linking
 
 ---
 
