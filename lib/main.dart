@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'config/env_config.dart';
 import 'providers/user_provider.dart';
 import 'providers/appointment_provider.dart'; // New provider
 import 'providers/health_record_provider.dart'; // New provider
@@ -13,6 +14,16 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
+  
+  // Initialize environment configuration
+  try {
+    await EnvConfig.init();
+  } catch (e) {
+    // Show error if .env file is missing or invalid
+    runApp(EnvConfigErrorApp(error: e.toString()));
+    return;
+  }
+  
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Uses config from CLI
   );
@@ -29,6 +40,83 @@ void main() async {
       child: const MyApp(),
     ),
   );
+}
+
+/// Error app shown when environment configuration fails
+class EnvConfigErrorApp extends StatelessWidget {
+  final String error;
+  
+  const EnvConfigErrorApp({super.key, required this.error});
+  
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.red[50],
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red[700],
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Configuration Error',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red[700],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load environment configuration.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Please ensure a .env file exists in the project root with all required values. '
+                  'You can copy .env.example to .env and fill in your configuration.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    error,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'monospace',
+                      color: Colors.grey[800],
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

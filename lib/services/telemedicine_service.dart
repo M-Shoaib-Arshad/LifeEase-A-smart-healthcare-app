@@ -1,6 +1,7 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../config/env_config.dart';
 
 /// Service for managing telemedicine video calls using Agora RTC
 /// Handles video call initialization, connection, and management
@@ -9,9 +10,8 @@ class TelemedicineService {
   bool _isInitialized = false;
   bool _isInCall = false;
   
-  // Agora configuration
-  // TODO: Replace with actual Agora App ID from environment variables
-  static const String appId = 'd723eb9e0ee8491ba78045780251d140';
+  // Agora configuration - loaded from environment variables
+  static String get appId => EnvConfig.agoraAppId;
   
   // Call state
   int? _remoteUid;
