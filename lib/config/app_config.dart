@@ -1,17 +1,31 @@
+import 'env_config.dart';
+
 class AppConfig {
-  // Firebase Config (from google-services.json)
-  static const String apiKey = 'AIzaSyAE2wuVwFjkjE37Y0qH96GH3mqbdaB0I_0';
-  static const String authDomain = 'lifeease-smart-healthcare.firebaseapp.com'; // Not used on Android
-  static const String projectId = 'lifeease-smart-healthcare';
-  static const String storageBucket = 'lifeease-smart-healthcare.firebasestorage.app';
-  static const String messagingSenderId = '188575701098';
-  static const String appId = '1:188575701098:android:0d1aa7f5376919d5135213';
+  // Firebase Config - loaded from environment variables
+  static String get apiKey => EnvConfig.firebaseApiKey;
+  static String get authDomain => '${EnvConfig.firebaseProjectId}.firebaseapp.com';
+  static String get projectId => EnvConfig.firebaseProjectId;
+  static String get storageBucket => EnvConfig.firebaseStorageBucket;
+  static String get messagingSenderId => EnvConfig.firebaseMessagingSenderId;
+  static String get appId => EnvConfig.firebaseAppId;
 
-  // Other app settings
-  static const String appName = 'LifeEase';
-  static const bool enableNotifications = true;
-  static const String apiBaseUrl = 'https://your-backend-url.com';
+  // Other app settings - loaded from environment variables
+  static String get appName => EnvConfig.appName;
+  static bool get enableNotifications => EnvConfig.enableNotifications;
+  static String get apiBaseUrl => EnvConfig.apiBaseUrl;
 
-  // Environment check
-  static bool get isProduction => const bool.fromEnvironment('dart.vm.product');
+  // Agora configuration for video calls
+  static String get agoraAppId => EnvConfig.agoraAppId;
+
+  // API Keys for integrations
+  static String? get openaiApiKey => EnvConfig.openaiApiKey;
+  static String? get googleMapsApiKey => EnvConfig.googleMapsApiKey;
+  static String? get stripePublishableKey => EnvConfig.stripePublishableKey;
+  static String? get stripeSecretKey => EnvConfig.stripeSecretKey;
+
+  // Environment checks
+  static bool get isProduction => EnvConfig.isProduction;
+  static bool get isDevelopment => EnvConfig.isDevelopment;
+  static bool get isStaging => EnvConfig.isStaging;
+  static String get environment => EnvConfig.appEnv;
 }
