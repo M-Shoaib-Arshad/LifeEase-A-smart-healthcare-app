@@ -35,8 +35,9 @@ class TelemedicineService {
       
       // Create RTC engine
       _engine = createAgoraRtcEngine();
+      final agoraAppId = appId;
       await _engine!.initialize(RtcEngineContext(
-        appId: appId,
+        appId: agoraAppId,
         channelProfile: ChannelProfileType.channelProfileCommunication,
       ));
       
