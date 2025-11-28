@@ -5,10 +5,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class EnvConfig {
   /// Initialize the environment configuration
   /// Call this in main() before runApp()
+  /// Validates required environment variables after loading
   static Future<void> init() async {
     try {
       await dotenv.load(fileName: '.env');
+      // Validate required environment variables
+      validate();
     } catch (e) {
+      if (e is EnvConfigException) {
+        rethrow;
+      }
       // If .env file is not found, show a helpful error
       throw EnvConfigException(
         'Failed to load .env file. Please ensure a .env file exists in the project root. '
@@ -51,64 +57,54 @@ class EnvConfig {
   }
 
   // ===========================================
-  // Firebase Configuration
+  // Firebase Configuration (Required)
   // ===========================================
   
-  /// Firebase API Key
-  static String get firebaseApiKey => 
-      get('FIREBASE_API_KEY', defaultValue: '');
+  /// Firebase API Key (required)
+  static String get firebaseApiKey => get('FIREBASE_API_KEY');
 
-  /// Firebase App ID
-  static String get firebaseAppId => 
-      get('FIREBASE_APP_ID', defaultValue: '');
+  /// Firebase App ID (required)
+  static String get firebaseAppId => get('FIREBASE_APP_ID');
 
-  /// Firebase Messaging Sender ID
-  static String get firebaseMessagingSenderId => 
-      get('FIREBASE_MESSAGING_SENDER_ID', defaultValue: '');
+  /// Firebase Messaging Sender ID (required)
+  static String get firebaseMessagingSenderId => get('FIREBASE_MESSAGING_SENDER_ID');
 
-  /// Firebase Project ID
-  static String get firebaseProjectId => 
-      get('FIREBASE_PROJECT_ID', defaultValue: '');
+  /// Firebase Project ID (required)
+  static String get firebaseProjectId => get('FIREBASE_PROJECT_ID');
 
-  /// Firebase Storage Bucket
-  static String get firebaseStorageBucket => 
-      get('FIREBASE_STORAGE_BUCKET', defaultValue: '');
+  /// Firebase Storage Bucket (required)
+  static String get firebaseStorageBucket => get('FIREBASE_STORAGE_BUCKET');
 
-  // iOS-specific Firebase settings
-  static String get firebaseIosApiKey => 
-      get('FIREBASE_IOS_API_KEY', defaultValue: '');
+  // iOS-specific Firebase settings (optional - only needed for iOS builds)
+  static String? get firebaseIosApiKey => getOptional('FIREBASE_IOS_API_KEY');
 
-  static String get firebaseIosAppId => 
-      get('FIREBASE_IOS_APP_ID', defaultValue: '');
+  static String? get firebaseIosAppId => getOptional('FIREBASE_IOS_APP_ID');
 
-  static String get firebaseIosClientId => 
-      get('FIREBASE_IOS_CLIENT_ID', defaultValue: '');
+  static String? get firebaseIosClientId => getOptional('FIREBASE_IOS_CLIENT_ID');
 
-  static String get firebaseIosBundleId => 
-      get('FIREBASE_IOS_BUNDLE_ID', defaultValue: '');
+  static String? get firebaseIosBundleId => getOptional('FIREBASE_IOS_BUNDLE_ID');
 
   // ===========================================
-  // Agora Configuration
+  // Agora Configuration (Required)
   // ===========================================
   
-  /// Agora App ID for video calls
-  static String get agoraAppId => 
-      get('AGORA_APP_ID', defaultValue: '');
+  /// Agora App ID for video calls (required)
+  static String get agoraAppId => get('AGORA_APP_ID');
 
   // ===========================================
-  // API Keys (for future integrations)
+  // API Keys (Optional - for future integrations)
   // ===========================================
   
-  /// OpenAI API Key
+  /// OpenAI API Key (optional)
   static String? get openaiApiKey => getOptional('OPENAI_API_KEY');
 
-  /// Google Maps API Key
+  /// Google Maps API Key (optional)
   static String? get googleMapsApiKey => getOptional('GOOGLE_MAPS_API_KEY');
 
-  /// Stripe Publishable Key
+  /// Stripe Publishable Key (optional)
   static String? get stripePublishableKey => getOptional('STRIPE_PUBLISHABLE_KEY');
 
-  /// Stripe Secret Key
+  /// Stripe Secret Key (optional)
   static String? get stripeSecretKey => getOptional('STRIPE_SECRET_KEY');
 
   // ===========================================
@@ -145,6 +141,7 @@ class EnvConfig {
       getBool('ENABLE_NOTIFICATIONS', defaultValue: true);
 
   /// Validate that all required environment variables are set
+  /// Called automatically during init()
   static void validate() {
     final requiredVars = [
       'FIREBASE_API_KEY',

@@ -201,6 +201,13 @@ APP_ENV=staging
         expect(EnvConfig.stripeSecretKey, isNull);
       });
 
+      test('should return null for missing iOS-specific Firebase keys', () {
+        expect(EnvConfig.firebaseIosApiKey, isNull);
+        expect(EnvConfig.firebaseIosAppId, isNull);
+        expect(EnvConfig.firebaseIosClientId, isNull);
+        expect(EnvConfig.firebaseIosBundleId, isNull);
+      });
+
       test('should return OpenAI API key when set', () {
         dotenv.testLoad(fileInput: '''
 FIREBASE_API_KEY=test_api_key
@@ -213,6 +220,26 @@ OPENAI_API_KEY=sk-test123
 ''');
         
         expect(EnvConfig.openaiApiKey, 'sk-test123');
+      });
+
+      test('should return iOS Firebase keys when set', () {
+        dotenv.testLoad(fileInput: '''
+FIREBASE_API_KEY=test_api_key
+FIREBASE_APP_ID=test_app_id
+FIREBASE_MESSAGING_SENDER_ID=test_sender_id
+FIREBASE_PROJECT_ID=test_project_id
+FIREBASE_STORAGE_BUCKET=test_bucket
+AGORA_APP_ID=test_agora_id
+FIREBASE_IOS_API_KEY=ios_api_key
+FIREBASE_IOS_APP_ID=ios_app_id
+FIREBASE_IOS_CLIENT_ID=ios_client_id
+FIREBASE_IOS_BUNDLE_ID=com.example.app
+''');
+        
+        expect(EnvConfig.firebaseIosApiKey, 'ios_api_key');
+        expect(EnvConfig.firebaseIosAppId, 'ios_app_id');
+        expect(EnvConfig.firebaseIosClientId, 'ios_client_id');
+        expect(EnvConfig.firebaseIosBundleId, 'com.example.app');
       });
     });
   });
