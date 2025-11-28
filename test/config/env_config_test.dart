@@ -6,7 +6,7 @@ void main() {
   group('EnvConfig', () {
     setUp(() {
       // Reset dotenv before each test
-      dotenv.testLoad(fileInput: '''
+      dotenv.loadFromString(envString: '''
 FIREBASE_API_KEY=test_api_key
 FIREBASE_APP_ID=test_app_id
 FIREBASE_MESSAGING_SENDER_ID=test_sender_id
@@ -140,7 +140,7 @@ ENABLE_NOTIFICATIONS=true
       });
 
       test('should throw when required variable is missing', () {
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 FIREBASE_API_KEY=test_api_key
 ''');
         
@@ -153,7 +153,7 @@ FIREBASE_API_KEY=test_api_key
 
     group('Production environment', () {
       test('should detect production environment', () {
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 FIREBASE_API_KEY=test_api_key
 FIREBASE_APP_ID=test_app_id
 FIREBASE_MESSAGING_SENDER_ID=test_sender_id
@@ -171,7 +171,7 @@ APP_ENV=production
 
     group('Staging environment', () {
       test('should detect staging environment', () {
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 FIREBASE_API_KEY=test_api_key
 FIREBASE_APP_ID=test_app_id
 FIREBASE_MESSAGING_SENDER_ID=test_sender_id
@@ -209,7 +209,7 @@ APP_ENV=staging
       });
 
       test('should return OpenAI API key when set', () {
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 FIREBASE_API_KEY=test_api_key
 FIREBASE_APP_ID=test_app_id
 FIREBASE_MESSAGING_SENDER_ID=test_sender_id
@@ -223,7 +223,7 @@ OPENAI_API_KEY=sk-test123
       });
 
       test('should return iOS Firebase keys when set', () {
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 FIREBASE_API_KEY=test_api_key
 FIREBASE_APP_ID=test_app_id
 FIREBASE_MESSAGING_SENDER_ID=test_sender_id
