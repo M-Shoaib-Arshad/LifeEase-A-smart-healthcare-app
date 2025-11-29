@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/user_service.dart';
+import '../../widgets/auth/google_signin_button.dart';
+import '../../widgets/auth/social_auth_divider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
   String? _selectedRole = 'patient';
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -85,6 +89,67 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleLoading = true);
+    try {
+      final authService = AuthService();
+      final userCredential = await authService.signInWithGoogle();
+
+      if (userCredential == null) {
+        // User cancelled the sign-in
+        return;
+      }
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('Failed to get user from Google Sign-In');
+      }
+
+      // Check if user profile exists, if not create one
+      final userService = UserService();
+      final existingProfile = await userService.getUserProfile(user.uid);
+
+      if (existingProfile == null) {
+        // Create new profile with Google account info
+        // Use _selectedRole which is required from the UI (defaults to 'patient')
+        await userService.createUserProfile(
+          uid: user.uid,
+          email: user.email ?? '',
+          name: user.displayName ?? 'Google User',
+          role: _selectedRole!, // _selectedRole has a default value of 'patient'
+          photoURL: user.photoURL,
+        );
+      }
+
+      // Wait for auth listener to update
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      if (!mounted) return;
+
+      final userProv = context.read<UserProvider>();
+      final role = userProv.role ?? _selectedRole ?? 'patient';
+
+      switch (role) {
+        case 'doctor':
+          context.go('/doctor/home');
+          break;
+        case 'admin':
+          context.go('/admin/home');
+          break;
+        default:
+          context.go('/patient/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Google sign-in failed: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
     }
   }
 
@@ -323,6 +388,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               ),
                             ),
                           ),
+                        ),
+
+                        // Social Auth Divider
+                        const SocialAuthDivider(),
+
+                        // Google Sign-In Button
+                        GoogleSignInButton(
+                          onPressed: _handleGoogleSignIn,
+                          isLoading: _isGoogleLoading,
+                          text: 'Sign in with Google',
                         ),
 
                         const SizedBox(height: 24),

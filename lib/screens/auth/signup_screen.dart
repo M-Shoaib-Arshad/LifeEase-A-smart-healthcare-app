@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
+import '../../widgets/auth/google_signin_button.dart';
+import '../../widgets/auth/social_auth_divider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -22,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   File? _avatarImage;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
   bool _obscurePassword = true;
   String? _selectedRole;
 
@@ -225,6 +228,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 _buildFormFields(),
                                 const SizedBox(height: 32),
                                 _buildSignUpButton(),
+                                const SocialAuthDivider(text: 'Or sign up with'),
+                                _buildGoogleSignUpButton(),
                                 const SizedBox(height: 16),
                                 _buildLoginLink(),
                               ],
@@ -572,6 +577,83 @@ class _SignUpScreenState extends State<SignUpScreen>
         ),
       ],
     );
+  }
+
+  Widget _buildGoogleSignUpButton() {
+    return GoogleSignInButton(
+      onPressed: _handleGoogleSignUp,
+      isLoading: _isGoogleLoading,
+      text: 'Sign up with Google',
+    );
+  }
+
+  Future<void> _handleGoogleSignUp() async {
+    // Require role selection before Google sign-up
+    if (_selectedRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a role first')),
+      );
+      return;
+    }
+
+    setState(() => _isGoogleLoading = true);
+    try {
+      final authService = AuthService();
+      final userCredential = await authService.signInWithGoogle();
+
+      if (userCredential == null) {
+        // User cancelled the sign-in
+        return;
+      }
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('Failed to get user from Google Sign-In');
+      }
+
+      // Check if user profile exists
+      final userService = UserService();
+      final existingProfile = await userService.getUserProfile(user.uid);
+
+      if (existingProfile == null) {
+        // Create new profile with Google account info
+        // Use displayName from Google, or 'Google User' as fallback
+        final displayName = user.displayName;
+        final name = (displayName != null && displayName.isNotEmpty)
+            ? displayName
+            : 'Google User';
+        
+        await userService.createUserProfile(
+          uid: user.uid,
+          email: user.email ?? '',
+          name: name,
+          role: _selectedRole!,
+          photoURL: user.photoURL,
+        );
+      }
+
+      if (!mounted) return;
+
+      // Navigate based on role
+      switch (_selectedRole) {
+        case 'doctor':
+          context.go('/doctor/home');
+          break;
+        case 'admin':
+          context.go('/admin/home');
+          break;
+        default:
+          context.go('/patient/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Google sign-up failed: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
+    }
   }
 
   // In lib/screens/auth/signup_screen.dart, replace _handleSignUp with:
