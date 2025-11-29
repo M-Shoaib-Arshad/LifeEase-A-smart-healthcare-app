@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'config/env_config.dart';
 import 'providers/user_provider.dart';
 import 'providers/appointment_provider.dart'; // New provider
@@ -11,6 +12,18 @@ import 'routes/app_routes.dart';
 import 'utils/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'services/fcm_service.dart';
+
+/// Background message handler for FCM - must be a top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Ensure Firebase is initialized for background handling
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  debugPrint('Handling background message: ${message.messageId}');
+  // Background messages are automatically displayed by FCM
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
@@ -27,6 +40,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Uses config from CLI
   );
+
+  // Set up background message handler for FCM
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
   runApp(
     MultiProvider(
       providers: [
