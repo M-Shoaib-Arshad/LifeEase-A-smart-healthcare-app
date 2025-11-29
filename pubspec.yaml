@@ -26,6 +26,10 @@ dependencies:
   firebase_storage: ^12.4.10
   permission_handler: ^11.0.1
   flutter_dotenv: ^6.0.0
+  # Google Maps Integration
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
 
 dev_dependencies:
   flutter_test:

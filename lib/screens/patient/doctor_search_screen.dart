@@ -156,6 +156,24 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
         elevation: 0,
         actions: [
           IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.map,
+                color: Colors.green.shade700,
+                size: 20,
+              ),
+            ),
+            onPressed: () {
+              context.go('/patient/doctor-map');
+            },
+            tooltip: 'Map View',
+          ),
+          IconButton(
             icon: Icon(
               showFilters ? Icons.filter_list_off : Icons.filter_list,
               color: showFilters ? Colors.blue : Colors.grey[600],

@@ -12,6 +12,7 @@ import '../screens/patient/profile_view_screen.dart';
 import '../screens/patient/doctor_search_screen.dart';
 import '../screens/patient/doctor_list_screen.dart';
 import '../screens/patient/doctor_profile_screen.dart';
+import '../screens/patient/doctor_map_search_screen.dart';
 import '../screens/patient/appointment_booking_screen.dart';
 import '../screens/patient/appointment_confirmation_screen.dart';
 import '../screens/patient/appointment_history_screen.dart';
@@ -46,6 +47,7 @@ final GoRouter router = GoRouter(
     GoRoute(path: '/patient/doctor-search', builder: (context, state) => const DoctorSearchScreen()),
     GoRoute(path: '/patient/doctor-list', builder: (context, state) => const DoctorListScreen()),
     GoRoute(path: '/patient/doctor-profile', builder: (context, state) => const DoctorProfileScreen()),
+    GoRoute(path: '/patient/doctor-map', builder: (context, state) => const DoctorMapSearchScreen()),
     GoRoute(path: '/patient/appointment-booking', builder: (context, state) => const AppointmentBookingScreen()),
     GoRoute(path: '/patient/appointment-confirmation', builder: (context, state) => const AppointmentConfirmationScreen()),
     GoRoute(path: '/patient/appointment-history', builder: (context, state) => const AppointmentHistoryScreen()),
