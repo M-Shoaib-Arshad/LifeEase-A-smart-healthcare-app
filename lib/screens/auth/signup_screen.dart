@@ -617,10 +617,16 @@ class _SignUpScreenState extends State<SignUpScreen>
 
       if (existingProfile == null) {
         // Create new profile with Google account info
+        // Use displayName from Google, or 'Google User' as fallback
+        final displayName = user.displayName;
+        final name = (displayName != null && displayName.isNotEmpty)
+            ? displayName
+            : 'Google User';
+        
         await userService.createUserProfile(
           uid: user.uid,
           email: user.email ?? '',
-          name: user.displayName ?? _nameController.text.trim(),
+          name: name,
           role: _selectedRole!,
           photoURL: user.photoURL,
         );

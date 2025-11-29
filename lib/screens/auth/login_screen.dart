@@ -114,11 +114,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
       if (existingProfile == null) {
         // Create new profile with Google account info
+        // Use _selectedRole which is required from the UI (defaults to 'patient')
         await userService.createUserProfile(
           uid: user.uid,
           email: user.email ?? '',
-          name: user.displayName ?? 'User',
-          role: _selectedRole ?? 'patient',
+          name: user.displayName ?? 'Google User',
+          role: _selectedRole!, // _selectedRole has a default value of 'patient'
           photoURL: user.photoURL,
         );
       }
