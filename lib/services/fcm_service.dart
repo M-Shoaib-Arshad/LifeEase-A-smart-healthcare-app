@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -165,11 +166,12 @@ class FCMService {
       _notificationController.add(pushNotification);
 
       // Show local notification when app is in foreground
+      // Use JSON encoding for proper payload serialization
       _localNotifications.showNotification(
         id: pushNotification.id.hashCode,
         title: pushNotification.title,
         body: pushNotification.body,
-        payload: pushNotification.toMap().toString(),
+        payload: jsonEncode(pushNotification.toMap()),
         type: pushNotification.type,
       );
     });

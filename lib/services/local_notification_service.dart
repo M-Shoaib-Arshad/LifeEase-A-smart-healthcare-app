@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -298,22 +299,24 @@ class LocalNotificationService {
 
   /// Handle notification payload
   void _handleNotificationPayload(String? payload) {
-    if (payload == null) return;
+    if (payload == null || payload.isEmpty) return;
 
     try {
-      // Parse the payload - it's stored as a string representation of Map
-      // In production, you might want to use JSON encoding
-      final notification = PushNotification(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: 'Notification',
-        body: '',
-        receivedAt: DateTime.now(),
-        type: PushNotificationType.general,
-      );
-
+      // Parse the payload from JSON
+      final Map<String, dynamic> data = jsonDecode(payload);
+      final notification = PushNotification.fromMap(data);
       _onNotificationTap?.call(notification);
     } catch (e) {
       debugPrint('Error parsing notification payload: $e');
+      // If JSON parsing fails, create a basic notification
+      // This handles legacy or malformed payloads gracefully
+      _onNotificationTap?.call(PushNotification(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'Notification',
+        body: payload,
+        receivedAt: DateTime.now(),
+        type: PushNotificationType.general,
+      ));
     }
   }
 }

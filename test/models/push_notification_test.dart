@@ -42,7 +42,7 @@ void main() {
       expect(map['body'], 'Test Body');
       expect(map['imageUrl'], 'https://example.com/img.jpg');
       expect(map['data'], {'test': 'data'});
-      expect(map['type'], 'medicationReminder');
+      expect(map['type'], 'medication_reminder');
       expect(map['receivedAt'], isNotNull);
     });
 

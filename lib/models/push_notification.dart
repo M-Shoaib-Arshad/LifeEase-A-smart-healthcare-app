@@ -59,8 +59,30 @@ class PushNotification {
       'imageUrl': imageUrl,
       'data': data,
       'receivedAt': receivedAt.toIso8601String(),
-      'type': type.name,
+      'type': _typeToString(type),
     };
+  }
+
+  /// Convert PushNotificationType to snake_case string for consistency
+  static String _typeToString(PushNotificationType type) {
+    switch (type) {
+      case PushNotificationType.appointmentReminder:
+        return 'appointment_reminder';
+      case PushNotificationType.appointmentConfirmation:
+        return 'appointment_confirmation';
+      case PushNotificationType.appointmentCancellation:
+        return 'appointment_cancellation';
+      case PushNotificationType.newMessage:
+        return 'new_message';
+      case PushNotificationType.prescriptionReady:
+        return 'prescription_ready';
+      case PushNotificationType.healthTip:
+        return 'health_tip';
+      case PushNotificationType.medicationReminder:
+        return 'medication_reminder';
+      case PushNotificationType.general:
+        return 'general';
+    }
   }
 
   /// Parse notification type from string
