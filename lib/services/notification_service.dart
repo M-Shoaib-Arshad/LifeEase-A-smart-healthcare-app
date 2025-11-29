@@ -1,17 +1,98 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import '../models/notification.dart' as app_notification;
+import '../models/push_notification.dart';
+import 'fcm_service.dart';
+import 'local_notification_service.dart';
 
 /// Service for managing in-app notifications and push notifications
 /// Handles creating, retrieving, and marking notifications as read
+/// Integrates with FCM for push notifications
 class NotificationService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FCMService _fcmService = FCMService();
+  final LocalNotificationService _localNotificationService = LocalNotificationService();
 
   static const String _notificationsCollection = 'notifications';
 
   /// Get current user ID
   String? get _currentUserId => _auth.currentUser?.uid;
+
+  /// Get FCM service instance
+  FCMService get fcmService => _fcmService;
+
+  /// Get local notification service instance
+  LocalNotificationService get localNotificationService => _localNotificationService;
+
+  /// Initialize push notification services
+  /// Should be called after user login
+  Future<void> initializePushNotifications({
+    Function(PushNotification)? onNotificationTap,
+  }) async {
+    try {
+      _fcmService.onNotificationTap = onNotificationTap;
+      await _fcmService.initialize();
+      debugPrint('Push notifications initialized');
+    } catch (e) {
+      debugPrint('Error initializing push notifications: $e');
+    }
+  }
+
+  /// Check if push notifications are enabled
+  Future<bool> arePushNotificationsEnabled() async {
+    return await _fcmService.areNotificationsEnabled();
+  }
+
+  /// Request push notification permission
+  Future<bool> requestPushNotificationPermission() async {
+    final settings = await _fcmService.requestPermission();
+    return settings.authorizationStatus == AuthorizationStatus.authorized;
+  }
+
+  /// Schedule a local notification
+  Future<void> scheduleLocalNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime scheduledTime,
+    PushNotificationType type = PushNotificationType.general,
+  }) async {
+    await _localNotificationService.scheduleNotification(
+      id: id,
+      title: title,
+      body: body,
+      scheduledTime: scheduledTime,
+      type: type,
+    );
+  }
+
+  /// Cancel a scheduled notification
+  Future<void> cancelScheduledNotification(int id) async {
+    await _localNotificationService.cancelNotification(id);
+  }
+
+  /// Cancel all scheduled notifications
+  Future<void> cancelAllScheduledNotifications() async {
+    await _localNotificationService.cancelAllNotifications();
+  }
+
+  /// Subscribe to a notification topic
+  Future<void> subscribeToTopic(String topic) async {
+    await _fcmService.subscribeToTopic(topic);
+  }
+
+  /// Unsubscribe from a notification topic
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await _fcmService.unsubscribeFromTopic(topic);
+  }
+
+  /// Cleanup push notifications (call on logout)
+  Future<void> cleanupPushNotifications() async {
+    await _fcmService.removeTokenFromFirestore();
+  }
 
   /// Create a new notification for a specific user
   Future<String> createNotification({
