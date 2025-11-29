@@ -203,8 +203,8 @@ class LocationService {
     if (bearing >= 22.5 && bearing < 67.5) return 'Northeast';
     if (bearing >= 67.5 && bearing < 112.5) return 'East';
     if (bearing >= 112.5 && bearing < 157.5) return 'Southeast';
-    if (bearing >= 157.5 || bearing < -157.5) return 'South';
-    if (bearing >= -157.5 && bearing < -112.5) return 'Southwest';
+    if (bearing >= 157.5 || bearing <= -157.5) return 'South';
+    if (bearing > -157.5 && bearing < -112.5) return 'Southwest';
     if (bearing >= -112.5 && bearing < -67.5) return 'West';
     return 'Northwest';
   }
