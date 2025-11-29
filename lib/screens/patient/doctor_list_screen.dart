@@ -549,6 +549,21 @@ class _DoctorListScreenState extends State<DoctorListScreen>
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.map,
+                color: Colors.blue.shade700,
+              ),
+            ),
+            onPressed: () => context.go('/patient/doctor-map'),
+            tooltip: 'Map View',
+          ),
+          IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
                 color: Colors.green.shade50,
                 borderRadius: BorderRadius.circular(12),
               ),

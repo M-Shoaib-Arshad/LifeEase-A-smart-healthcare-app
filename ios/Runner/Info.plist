@@ -45,5 +45,12 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Location Permissions for Google Maps -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>LifeEase needs access to your location to find nearby doctors and healthcare facilities.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>LifeEase needs access to your location to find nearby doctors and provide navigation directions.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>LifeEase needs access to your location to find nearby doctors and provide navigation directions.</string>
 </dict>
 </plist>

@@ -38,6 +38,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
     'consultationFee': 150,
     'location': 'Downtown Medical Center, New York, NY',
     'distance': 2.5,
+    'latitude': 40.7580,
+    'longitude': -73.9855,
     'languages': ['English', 'Spanish', 'French'],
     'education': [
       'MD from Harvard Medical School (2008)',
@@ -1806,21 +1808,109 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             ],
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Opening directions...')),
-                );
-              },
-              icon: const Icon(Icons.directions, size: 16),
-              label: const Text('Get Directions'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.green.shade600,
-                side: BorderSide(color: Colors.green.shade600),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    context.go('/patient/doctor-map');
+                  },
+                  icon: const Icon(Icons.map, size: 16),
+                  label: const Text('View on Map'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.blue.shade600,
+                    side: BorderSide(color: Colors.blue.shade600),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _navigateToDoctor();
+                  },
+                  icon: const Icon(Icons.navigation, size: 16),
+                  label: const Text('Navigate'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToDoctor() {
+    final lat = _doctorData['latitude'];
+    final lng = _doctorData['longitude'];
+    final location = _doctorData['location'];
+
+    // Show a dialog with navigation options
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text('Open in Maps'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              location,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Choose your preferred maps app to get directions to the clinic.',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // In a real app, this would launch the URL
+              // url_launcher can be used here: 
+              // launchUrl(Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lng'))
+              ScaffoldMessenger.of(this.context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(Icons.navigation, color: Colors.white),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text('Opening directions to $location'),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Colors.green.shade600,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+            icon: const Icon(Icons.navigation, size: 16),
+            label: const Text('Get Directions'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade600,
+              foregroundColor: Colors.white,
             ),
           ),
         ],
