@@ -284,6 +284,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       }
 
       // Try to update via UserProvider if user is authenticated
+      bool remoteSyncFailed = false;
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       if (userProvider.isAuthenticated) {
         try {
@@ -295,13 +296,18 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           );
         } catch (_) {
           // Continue even if Firebase update fails - local data is saved
+          remoteSyncFailed = true;
         }
       }
 
       setState(() => _isSaving = false);
       
       if (mounted) {
-        _showSnackBar('Profile updated successfully!');
+        if (remoteSyncFailed) {
+          _showSnackBar('Profile saved locally. Sync will complete when connection is restored.', isWarning: true);
+        } else {
+          _showSnackBar('Profile updated successfully!');
+        }
         // Navigate back to profile view
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
@@ -317,23 +323,38 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     }
   }
 
-  void _showSnackBar(String message, {bool isError = false}) {
+  void _showSnackBar(String message, {bool isError = false, bool isWarning = false}) {
+    Color backgroundColor;
+    IconData iconData;
+    
+    if (isError) {
+      backgroundColor = Colors.red;
+      iconData = Icons.error_outline;
+    } else if (isWarning) {
+      backgroundColor = Colors.orange;
+      iconData = Icons.warning_amber_rounded;
+    } else {
+      backgroundColor = const Color(0xFF667eea);
+      iconData = Icons.check_circle;
+    }
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
             Icon(
-              isError ? Icons.error_outline : Icons.check_circle,
+              iconData,
               color: Colors.white,
             ),
             const SizedBox(width: 12),
             Expanded(child: Text(message)),
           ],
         ),
-        backgroundColor: isError ? Colors.red : const Color(0xFF667eea),
+        backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
+        duration: isWarning ? const Duration(seconds: 4) : const Duration(seconds: 3),
       ),
     );
   }
