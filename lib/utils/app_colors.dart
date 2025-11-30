@@ -124,6 +124,9 @@ class AppColors {
   /// Dark theme text secondary
   static const Color darkTextSecondary = Color(0xFFB0B0B0);
 
+  /// Darker coral for gradients - #E53935
+  static const Color accentCoralDark = Color(0xFFE53935);
+
   // ============================================
   // MATERIAL COLOR SWATCH
   // ============================================

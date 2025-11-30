@@ -295,7 +295,7 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
                 gradient: const RadialGradient(
                   colors: [
                     AppColors.accentCoral,
-                    Color(0xFFE53935), // Darker coral
+                    AppColors.accentCoralDark,
                   ],
                 ),
                 shape: BoxShape.circle,

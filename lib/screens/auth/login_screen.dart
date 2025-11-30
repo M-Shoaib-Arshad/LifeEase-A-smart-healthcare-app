@@ -457,7 +457,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             color: isSelected ? AppColors.primaryLight : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: isSelected
-                ? const Border.fromBorderSide(BorderSide(color: AppColors.primary))
+                ? Border.all(color: AppColors.primary)
                 : null,
           ),
           child: Column(
