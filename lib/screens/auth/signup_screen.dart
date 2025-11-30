@@ -7,6 +7,7 @@ import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
 import '../../widgets/auth/google_signin_button.dart';
 import '../../widgets/auth/social_auth_divider.dart';
+import '../../utils/app_colors.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -111,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.bgCard,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
@@ -122,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               height: 4,
               margin: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppColors.borderLight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -134,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.blue),
+              leading: const Icon(Icons.camera_alt, color: AppColors.primary),
               title: const Text('Camera'),
               onTap: () {
                 Navigator.pop(context);
@@ -142,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: Colors.blue),
+              leading: const Icon(Icons.photo_library, color: AppColors.primary),
               title: const Text('Gallery'),
               onTap: () {
                 Navigator.pop(context);
@@ -180,9 +181,9 @@ class _SignUpScreenState extends State<SignUpScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.blue.shade50,
-              Colors.indigo.shade100,
-              Colors.purple.shade50,
+              AppColors.primaryLight,
+              AppColors.bgMain,
+              AppColors.accentPink,
             ],
           ),
         ),
@@ -205,12 +206,12 @@ class _SignUpScreenState extends State<SignUpScreen>
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.white,
-                              Colors.grey.shade50,
+                              AppColors.bgCard,
+                              AppColors.bgCard,
                             ],
                           ),
                         ),
@@ -254,15 +255,13 @@ class _SignUpScreenState extends State<SignUpScreen>
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade400, Colors.indigo.shade500],
-            ),
+            gradient: AppColors.primaryGradient,
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.person_add,
             size: 32,
-            color: Colors.white,
+            color: AppColors.textLight,
           ),
         ),
         const SizedBox(height: 16),
@@ -271,15 +270,15 @@ class _SignUpScreenState extends State<SignUpScreen>
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
-        Text(
+        const Text(
           'Join us and start your journey',
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey.shade600,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -304,15 +303,15 @@ class _SignUpScreenState extends State<SignUpScreen>
               ),
               child: CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: AppColors.bgMain,
                 backgroundImage: _avatarImage != null
                     ? FileImage(_avatarImage!)
                     : null,
                 child: _avatarImage == null
-                    ? Icon(
+                    ? const Icon(
                   Icons.person,
                   size: 50,
-                  color: Colors.grey.shade400,
+                  color: AppColors.textSecondary,
                 )
                     : null,
               ),
@@ -325,13 +324,11 @@ class _SignUpScreenState extends State<SignUpScreen>
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.blue.shade400, Colors.indigo.shade500],
-                    ),
+                    gradient: AppColors.primaryGradient,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blue.withOpacity(0.3),
+                        color: AppColors.primary.withOpacity(0.3),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -339,7 +336,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                   ),
                   child: const Icon(
                     Icons.camera_alt,
-                    color: Colors.white,
+                    color: AppColors.textLight,
                     size: 20,
                   ),
                 ),
@@ -348,10 +345,10 @@ class _SignUpScreenState extends State<SignUpScreen>
           ],
         ),
         const SizedBox(height: 8),
-        Text(
+        const Text(
           'Tap to add photo',
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: AppColors.textSecondary,
             fontSize: 14,
           ),
         ),
@@ -392,7 +389,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           suffixIcon: IconButton(
             icon: Icon(
               _obscurePassword ? Icons.visibility : Icons.visibility_off,
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondary,
             ),
             onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
           ),
@@ -424,26 +421,26 @@ class _SignUpScreenState extends State<SignUpScreen>
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blue.shade400),
+        prefixIcon: Icon(icon, color: AppColors.primary),
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: const BorderSide(color: AppColors.accentCoral),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: AppColors.bgMain,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
@@ -453,21 +450,21 @@ class _SignUpScreenState extends State<SignUpScreen>
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: 'Select Role',
-        prefixIcon: Icon(Icons.work_outline, color: Colors.blue.shade400),
+        prefixIcon: const Icon(Icons.work_outline, color: AppColors.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: AppColors.bgMain,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
       value: _selectedRole,
@@ -476,7 +473,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           value: 'patient',
           child: Row(
             children: [
-              Icon(Icons.person, color: Colors.green, size: 20),
+              Icon(Icons.person, color: AppColors.accentMint, size: 20),
               SizedBox(width: 8),
               Text('Patient'),
             ],
@@ -486,7 +483,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           value: 'doctor',
           child: Row(
             children: [
-              Icon(Icons.medical_services, color: Colors.blue, size: 20),
+              Icon(Icons.medical_services, color: AppColors.primary, size: 20),
               SizedBox(width: 8),
               Text('Doctor'),
             ],
@@ -496,7 +493,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           value: 'admin',
           child: Row(
             children: [
-              Icon(Icons.admin_panel_settings, color: Colors.orange, size: 20),
+              Icon(Icons.admin_panel_settings, color: AppColors.warning, size: 20),
               SizedBox(width: 8),
               Text('Admin'),
             ],
@@ -523,9 +520,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         onPressed: _isLoading ? null : _handleSignUp,
         child: Ink(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade400, Colors.indigo.shade500],
-            ),
+            gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
@@ -535,7 +530,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                color: Colors.white,
+                color: AppColors.textLight,
                 strokeWidth: 2,
               ),
             )
@@ -544,7 +539,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: AppColors.textLight,
               ),
             ),
           ),
@@ -557,19 +552,19 @@ class _SignUpScreenState extends State<SignUpScreen>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           'Already have an account? ',
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: AppColors.textSecondary,
             fontSize: 16,
           ),
         ),
         TextButton(
           onPressed: () => context.go('/login'),
-          child: Text(
+          child: const Text(
             'Sign In',
             style: TextStyle(
-              color: Colors.blue.shade600,
+              color: AppColors.primaryDark,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),

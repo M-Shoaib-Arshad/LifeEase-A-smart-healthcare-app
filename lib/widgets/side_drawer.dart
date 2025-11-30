@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
+import '../utils/app_colors.dart';
 
 class SideDrawer extends StatefulWidget {
   const SideDrawer({super.key});
@@ -83,8 +84,8 @@ class _SideDrawerState extends State<SideDrawer>
               Provider.of<UserProvider>(context, listen: false).logout();
               context.go('/login');
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Logout', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentCoral),
+            child: const Text('Logout', style: TextStyle(color: AppColors.textLight)),
           ),
         ],
       ),
@@ -95,18 +96,18 @@ class _SideDrawerState extends State<SideDrawer>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            Icon(Icons.emergency, color: Colors.red[700]),
-            const SizedBox(width: 8),
-            const Text('Emergency Protocols'),
+            Icon(Icons.emergency, color: AppColors.accentCoral),
+            SizedBox(width: 8),
+            Text('Emergency Protocols'),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.local_hospital, color: Colors.red[600]),
+              leading: const Icon(Icons.local_hospital, color: AppColors.accentCoral),
               title: const Text('Code Blue'),
               subtitle: const Text('Cardiac/Respiratory Arrest'),
               onTap: () {
@@ -115,7 +116,7 @@ class _SideDrawerState extends State<SideDrawer>
               },
             ),
             ListTile(
-              leading: Icon(Icons.warning, color: Colors.orange[600]),
+              leading: const Icon(Icons.warning, color: AppColors.warning),
               title: const Text('Code Yellow'),
               subtitle: const Text('Missing Patient'),
               onTap: () {
@@ -124,7 +125,7 @@ class _SideDrawerState extends State<SideDrawer>
               },
             ),
             ListTile(
-              leading: Icon(Icons.security, color: Colors.purple[600]),
+              leading: const Icon(Icons.security, color: AppColors.accentPurple),
               title: const Text('Code Silver'),
               subtitle: const Text('Security Threat'),
               onTap: () {
@@ -152,13 +153,13 @@ class _SideDrawerState extends State<SideDrawer>
     return Drawer(
       backgroundColor: Colors.transparent,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.blue.shade50,
-              Colors.white,
+              AppColors.primaryLight,
+              AppColors.bgCard,
             ],
           ),
         ),
@@ -198,17 +199,10 @@ class _SideDrawerState extends State<SideDrawer>
     return Container(
       height: 280,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.blue.shade600,
-            Colors.blue.shade800,
-          ],
-        ),
+        gradient: AppColors.primaryGradient,
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade200.withOpacity(0.5),
+            color: AppColors.primaryLight.withOpacity(0.5),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -227,7 +221,7 @@ class _SideDrawerState extends State<SideDrawer>
                       Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
+                          border: Border.all(color: AppColors.textLight, width: 3),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.2),
@@ -249,13 +243,13 @@ class _SideDrawerState extends State<SideDrawer>
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.green,
+                              color: AppColors.accentMint,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
+                              border: Border.all(color: AppColors.textLight, width: 2),
                             ),
                             child: const Icon(
                               Icons.verified,
-                              color: Colors.white,
+                              color: AppColors.textLight,
                               size: 16,
                             ),
                           ),
@@ -272,7 +266,7 @@ class _SideDrawerState extends State<SideDrawer>
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.textLight,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -280,7 +274,7 @@ class _SideDrawerState extends State<SideDrawer>
                           _userData['specialization'],
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.white.withOpacity(0.9),
+                            color: AppColors.textLight.withOpacity(0.9),
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -288,7 +282,7 @@ class _SideDrawerState extends State<SideDrawer>
                           _userData['hospital'],
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.8),
+                            color: AppColors.textLight.withOpacity(0.8),
                           ),
                         ),
                       ],
@@ -300,7 +294,7 @@ class _SideDrawerState extends State<SideDrawer>
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: AppColors.textLight.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -319,7 +313,7 @@ class _SideDrawerState extends State<SideDrawer>
                       children: [
                         Icon(
                           Icons.access_time,
-                          color: Colors.white.withOpacity(0.8),
+                          color: AppColors.textLight.withOpacity(0.8),
                           size: 14,
                         ),
                         const SizedBox(width: 4),
@@ -327,7 +321,7 @@ class _SideDrawerState extends State<SideDrawer>
                           'Last login: ${_getTimeAgo(_userData['lastLogin'])}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.8),
+                            color: AppColors.textLight.withOpacity(0.8),
                           ),
                         ),
                       ],
@@ -350,7 +344,7 @@ class _SideDrawerState extends State<SideDrawer>
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.textLight,
           ),
         ),
         const SizedBox(height: 2),
@@ -358,7 +352,7 @@ class _SideDrawerState extends State<SideDrawer>
           label,
           style: TextStyle(
             fontSize: 10,
-            color: Colors.white.withOpacity(0.8),
+            color: AppColors.textLight.withOpacity(0.8),
           ),
         ),
       ],
@@ -370,7 +364,7 @@ class _SideDrawerState extends State<SideDrawer>
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -388,7 +382,7 @@ class _SideDrawerState extends State<SideDrawer>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -399,7 +393,7 @@ class _SideDrawerState extends State<SideDrawer>
                   'Notifications',
                   _userData['notifications'].toString(),
                   Icons.notifications,
-                  Colors.orange,
+                  AppColors.warning,
                 ),
               ),
               Expanded(
@@ -407,7 +401,7 @@ class _SideDrawerState extends State<SideDrawer>
                   'Alerts',
                   _userData['emergencyAlerts'].toString(),
                   Icons.warning,
-                  Colors.red,
+                  AppColors.accentCoral,
                 ),
               ),
             ],
@@ -441,9 +435,9 @@ class _SideDrawerState extends State<SideDrawer>
           const SizedBox(height: 2),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 10,
-              color: Colors.grey[600],
+              color: AppColors.textSecondary,
             ),
           ),
         ],
@@ -455,7 +449,7 @@ class _SideDrawerState extends State<SideDrawer>
     return _buildSection(
       'Navigation',
       Icons.navigation,
-      Colors.blue,
+      AppColors.primary,
       [
         _buildDrawerItem(
           Icons.home_rounded,
@@ -510,7 +504,7 @@ class _SideDrawerState extends State<SideDrawer>
     return _buildSection(
       'Medical Tools',
       Icons.medical_services,
-      Colors.green,
+      AppColors.accentMint,
       [
         if (role == 'doctor') ...[
           _buildDrawerItem(
@@ -564,7 +558,7 @@ class _SideDrawerState extends State<SideDrawer>
     return _buildSection(
       'System',
       Icons.settings,
-      Colors.purple,
+      AppColors.accentPurple,
       [
         _buildDrawerItem(
           Icons.settings_rounded,
@@ -602,25 +596,25 @@ class _SideDrawerState extends State<SideDrawer>
     return _buildSection(
       'Emergency',
       Icons.emergency,
-      Colors.red,
+      AppColors.accentCoral,
       [
         _buildDrawerItem(
           Icons.emergency_rounded,
           'Emergency Protocols',
           _showEmergencyDialog,
-          textColor: Colors.red[700],
+          textColor: AppColors.accentCoral,
         ),
         _buildDrawerItem(
           Icons.local_hospital_rounded,
           'Emergency Contacts',
           () => context.go('/emergency-contacts'),
-          textColor: Colors.red[700],
+          textColor: AppColors.accentCoral,
         ),
         _buildDrawerItem(
           Icons.warning_rounded,
           'Safety Guidelines',
           () => context.go('/safety-guidelines'),
-          textColor: Colors.red[700],
+          textColor: AppColors.accentCoral,
         ),
       ],
     );
@@ -631,7 +625,7 @@ class _SideDrawerState extends State<SideDrawer>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -681,7 +675,7 @@ class _SideDrawerState extends State<SideDrawer>
     return ListTile(
       leading: Icon(
         icon,
-        color: textColor ?? Colors.grey[700],
+        color: textColor ?? AppColors.textSecondary,
         size: 22,
       ),
       title: Row(
@@ -692,7 +686,7 @@ class _SideDrawerState extends State<SideDrawer>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: textColor ?? Colors.black87,
+                color: textColor ?? AppColors.textPrimary,
               ),
             ),
           ),
@@ -700,13 +694,13 @@ class _SideDrawerState extends State<SideDrawer>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.red[600],
+                color: AppColors.accentCoral,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 badge > 99 ? '99+' : badge.toString(),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textLight,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
@@ -727,9 +721,9 @@ class _SideDrawerState extends State<SideDrawer>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgCard,
         border: Border(
-          top: BorderSide(color: Colors.grey.shade200),
+          top: BorderSide(color: AppColors.borderLight),
         ),
       ),
       child: Column(
@@ -745,8 +739,8 @@ class _SideDrawerState extends State<SideDrawer>
                   icon: const Icon(Icons.edit, size: 16),
                   label: const Text('Edit Profile'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textLight,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
@@ -755,8 +749,8 @@ class _SideDrawerState extends State<SideDrawer>
               ElevatedButton(
                 onPressed: _showLogoutDialog,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[600],
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.accentCoral,
+                  foregroundColor: AppColors.textLight,
                   padding: const EdgeInsets.all(12),
                 ),
                 child: const Icon(Icons.logout, size: 16),
@@ -764,11 +758,11 @@ class _SideDrawerState extends State<SideDrawer>
             ],
           ),
           const SizedBox(height: 12),
-          Text(
+          const Text(
             'Version 2.1.0 • Build 2024.12.18',
             style: TextStyle(
               fontSize: 10,
-              color: Colors.grey[500],
+              color: AppColors.textSecondary,
             ),
           ),
         ],

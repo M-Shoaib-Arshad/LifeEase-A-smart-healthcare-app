@@ -6,6 +6,7 @@ import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
 import '../../widgets/auth/google_signin_button.dart';
 import '../../widgets/auth/social_auth_divider.dart';
+import '../../utils/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -159,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgCard,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -179,30 +180,30 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
+                            color: AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.health_and_safety,
                             size: 60,
-                            color: Colors.blue.shade700,
+                            color: AppColors.primaryDark,
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Text(
+                        const Text(
                           'Welcome Back',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800,
+                            color: AppColors.primaryDark,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(
+                        const Text(
                           'Sign in to continue to HealthCare',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -218,20 +219,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Role Selection
-                        Text(
+                        const Text(
                           'Login as',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade700,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 12),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
+                            color: AppColors.bgMain,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade200),
+                            border: Border.all(color: AppColors.borderLight),
                           ),
                           child: Row(
                             children: [
@@ -244,12 +245,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         const SizedBox(height: 24),
 
                         // Email Field
-                        Text(
+                        const Text(
                           'Email or Phone',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade700,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -258,24 +259,24 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             hintText: 'Enter your email or phone',
-                            prefixIcon: Icon(Icons.person_outline, color: Colors.blue.shade300),
+                            prefixIcon: const Icon(Icons.person_outline, color: AppColors.primary),
                             filled: true,
-                            fillColor: Colors.grey.shade50,
+                            fillColor: AppColors.bgMain,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.grey.shade200),
+                              borderSide: const BorderSide(color: AppColors.borderLight),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.red.shade300),
+                              borderSide: const BorderSide(color: AppColors.accentCoral),
                             ),
                             contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                           ),
@@ -289,12 +290,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         const SizedBox(height: 20),
 
                         // Password Field
-                        Text(
+                        const Text(
                           'Password',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade700,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -303,31 +304,31 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'Enter your password',
-                            prefixIcon: Icon(Icons.lock_outline, color: Colors.blue.shade300),
+                            prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                                color: Colors.grey.shade500,
+                                color: AppColors.textSecondary,
                               ),
                               onPressed: _togglePasswordVisibility,
                             ),
                             filled: true,
-                            fillColor: Colors.grey.shade50,
+                            fillColor: AppColors.bgMain,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.grey.shade200),
+                              borderSide: const BorderSide(color: AppColors.borderLight),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.red.shade300),
+                              borderSide: const BorderSide(color: AppColors.accentCoral),
                             ),
                             contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                           ),
@@ -345,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           child: TextButton(
                             onPressed: () => context.go('/forgot-password'),
                             style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue.shade700,
+                              foregroundColor: AppColors.primaryDark,
                               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                             ),
                             child: const Text(
@@ -363,9 +364,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleLogin,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue.shade600,
-                              foregroundColor: Colors.white,
-                              disabledBackgroundColor: Colors.blue.shade300,
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: AppColors.textLight,
+                              disabledBackgroundColor: AppColors.primaryLight,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -376,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: AppColors.textLight,
                                 strokeWidth: 2,
                               ),
                             )
@@ -406,17 +407,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               "Don't have an account?",
                               style: TextStyle(
-                                color: Colors.grey.shade600,
+                                color: AppColors.textSecondary,
                                 fontSize: 14,
                               ),
                             ),
                             TextButton(
                               onPressed: () => context.go('/signup'),
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.blue.shade700,
+                                foregroundColor: AppColors.primaryDark,
                                 padding: const EdgeInsets.symmetric(horizontal: 8),
                               ),
                               child: const Text(
@@ -453,24 +454,24 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.blue.shade50 : Colors.transparent,
+            color: isSelected ? AppColors.primaryLight : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: isSelected
-                ? Border.all(color: Colors.blue.shade300)
+                ? const Border.fromBorderSide(BorderSide(color: AppColors.primary))
                 : null,
           ),
           child: Column(
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.blue.shade700 : Colors.grey.shade500,
+                color: isSelected ? AppColors.primaryDark : AppColors.textSecondary,
                 size: 24,
               ),
               const SizedBox(height: 4),
               Text(
                 title,
                 style: TextStyle(
-                  color: isSelected ? Colors.blue.shade700 : Colors.grey.shade700,
+                  color: isSelected ? AppColors.primaryDark : AppColors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   fontSize: 14,
                 ),
