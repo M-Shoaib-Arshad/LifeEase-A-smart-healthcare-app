@@ -9,6 +9,7 @@ import '../screens/auth/otp_verification_screen.dart';
 import '../screens/patient/patient_home_screen.dart';
 import '../screens/patient/profile_setup_screen.dart';
 import '../screens/patient/profile_view_screen.dart';
+import '../screens/patient/edit_profile_screen.dart';
 import '../screens/patient/doctor_search_screen.dart';
 import '../screens/patient/doctor_list_screen.dart';
 import '../screens/patient/doctor_profile_screen.dart';
@@ -44,6 +45,7 @@ final GoRouter router = GoRouter(
     GoRoute(path: '/patient/home', builder: (context, state) => const PatientHomeScreen()),
     GoRoute(path: '/patient/profile-setup', builder: (context, state) => const ProfileSetupScreen()),
     GoRoute(path: '/patient/profile', builder: (context, state) => const ProfileViewScreen()),
+    GoRoute(path: '/patient/edit-profile', builder: (context, state) => const EditProfileScreen()),
     GoRoute(path: '/patient/doctor-search', builder: (context, state) => const DoctorSearchScreen()),
     GoRoute(path: '/patient/doctor-list', builder: (context, state) => const DoctorListScreen()),
     GoRoute(path: '/patient/doctor-profile', builder: (context, state) => const DoctorProfileScreen()),
