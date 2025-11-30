@@ -124,7 +124,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
     }
 
     // Navigate to doctor list with search parameters
-    context.go('/patient/doctor-list?search=${_searchController.text}&specialty=$selectedSpecialty&location=${_locationController.text}');
+    context.push('/patient/doctor-list?search=${_searchController.text}&specialty=$selectedSpecialty&location=${_locationController.text}');
   }
 
   void _clearFilters() {
@@ -169,7 +169,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
               ),
             ),
             onPressed: () {
-              context.go('/patient/doctor-map');
+              context.push('/patient/doctor-map');
             },
             tooltip: 'Map View',
           ),
@@ -662,7 +662,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
         onTap: (index) {
           if (index == 0) context.go('/patient/home');
           if (index == 1) context.go('/patient/profile');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go('/patient/appointment-history');
+          if (index == 3) context.go('/settings');
         },
       ),
     );

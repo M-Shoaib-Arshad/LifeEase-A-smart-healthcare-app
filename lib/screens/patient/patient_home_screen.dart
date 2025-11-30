@@ -106,7 +106,7 @@ class PatientHomeScreen extends StatelessWidget {
               subtitle: 'Find and schedule with doctors',
               icon: Icons.calendar_today,
               color: AppColors.primary,
-              onTap: () => context.go('/patient/doctor-search'),
+              onTap: () => context.push('/patient/doctor-search'),
             ),
 
             const SizedBox(height: 12),
@@ -117,7 +117,7 @@ class PatientHomeScreen extends StatelessWidget {
               subtitle: 'Monitor your health metrics',
               icon: Icons.favorite,
               color: AppColors.accentCoral,
-              onTap: () => context.go('/patient/health-tracker-input'),
+              onTap: () => context.push('/patient/health-tracker-input'),
             ),
 
             const SizedBox(height: 12),
@@ -128,7 +128,7 @@ class PatientHomeScreen extends StatelessWidget {
               subtitle: 'View your health history',
               icon: Icons.folder_outlined,
               color: AppColors.accentMint,
-              onTap: () => context.go('/patient/medical-records'),
+              onTap: () => context.push('/patient/medical-records'),
             ),
 
             const SizedBox(height: 32),
@@ -250,7 +250,8 @@ class PatientHomeScreen extends StatelessWidget {
         onTap: (index) {
           if (index == 0) context.go('/patient/home');
           if (index == 1) context.go('/patient/profile');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go('/patient/appointment-history');
+          if (index == 3) context.go('/settings');
         },
       ),
     );

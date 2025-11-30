@@ -371,7 +371,8 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
         onTap: (index) {
           if (index == 0) context.go('/patient/home');
           if (index == 1) context.go('/patient/profile');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go('/patient/appointment-history');
+          if (index == 3) context.go('/settings');
         },
       ),
     );

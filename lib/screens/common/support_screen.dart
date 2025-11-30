@@ -86,11 +86,12 @@ class _SupportScreenState extends State<SupportScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
+        currentIndex: 3,
         onTap: (index) {
           if (index == 0) context.go(userProvider.role == 'patient' ? '/patient/home' : userProvider.role == 'doctor' ? '/doctor/home' : '/admin/dashboard');
           if (index == 1) context.go(userProvider.role == 'patient' ? '/patient/profile' : userProvider.role == 'doctor' ? '/doctor/profile' : '/admin/user-management');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go(userProvider.role == 'patient' ? '/patient/appointment-history' : userProvider.role == 'doctor' ? '/doctor/appointment-management' : '/admin/content-management');
+          if (index == 3) context.go('/settings');
         },
       ),
     );
