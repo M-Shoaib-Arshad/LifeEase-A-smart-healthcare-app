@@ -451,7 +451,8 @@ class _UserManagementScreenState extends State<UserManagementScreen>
         onTap: (index) {
           if (index == 0) context.go('/admin/dashboard');
           if (index == 1) context.go('/admin/user-management');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go('/admin/content-management');
+          if (index == 3) context.go('/settings');
         },
       ),
     );

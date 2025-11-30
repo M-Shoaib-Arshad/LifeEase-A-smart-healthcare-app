@@ -362,12 +362,12 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
         onTap: (index) {
           if (index == 0) context.go('/patient/home');
           if (index == 1) context.go('/patient/profile');
-          if (index == 2) context.go('/patient/appointments');
+          if (index == 2) context.go('/patient/appointment-history');
           if (index == 3) context.go('/settings');
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.go('/patient/appointment-booking'),
+        onPressed: () => context.push('/patient/appointment-booking'),
         backgroundColor: Colors.blue.shade600,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
@@ -958,7 +958,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 child: OutlinedButton.icon(
                   onPressed: () {
                     // Book follow-up
-                    context.go('/patient/appointment-booking');
+                    context.push('/patient/appointment-booking');
                   },
                   icon: const Icon(Icons.event_repeat, size: 16),
                   label: const Text('Book Follow-up'),
@@ -976,7 +976,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 child: OutlinedButton.icon(
                   onPressed: () {
                     // Reschedule
-                    context.go('/patient/appointment-booking');
+                    context.push('/patient/appointment-booking');
                   },
                   icon: const Icon(Icons.schedule, size: 16),
                   label: const Text('Reschedule'),

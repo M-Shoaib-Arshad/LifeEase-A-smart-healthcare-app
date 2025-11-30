@@ -279,7 +279,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
   }
 
   void _bookAppointment() {
-    context.go('/patient/appointment-booking');
+    context.push('/patient/appointment-booking');
   }
 
   @override
@@ -338,7 +338,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
         onTap: (index) {
           if (index == 0) context.go('/patient/home');
           if (index == 1) context.go('/patient/profile');
-          if (index == 2) context.go('/patient/appointments');
+          if (index == 2) context.go('/patient/appointment-history');
           if (index == 3) context.go('/settings');
         },
       ),
@@ -1813,7 +1813,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    context.go('/patient/doctor-map');
+                    context.push('/patient/doctor-map');
                   },
                   icon: const Icon(Icons.map, size: 16),
                   label: const Text('View on Map'),

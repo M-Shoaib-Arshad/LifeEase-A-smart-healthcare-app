@@ -297,11 +297,12 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
         ),
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 1,
+        currentIndex: 2,
         onTap: (index) {
           if (index == 0) context.go('/admin/dashboard');
           if (index == 1) context.go('/admin/user-management');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go('/admin/content-management');
+          if (index == 3) context.go('/settings');
         },
       ),
     );

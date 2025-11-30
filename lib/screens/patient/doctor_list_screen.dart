@@ -497,7 +497,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
         onTap: (index) {
           if (index == 0) context.go('/patient/home');
           if (index == 1) context.go('/patient/profile');
-          if (index == 2) context.go('/patient/appointments');
+          if (index == 2) context.go('/patient/appointment-history');
           if (index == 3) context.go('/settings');
         },
       ),
@@ -557,7 +557,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                 color: Colors.blue.shade700,
               ),
             ),
-            onPressed: () => context.go('/patient/doctor-map'),
+            onPressed: () => context.push('/patient/doctor-map'),
             tooltip: 'Map View',
           ),
           IconButton(
@@ -933,7 +933,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => context.go('/patient/appointment-booking'),
+                      onPressed: () => context.push('/patient/appointment-booking'),
                       icon: const Icon(Icons.calendar_today, size: 16),
                       label: const Text('Book Now'),
                       style: ElevatedButton.styleFrom(
@@ -1103,7 +1103,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
-                  context.go('/patient/appointment-booking');
+                  context.push('/patient/appointment-booking');
                 },
                 icon: const Icon(Icons.calendar_today),
                 label: const Text('Book Appointment'),

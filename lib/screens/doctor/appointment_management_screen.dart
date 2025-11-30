@@ -487,7 +487,8 @@ class _AppointmentManagementScreenState
         onTap: (index) {
           if (index == 0) context.go('/doctor/home');
           if (index == 1) context.go('/doctor/profile');
-          if (index == 2) context.go('/settings');
+          if (index == 2) context.go('/doctor/appointment-management');
+          if (index == 3) context.go('/settings');
         },
       ),
       floatingActionButton: FloatingActionButton(
