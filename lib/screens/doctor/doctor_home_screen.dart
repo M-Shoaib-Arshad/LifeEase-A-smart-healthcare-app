@@ -7,6 +7,7 @@ import '../../providers/appointment_provider.dart';
 import '../../models/appointment.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../utils/app_colors.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   const DoctorHomeScreen({super.key});
@@ -93,13 +94,13 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     if (_isLoading) {
       return Scaffold(
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.blue.shade50,
-                Colors.white,
+                AppColors.primaryLight,
+                AppColors.bgCard,
               ],
             ),
           ),
@@ -131,13 +132,13 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.blue.shade50,
-              Colors.white,
+              AppColors.primaryLight,
+              AppColors.bgCard,
             ],
           ),
         ),
@@ -193,8 +194,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
         onPressed: () {
           context.go('/doctor/appointment-management');
         },
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textLight,
         icon: const Icon(Icons.add),
         label: const Text('New Appointment'),
       ),
@@ -205,7 +206,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgCard,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -221,12 +222,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
+                  color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.menu,
-                  color: Colors.blue.shade700,
+                  color: AppColors.primaryDark,
                 ),
               ),
               onPressed: () => Scaffold.of(context).openDrawer(),
@@ -238,7 +239,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.textPrimary,
             ),
           ),
           const Spacer(),
@@ -248,12 +249,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.notifications_outlined,
-                    color: Colors.blue.shade700,
+                    color: AppColors.primaryDark,
                   ),
                 ),
                 onPressed: () {
@@ -267,15 +268,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: Colors.red,
+                    color: AppColors.accentCoral,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
+                    border: Border.all(color: AppColors.textLight, width: 2),
                   ),
                   child: const Center(
                     child: Text(
                       '3',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textLight,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
@@ -302,13 +303,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade600, Colors.blue.shade800],
-        ),
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade200.withOpacity(0.5),
+            color: AppColors.primaryLight.withOpacity(0.5),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -328,7 +327,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.textLight,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -336,7 +335,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                       DateFormat('EEEE, MMMM d, yyyy').format(now),
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.9),
+                        color: AppColors.textLight.withOpacity(0.9),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -344,7 +343,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                       'You have $todayAppointmentsCount appointments today',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: AppColors.textLight.withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -353,13 +352,13 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: AppColors.textLight.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Icon(
                   Icons.medical_services,
                   size: 40,
-                  color: Colors.white,
+                  color: AppColors.textLight,
                 ),
               ),
             ],
@@ -376,21 +375,21 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
         'title': 'Today\'s Appointments',
         'value': todayAppointments.toString(),
         'icon': Icons.calendar_today,
-        'color': Colors.blue,
+        'color': AppColors.primary,
         'change': 'Scheduled for today',
       },
       {
         'title': 'Pending',
         'value': pendingAppointments.toString(),
         'icon': Icons.pending_actions,
-        'color': Colors.orange,
+        'color': AppColors.warning,
         'change': pendingAppointments > 0 ? 'Needs attention' : 'All clear',
       },
       {
         'title': 'Completed Today',
         'value': completedToday.toString(),
         'icon': Icons.check_circle,
-        'color': Colors.green,
+        'color': AppColors.accentMint,
         'change': '$completedToday consultations done',
       },
       {
@@ -400,7 +399,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
             .length
             .toString(),
         'icon': Icons.people,
-        'color': Colors.purple,
+        'color': AppColors.accentPurple,
         'change': 'All time',
       },
     ];
@@ -420,7 +419,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.bgCard,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -448,9 +447,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                     ),
                   ),
                   const Spacer(),
-                  Icon(
+                  const Icon(
                     Icons.trending_up,
-                    color: Colors.green.shade600,
+                    color: AppColors.accentMint,
                     size: 16,
                   ),
                 ],
@@ -461,24 +460,24 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 stat['title'] as String,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 stat['change'] as String,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 10,
-                  color: Colors.grey.shade500,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -494,28 +493,28 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
         'title': 'Manage Appointments',
         'subtitle': 'View and schedule appointments',
         'icon': Icons.calendar_month,
-        'color': Colors.blue,
+        'color': AppColors.primary,
         'route': '/doctor/appointment-management',
       },
       {
         'title': 'Patient Records',
         'subtitle': 'Access patient information',
         'icon': Icons.folder_shared,
-        'color': Colors.green,
+        'color': AppColors.accentMint,
         'route': '/doctor/patient-details',
       },
       {
         'title': 'Prescriptions',
         'subtitle': 'Manage medications',
         'icon': Icons.medication,
-        'color': Colors.orange,
+        'color': AppColors.warning,
         'route': '/doctor/prescriptions',
       },
       {
         'title': 'Reports',
         'subtitle': 'View analytics and reports',
         'icon': Icons.analytics,
-        'color': Colors.purple,
+        'color': AppColors.accentPurple,
         'route': '/doctor/reports',
       },
     ];
@@ -528,7 +527,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 16),
@@ -546,7 +545,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
             final action = actions[index];
             return Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.bgCard,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -585,15 +584,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           action['subtitle'] as String,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -620,7 +619,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.textPrimary,
               ),
             ),
             TextButton(
@@ -634,7 +633,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.bgCard,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -644,20 +643,20 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                 ),
               ],
             ),
-            child: Center(
+            child: const Center(
               child: Column(
                 children: [
                   Icon(
                     Icons.calendar_today_outlined,
                     size: 48,
-                    color: Colors.grey.shade400,
+                    color: AppColors.textSecondary,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Text(
                     'No upcoming appointments',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey.shade600,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -667,7 +666,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
         else
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.bgCard,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -688,9 +687,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                   decoration: BoxDecoration(
                     border: isLast
                         ? null
-                        : Border(
+                        : const Border(
                             bottom: BorderSide(
-                              color: Colors.grey.shade200,
+                              color: AppColors.borderLight,
                               width: 1,
                             ),
                           ),
@@ -702,8 +701,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                         height: 40,
                         decoration: BoxDecoration(
                           color: appointment.status == 'scheduled'
-                              ? Colors.blue
-                              : Colors.orange,
+                              ? AppColors.primary
+                              : AppColors.warning,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -729,15 +728,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.orange.shade100,
+                                      color: AppColors.warning.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
                                       appointment.status.toUpperCase(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.orange.shade700,
+                                        color: AppColors.warning,
                                       ),
                                     ),
                                   ),
@@ -746,8 +745,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                             const SizedBox(height: 4),
                             Text(
                               appointment.notes ?? 'No notes',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
                                 fontSize: 14,
                               ),
                               maxLines: 1,
@@ -765,14 +764,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward_ios,
                             size: 12,
-                            color: Colors.grey.shade400,
+                            color: AppColors.textSecondary,
                           ),
                         ],
                       ),
