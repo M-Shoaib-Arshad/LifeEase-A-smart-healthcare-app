@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart';
 
 class BottomNavBar extends StatefulWidget {
   final int currentIndex;
@@ -79,11 +80,11 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            Icon(Icons.emergency, color: Colors.red.shade700),
-            const SizedBox(width: 8),
-            const Text('Emergency Alert'),
+            Icon(Icons.emergency, color: AppColors.accentCoral),
+            SizedBox(width: 8),
+            Text('Emergency Alert'),
           ],
         ),
         content: const Text(
@@ -98,8 +99,8 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
               Navigator.pop(context);
               _triggerEmergencyAlert();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Emergency Alert', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentCoral),
+            child: const Text('Emergency Alert', style: TextStyle(color: AppColors.textLight)),
           ),
         ],
       ),
@@ -108,15 +109,15 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
 
   void _triggerEmergencyAlert() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
+      const SnackBar(
+        content: Row(
           children: [
-            Icon(Icons.emergency, color: Colors.white),
+            Icon(Icons.emergency, color: AppColors.textLight),
             SizedBox(width: 8),
             Text('Emergency alert sent!'),
           ],
         ),
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: AppColors.accentCoral,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -134,7 +135,7 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
         clipBehavior: Clip.hardEdge, // ensure we don’t draw outside the bar
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.bgCard,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
@@ -201,7 +202,7 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // slightly reduced
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue.shade50 : Colors.transparent,
+          color: isSelected ? AppColors.primaryLight : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -216,12 +217,12 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue.shade600 : Colors.transparent,
+                      color: isSelected ? AppColors.primary : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       icon,
-                      color: isSelected ? Colors.white : Colors.grey.shade600,
+                      color: isSelected ? AppColors.textLight : AppColors.textSecondary,
                       size: 20,
                     ),
                   ),
@@ -233,9 +234,9 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
                     child: Container(
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
-                        color: Colors.red.shade600,
+                        color: AppColors.accentCoral,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
+                        border: Border.all(color: AppColors.textLight, width: 1.5),
                       ),
                       constraints: const BoxConstraints(
                         minWidth: 15,
@@ -244,7 +245,7 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
                       child: Text(
                         badgeCount > 99 ? '99+' : badgeCount.toString(),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textLight,
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                         ),
@@ -262,7 +263,7 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
                 fontSize: 8,
                 height: 1.0, // tighter line height
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? Colors.blue.shade600 : Colors.grey.shade600,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
               ),
               child: const FittedBox(
                 fit: BoxFit.scaleDown,
@@ -291,16 +292,16 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                gradient: RadialGradient(
+                gradient: const RadialGradient(
                   colors: [
-                    Colors.red.shade600,
-                    Colors.red.shade800,
+                    AppColors.accentCoral,
+                    AppColors.accentCoralDark,
                   ],
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.red.shade300.withOpacity(0.6),
+                    color: AppColors.accentCoral.withOpacity(0.6),
                     blurRadius: 12,
                     spreadRadius: 1,
                   ),
@@ -308,7 +309,7 @@ class _BottomNavBarState extends State<BottomNavBar> with TickerProviderStateMix
               ),
               child: const Icon(
                 Icons.emergency,
-                color: Colors.white,
+                color: AppColors.textLight,
                 size: 24,
               ),
             ),

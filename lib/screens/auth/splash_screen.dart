@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../utils/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -150,14 +151,14 @@ class _SplashScreenState extends State<SplashScreen>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.blue.shade600,
-              Colors.blue.shade800,
-              Colors.indigo.shade900,
+              AppColors.primary,
+              AppColors.primaryDark,
+              AppColors.accentPurple,
             ],
           ),
         ),
@@ -199,11 +200,11 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: AppColors.textLight.withOpacity(0.15),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.2),
+                          color: AppColors.textLight.withOpacity(0.2),
                           blurRadius: 30,
                           spreadRadius: 10,
                         ),
@@ -212,13 +213,13 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.bgCard,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.medical_services,
                         size: 80,
-                        color: Colors.blue.shade600,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
@@ -241,7 +242,7 @@ class _SplashScreenState extends State<SplashScreen>
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.textLight,
                       letterSpacing: 1.2,
                     ),
                   ),
@@ -250,7 +251,7 @@ class _SplashScreenState extends State<SplashScreen>
                     'Your Health, Our Priority',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: AppColors.textLight.withOpacity(0.9),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -277,7 +278,7 @@ class _SplashScreenState extends State<SplashScreen>
                   width: 200,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: AppColors.textLight.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                   child: Stack(
@@ -286,10 +287,10 @@ class _SplashScreenState extends State<SplashScreen>
                         width: 200 * _progressAnimation.value,
                         height: 4,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
-                              Colors.white,
-                              Colors.blue.shade100,
+                              AppColors.textLight,
+                              AppColors.primaryLight,
                             ],
                           ),
                           borderRadius: BorderRadius.circular(2),
@@ -302,7 +303,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   'Loading...',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: AppColors.textLight.withOpacity(0.8),
                     fontSize: 14,
                     letterSpacing: 0.5,
                   ),
@@ -320,7 +321,7 @@ class _SplashScreenState extends State<SplashScreen>
           child: Text(
             'Version 1.0.0',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: AppColors.textLight.withOpacity(0.6),
               fontSize: 12,
             ),
           ),
@@ -334,16 +335,16 @@ class _SplashScreenState extends State<SplashScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.favorite,
-                color: Colors.red.shade300,
+                color: AppColors.accentCoral,
                 size: 16,
               ),
               const SizedBox(width: 8),
               Text(
                 'Made with care for your health',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: AppColors.textLight.withOpacity(0.7),
                   fontSize: 12,
                 ),
               ),

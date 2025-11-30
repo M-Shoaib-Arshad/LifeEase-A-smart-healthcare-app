@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../utils/app_colors.dart';
 
 class PatientHomeScreen extends StatelessWidget {
   const PatientHomeScreen({super.key});
@@ -13,14 +14,14 @@ class PatientHomeScreen extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.bgMain,
       appBar: AppBar(
         title: const Text(
           'Healthcare Hub',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: AppColors.bgCard,
+        foregroundColor: AppColors.textPrimary,
         elevation: 0,
         actions: [
           IconButton(
@@ -43,15 +44,11 @@ class PatientHomeScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: AppColors.purpleGradient,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.3),
+                    color: AppColors.accentPurple.withOpacity(0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -60,10 +57,10 @@ class PatientHomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Good day!',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: AppColors.textLight.withOpacity(0.7),
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -72,16 +69,16 @@ class PatientHomeScreen extends StatelessWidget {
                   Text(
                     'Welcome, ${userProvider.role}!',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textLight,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Take control of your health journey',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: AppColors.textLight.withOpacity(0.7),
                       fontSize: 15,
                     ),
                   ),
@@ -97,7 +94,7 @@ class PatientHomeScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -108,7 +105,7 @@ class PatientHomeScreen extends StatelessWidget {
               title: 'Book Appointment',
               subtitle: 'Find and schedule with doctors',
               icon: Icons.calendar_today,
-              color: Colors.blue,
+              color: AppColors.primary,
               onTap: () => context.go('/patient/doctor-search'),
             ),
 
@@ -119,7 +116,7 @@ class PatientHomeScreen extends StatelessWidget {
               title: 'Track Vitals',
               subtitle: 'Monitor your health metrics',
               icon: Icons.favorite,
-              color: Colors.red,
+              color: AppColors.accentCoral,
               onTap: () => context.go('/patient/health-tracker-input'),
             ),
 
@@ -130,7 +127,7 @@ class PatientHomeScreen extends StatelessWidget {
               title: 'Medical Records',
               subtitle: 'View your health history',
               icon: Icons.folder_outlined,
-              color: Colors.green,
+              color: AppColors.accentMint,
               onTap: () => context.go('/patient/medical-records'),
             ),
 
@@ -142,7 +139,7 @@ class PatientHomeScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -159,7 +156,7 @@ class PatientHomeScreen extends StatelessWidget {
                 _buildServiceCard(
                   'Lab Reports',
                   Icons.science_outlined,
-                  Colors.purple,
+                  AppColors.accentPurple,
                       () {
                     // Navigate to lab reports
                   },
@@ -167,7 +164,7 @@ class PatientHomeScreen extends StatelessWidget {
                 _buildServiceCard(
                   'Prescriptions',
                   Icons.medication_outlined,
-                  Colors.orange,
+                  AppColors.warning,
                       () {
                     // Navigate to prescriptions
                   },
@@ -175,7 +172,7 @@ class PatientHomeScreen extends StatelessWidget {
                 _buildServiceCard(
                   'Health Tips',
                   Icons.lightbulb_outline,
-                  Colors.teal,
+                  AppColors.accentMint,
                       () {
                     // Navigate to health tips
                   },
@@ -183,7 +180,7 @@ class PatientHomeScreen extends StatelessWidget {
                 _buildServiceCard(
                   'Emergency',
                   Icons.emergency,
-                  Colors.red,
+                  AppColors.accentCoral,
                       () {
                     // Handle emergency
                   },
@@ -198,21 +195,21 @@ class PatientHomeScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.green[50],
+                color: AppColors.accentMint.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.green[200]!),
+                border: Border.all(color: AppColors.accentMint),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.green[100],
+                      color: AppColors.accentMint.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.check_circle,
-                      color: Colors.green[600],
+                      color: AppColors.accentMint,
                       size: 24,
                     ),
                   ),
@@ -226,7 +223,7 @@ class PatientHomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         SizedBox(height: 4),
@@ -234,7 +231,7 @@ class PatientHomeScreen extends StatelessWidget {
                           'Keep up the great work!',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.black54,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -269,7 +266,7 @@ class PatientHomeScreen extends StatelessWidget {
       }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -310,23 +307,23 @@ class PatientHomeScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.arrow_forward_ios,
-                  color: Colors.grey[400],
+                  color: AppColors.textSecondary,
                   size: 16,
                 ),
               ],
@@ -345,7 +342,7 @@ class PatientHomeScreen extends StatelessWidget {
       ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -383,7 +380,7 @@ class PatientHomeScreen extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),
