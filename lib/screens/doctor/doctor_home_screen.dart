@@ -192,7 +192,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          context.go('/doctor/appointment-management');
+          context.push('/doctor/appointment-management');
         },
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textLight,
@@ -560,7 +560,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
                 borderRadius: BorderRadius.circular(16),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
-                  onTap: () => context.go(action['route'] as String),
+                  onTap: () => context.push(action['route'] as String),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -623,7 +623,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen>
               ),
             ),
             TextButton(
-              onPressed: () => context.go('/doctor/appointment-management'),
+              onPressed: () => context.push('/doctor/appointment-management'),
               child: const Text('View All'),
             ),
           ],

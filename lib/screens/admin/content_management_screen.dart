@@ -9,7 +9,8 @@ class ContentManagementScreen extends StatefulWidget {
   const ContentManagementScreen({super.key});
 
   @override
-  State<ContentManagementScreen> createState() => _ContentManagementScreenState();
+  State<ContentManagementScreen> createState() =>
+      _ContentManagementScreenState();
 }
 
 class _ContentManagementScreenState extends State<ContentManagementScreen>
@@ -21,7 +22,6 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
   String _searchQuery = '';
   String _selectedFilter = 'All';
 
-  // Sample content data - replace with your actual data source
   final List<ContentItem> _contentItems = [
     ContentItem(
       id: '1',
@@ -93,9 +93,11 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
 
   List<ContentItem> get filteredContent {
     return _contentItems.where((item) {
-      final matchesSearch = item.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesFilter = _selectedFilter == 'All' || item.type == _selectedFilter;
+      final matchesSearch =
+          item.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              item.category.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesFilter =
+          _selectedFilter == 'All' || item.type == _selectedFilter;
       return matchesSearch && matchesFilter;
     }).toList();
   }
@@ -106,12 +108,15 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+
     return Scaffold(
       backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           'Content Management',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
         ),
         elevation: 0,
         backgroundColor: isDark ? Colors.grey[800] : Colors.white,
@@ -121,9 +126,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              setState(() {
-                // Refresh content logic
-              });
+              setState(() {});
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Content refreshed')),
               );
@@ -136,11 +139,10 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
         opacity: _fadeAnimation,
         child: Column(
           children: [
-            // Header Section
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(20),
+              margin: EdgeInsets.all(isMobile ? 14 : 20),
+              padding: EdgeInsets.all(isMobile ? 16 : 20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDark
@@ -152,8 +154,8 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.purple.withOpacity(0.3),
-                    blurRadius: 10,
+                    color: Colors.purple.withValues(alpha: 0.25),
+                    blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -161,36 +163,37 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(11),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.content_paste,
                       color: Colors.white,
-                      size: 28,
+                      size: 26,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Content Management',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 22,
+                            fontSize: isMobile ? 18 : 22,
                             fontWeight: FontWeight.bold,
+                            letterSpacing: 0.2,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '${filteredContent.length} items available',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 14,
+                            color: Colors.white.withValues(alpha: 0.95),
+                            fontSize: isMobile ? 12 : 14,
                           ),
                         ),
                       ],
@@ -200,29 +203,31 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                     onPressed: _showAddContentDialog,
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.purple[600],
-                    child: const Icon(Icons.add),
+                    elevation: 4,
+                    child: const Icon(Icons.add, size: 22),
                   ),
                 ],
               ),
             ),
-
-            // Search and Filter Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: isMobile ? 14 : 20),
               child: Column(
                 children: [
-                  // Search Bar
                   Container(
                     decoration: BoxDecoration(
                       color: isDark ? Colors.grey[800] : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
                       ],
+                      border: Border.all(
+                        color: (isDark ? Colors.grey[700] : Colors.grey[100])!,
+                        width: 1,
+                      ),
                     ),
                     child: TextField(
                       onChanged: (value) {
@@ -232,18 +237,21 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                       },
                       decoration: InputDecoration(
                         hintText: 'Search content...',
-                        prefixIcon: const Icon(Icons.search),
+                        prefixIcon: const Icon(Icons.search, size: 22),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.all(16),
+                        contentPadding: const EdgeInsets.all(14),
                         hintStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 14,
                         ),
+                      ),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                        fontSize: 14,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Filter Chips
+                  const SizedBox(height: 14),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -259,16 +267,31 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: FilterChip(
-                            label: Text(filter),
+                            label: Text(
+                              filter,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                              ),
+                            ),
                             selected: isSelected,
                             onSelected: (selected) {
                               setState(() {
                                 _selectedFilter = filter;
                               });
                             },
-                            backgroundColor: isDark ? Colors.grey[800] : Colors.white,
+                            backgroundColor:
+                                isDark ? Colors.grey[800] : Colors.grey[100],
                             selectedColor: Colors.purple[100],
                             checkmarkColor: Colors.purple[600],
+                            side: BorderSide(
+                              color: isSelected
+                                  ? Colors.purple[600]!
+                                  : Colors.transparent,
+                              width: 1.5,
+                            ),
                           ),
                         );
                       }).toList(),
@@ -277,21 +300,21 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                 ],
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            // Content List
+            const SizedBox(height: 16),
             Expanded(
               child: filteredContent.isEmpty
                   ? _buildEmptyState(isDark)
                   : ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: filteredContent.length,
-                itemBuilder: (context, index) {
-                  final item = filteredContent[index];
-                  return _buildContentCard(item, isDark);
-                },
-              ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 14 : 20,
+                        vertical: 8,
+                      ),
+                      itemCount: filteredContent.length,
+                      itemBuilder: (context, index) {
+                        final item = filteredContent[index];
+                        return _buildContentCard(item, isDark, isMobile);
+                      },
+                    ),
             ),
           ],
         ),
@@ -307,7 +330,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
     );
   }
 
-  Widget _buildContentCard(ContentItem item, bool isDark) {
+  Widget _buildContentCard(ContentItem item, bool isDark, bool isMobile) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -315,60 +338,73 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(
+          color: (isDark ? Colors.grey[700] : Colors.grey[100])!,
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
           ListTile(
-            contentPadding: const EdgeInsets.all(16),
+            contentPadding: EdgeInsets.all(isMobile ? 12 : 16),
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: _getTypeColor(item.type).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: _getTypeColor(item.type).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 _getTypeIcon(item.type),
                 color: _getTypeColor(item.type),
-                size: 20,
+                size: 22,
               ),
             ),
             title: Text(
               item.title,
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
+                fontSize: isMobile ? 14 : 15,
                 color: isDark ? Colors.white : Colors.black87,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    _buildStatusChip(item.status, isDark),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        item.type,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildStatusChip(item.status, isDark),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          item.type,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   'By ${item.author} • ${_formatDate(item.lastModified)}',
                   style: TextStyle(
@@ -387,7 +423,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                     children: [
                       Icon(Icons.edit, size: 16),
                       SizedBox(width: 8),
-                      Text('Edit'),
+                      Text('Edit', style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 ),
@@ -397,7 +433,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                     children: [
                       Icon(Icons.copy, size: 16),
                       SizedBox(width: 8),
-                      Text('Duplicate'),
+                      Text('Duplicate', style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 ),
@@ -407,7 +443,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                     children: [
                       Icon(Icons.archive, size: 16),
                       SizedBox(width: 8),
-                      Text('Archive'),
+                      Text('Archive', style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 ),
@@ -417,7 +453,8 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
                     children: [
                       Icon(Icons.delete, size: 16, color: Colors.red),
                       SizedBox(width: 8),
-                      Text('Delete', style: TextStyle(color: Colors.red)),
+                      Text('Delete',
+                          style: TextStyle(color: Colors.red, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -446,17 +483,19 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
       ),
       child: Text(
         status,
         style: TextStyle(
           color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.2,
         ),
       ),
     );
@@ -477,7 +516,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
             'No content found',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
           ),
@@ -485,6 +524,7 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
           Text(
             'Try adjusting your search or filters',
             style: TextStyle(
+              fontSize: 13,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
             ),
           ),
@@ -496,6 +536,10 @@ class _ContentManagementScreenState extends State<ContentManagementScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple[600],
               foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],

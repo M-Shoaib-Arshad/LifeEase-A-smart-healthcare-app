@@ -344,7 +344,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<String>(
-              value: priority,
+              initialValue: priority,
               decoration: const InputDecoration(
                 labelText: 'Priority',
                 border: OutlineInputBorder(),
@@ -490,7 +490,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen>
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.go('/doctor/telemedicine-consultation'),
+        onPressed: () => context.push('/doctor/telemedicine-consultation'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.video_call),

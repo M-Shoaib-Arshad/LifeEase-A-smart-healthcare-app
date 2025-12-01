@@ -48,8 +48,13 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'availableToday': false,
       'telemedicine': true,
       'emergencyAvailable': true,
-      'about': 'Experienced cardiologist specializing in preventive cardiology and heart disease management.',
-      'services': ['Heart Disease Treatment', 'Preventive Cardiology', 'Cardiac Imaging'],
+      'about':
+          'Experienced cardiologist specializing in preventive cardiology and heart disease management.',
+      'services': [
+        'Heart Disease Treatment',
+        'Preventive Cardiology',
+        'Cardiac Imaging'
+      ],
     },
     {
       'id': 'D002',
@@ -70,7 +75,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'availableToday': true,
       'telemedicine': true,
       'emergencyAvailable': false,
-      'about': 'Neurologist with expertise in epilepsy, stroke, and neurodegenerative diseases.',
+      'about':
+          'Neurologist with expertise in epilepsy, stroke, and neurodegenerative diseases.',
       'services': ['Epilepsy Treatment', 'Stroke Care', 'Migraine Management'],
     },
     {
@@ -92,8 +98,13 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'availableToday': false,
       'telemedicine': false,
       'emergencyAvailable': false,
-      'about': 'Dermatologist specializing in skin cancer detection and cosmetic dermatology.',
-      'services': ['Skin Cancer Screening', 'Acne Treatment', 'Cosmetic Procedures'],
+      'about':
+          'Dermatologist specializing in skin cancer detection and cosmetic dermatology.',
+      'services': [
+        'Skin Cancer Screening',
+        'Acne Treatment',
+        'Cosmetic Procedures'
+      ],
     },
     {
       'id': 'D004',
@@ -109,13 +120,21 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'distance': 3.1,
       'languages': ['English'],
       'education': 'MD from Mayo Clinic',
-      'certifications': ['Board Certified Orthopedic Surgeon', 'Sports Medicine'],
+      'certifications': [
+        'Board Certified Orthopedic Surgeon',
+        'Sports Medicine'
+      ],
       'nextAvailable': DateTime.now().add(const Duration(hours: 6)),
       'availableToday': true,
       'telemedicine': false,
       'emergencyAvailable': true,
-      'about': 'Orthopedic surgeon specializing in sports injuries and joint replacement.',
-      'services': ['Joint Replacement', 'Sports Injury Treatment', 'Arthroscopy'],
+      'about':
+          'Orthopedic surgeon specializing in sports injuries and joint replacement.',
+      'services': [
+        'Joint Replacement',
+        'Sports Injury Treatment',
+        'Arthroscopy'
+      ],
     },
     {
       'id': 'D005',
@@ -136,7 +155,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'availableToday': false,
       'telemedicine': true,
       'emergencyAvailable': true,
-      'about': 'Pediatrician with expertise in child development and adolescent health.',
+      'about':
+          'Pediatrician with expertise in child development and adolescent health.',
       'services': ['Well-Child Visits', 'Immunizations', 'Adolescent Care'],
     },
     {
@@ -158,8 +178,13 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'availableToday': true,
       'telemedicine': true,
       'emergencyAvailable': false,
-      'about': 'Family medicine physician providing comprehensive primary care for all ages.',
-      'services': ['Primary Care', 'Preventive Medicine', 'Chronic Disease Management'],
+      'about':
+          'Family medicine physician providing comprehensive primary care for all ages.',
+      'services': [
+        'Primary Care',
+        'Preventive Medicine',
+        'Chronic Disease Management'
+      ],
     },
   ];
 
@@ -305,7 +330,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                value: _selectedSpecialization,
+                initialValue: _selectedSpecialization,
                 decoration: const InputDecoration(
                   labelText: 'Specialization',
                   border: OutlineInputBorder(),
@@ -316,11 +341,12 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                     child: Text(spec == 'all' ? 'All Specializations' : spec),
                   );
                 }).toList(),
-                onChanged: (value) => setState(() => _selectedSpecialization = value!),
+                onChanged: (value) =>
+                    setState(() => _selectedSpecialization = value!),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedLocation,
+                initialValue: _selectedLocation,
                 decoration: const InputDecoration(
                   labelText: 'Location',
                   border: OutlineInputBorder(),
@@ -331,11 +357,12 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                     child: Text(location == 'all' ? 'All Locations' : location),
                   );
                 }).toList(),
-                onChanged: (value) => setState(() => _selectedLocation = value!),
+                onChanged: (value) =>
+                    setState(() => _selectedLocation = value!),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedRating,
+                initialValue: _selectedRating,
                 decoration: const InputDecoration(
                   labelText: 'Minimum Rating',
                   border: OutlineInputBorder(),
@@ -350,31 +377,39 @@ class _DoctorListScreenState extends State<DoctorListScreen>
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedAvailability,
+                initialValue: _selectedAvailability,
                 decoration: const InputDecoration(
                   labelText: 'Availability',
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'all', child: Text('Any Availability')),
-                  DropdownMenuItem(value: 'today', child: Text('Available Today')),
-                  DropdownMenuItem(value: 'telemedicine', child: Text('Telemedicine')),
-                  DropdownMenuItem(value: 'emergency', child: Text('Emergency Available')),
+                  DropdownMenuItem(
+                      value: 'all', child: Text('Any Availability')),
+                  DropdownMenuItem(
+                      value: 'today', child: Text('Available Today')),
+                  DropdownMenuItem(
+                      value: 'telemedicine', child: Text('Telemedicine')),
+                  DropdownMenuItem(
+                      value: 'emergency', child: Text('Emergency Available')),
                 ],
-                onChanged: (value) => setState(() => _selectedAvailability = value!),
+                onChanged: (value) =>
+                    setState(() => _selectedAvailability = value!),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _sortBy,
+                initialValue: _sortBy,
                 decoration: const InputDecoration(
                   labelText: 'Sort By',
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'rating', child: Text('Highest Rating')),
-                  DropdownMenuItem(value: 'experience', child: Text('Most Experience')),
+                  DropdownMenuItem(
+                      value: 'rating', child: Text('Highest Rating')),
+                  DropdownMenuItem(
+                      value: 'experience', child: Text('Most Experience')),
                   DropdownMenuItem(value: 'fee_low', child: Text('Lowest Fee')),
-                  DropdownMenuItem(value: 'fee_high', child: Text('Highest Fee')),
+                  DropdownMenuItem(
+                      value: 'fee_high', child: Text('Highest Fee')),
                   DropdownMenuItem(value: 'distance', child: Text('Nearest')),
                   DropdownMenuItem(value: 'name', child: Text('Name A-Z')),
                 ],
@@ -557,7 +592,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                 color: Colors.blue.shade700,
               ),
             ),
-            onPressed: () => context.go('/patient/doctor-map'),
+            onPressed: () => context.push('/patient/doctor-map'),
             tooltip: 'Map View',
           ),
           IconButton(
@@ -626,7 +661,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                 ),
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               ),
             ),
           ),
@@ -642,19 +678,26 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          _buildFilterChip('Available Today', _selectedAvailability == 'today', () {
+          _buildFilterChip('Available Today', _selectedAvailability == 'today',
+              () {
             setState(() {
-              _selectedAvailability = _selectedAvailability == 'today' ? 'all' : 'today';
+              _selectedAvailability =
+                  _selectedAvailability == 'today' ? 'all' : 'today';
             });
           }),
-          _buildFilterChip('Telemedicine', _selectedAvailability == 'telemedicine', () {
+          _buildFilterChip(
+              'Telemedicine', _selectedAvailability == 'telemedicine', () {
             setState(() {
-              _selectedAvailability = _selectedAvailability == 'telemedicine' ? 'all' : 'telemedicine';
+              _selectedAvailability = _selectedAvailability == 'telemedicine'
+                  ? 'all'
+                  : 'telemedicine';
             });
           }),
-          _buildFilterChip('Emergency', _selectedAvailability == 'emergency', () {
+          _buildFilterChip('Emergency', _selectedAvailability == 'emergency',
+              () {
             setState(() {
-              _selectedAvailability = _selectedAvailability == 'emergency' ? 'all' : 'emergency';
+              _selectedAvailability =
+                  _selectedAvailability == 'emergency' ? 'all' : 'emergency';
             });
           }),
           _buildFilterChip('4.5+ Rating', _selectedRating == '4.5', () {
@@ -894,7 +937,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                           style: const TextStyle(fontSize: 12),
                         ),
                         const Spacer(),
-                        Icon(Icons.location_on, color: Colors.grey.shade600, size: 16),
+                        Icon(Icons.location_on,
+                            color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 4),
                         Text(
                           '${doctor['distance']} km away',
@@ -906,11 +950,14 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                     Row(
                       children: [
                         if (doctor['telemedicine'])
-                          _buildFeatureBadge('Video Call', Icons.video_call, Colors.blue),
+                          _buildFeatureBadge(
+                              'Video Call', Icons.video_call, Colors.blue),
                         if (doctor['emergencyAvailable'])
-                          _buildFeatureBadge('Emergency', Icons.emergency, Colors.red),
+                          _buildFeatureBadge(
+                              'Emergency', Icons.emergency, Colors.red),
                         if (doctor['availableToday'])
-                          _buildFeatureBadge('Today', Icons.today, Colors.green),
+                          _buildFeatureBadge(
+                              'Today', Icons.today, Colors.green),
                       ],
                     ),
                   ],
@@ -933,7 +980,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => context.go('/patient/appointment-booking'),
+                      onPressed: () =>
+                          context.push('/patient/appointment-booking'),
                       icon: const Icon(Icons.calendar_today, size: 16),
                       label: const Text('Book Now'),
                       style: ElevatedButton.styleFrom(
@@ -1026,13 +1074,16 @@ class _DoctorListScreenState extends State<DoctorListScreen>
         Row(
           children: [
             Expanded(
-              child: _buildStatCard('Rating', '${doctor['rating']}⭐', '${doctor['reviewCount']} reviews'),
+              child: _buildStatCard('Rating', '${doctor['rating']}⭐',
+                  '${doctor['reviewCount']} reviews'),
             ),
             Expanded(
-              child: _buildStatCard('Experience', '${doctor['experience']}', 'years'),
+              child: _buildStatCard(
+                  'Experience', '${doctor['experience']}', 'years'),
             ),
             Expanded(
-              child: _buildStatCard('Fee', '\$${doctor['consultationFee']}', 'consultation'),
+              child: _buildStatCard(
+                  'Fee', '\$${doctor['consultationFee']}', 'consultation'),
             ),
           ],
         ),
@@ -1091,9 +1142,11 @@ class _DoctorListScreenState extends State<DoctorListScreen>
         // Education & Certifications
         _buildInfoSection('Education', doctor['education']),
         const SizedBox(height: 12),
-        _buildInfoSection('Certifications', (doctor['certifications'] as List).join(', ')),
+        _buildInfoSection(
+            'Certifications', (doctor['certifications'] as List).join(', ')),
         const SizedBox(height: 12),
-        _buildInfoSection('Languages', (doctor['languages'] as List).join(', ')),
+        _buildInfoSection(
+            'Languages', (doctor['languages'] as List).join(', ')),
         const SizedBox(height: 20),
 
         // Action Buttons
@@ -1103,7 +1156,7 @@ class _DoctorListScreenState extends State<DoctorListScreen>
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
-                  context.go('/patient/appointment-booking');
+                  context.push('/patient/appointment-booking');
                 },
                 icon: const Icon(Icons.calendar_today),
                 label: const Text('Book Appointment'),

@@ -401,7 +401,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: _selectedGender,
+          initialValue: _selectedGender,
           validator: (value) => value == null ? 'Please select your gender' : null,
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.person, color: Color(0xFF667eea)),

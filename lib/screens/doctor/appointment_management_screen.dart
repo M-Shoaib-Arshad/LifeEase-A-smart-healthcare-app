@@ -774,7 +774,7 @@ class _AppointmentManagementScreenState
                         children: [
                           Text(
                             // Use the defined max length constant for truncation
-                            'Patient: ${appointment.patientId.length > _maxPatientIdDisplayLength ? appointment.patientId.substring(0, _maxPatientIdDisplayLength) + '...' : appointment.patientId}',
+                            'Patient: ${appointment.patientId.length > _maxPatientIdDisplayLength ? '${appointment.patientId.substring(0, _maxPatientIdDisplayLength)}...' : appointment.patientId}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

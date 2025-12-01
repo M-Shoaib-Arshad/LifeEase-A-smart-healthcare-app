@@ -10,7 +10,8 @@ class HealthTrackerInputScreen extends StatefulWidget {
   const HealthTrackerInputScreen({super.key});
 
   @override
-  State<HealthTrackerInputScreen> createState() => _HealthTrackerInputScreenState();
+  State<HealthTrackerInputScreen> createState() =>
+      _HealthTrackerInputScreenState();
 }
 
 class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
@@ -171,7 +172,7 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
 
       // Navigate back to the dashboard after a short delay
       Future.delayed(const Duration(seconds: 1), () {
-        context.go('/patient/health-tracker-dashboard');
+        context.push('/patient/health-tracker-dashboard');
       });
     }
   }
@@ -274,7 +275,7 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                             vertical: 12,
                           ),
                         ),
-                        value: _selectedVitalType,
+                        initialValue: _selectedVitalType,
                         items: _vitalTypes.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -329,7 +330,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                                   suffixIcon: const Icon(Icons.calendar_today),
                                 ),
                                 child: Text(
-                                  DateFormat('MMM dd, yyyy').format(_selectedDate),
+                                  DateFormat('MMM dd, yyyy')
+                                      .format(_selectedDate),
                                 ),
                               ),
                             ),
@@ -369,7 +371,7 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                             vertical: 12,
                           ),
                         ),
-                        value: _selectedMeasurementContext,
+                        initialValue: _selectedMeasurementContext,
                         items: _measurementContexts.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -468,7 +470,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                         if (_systolicController.text.isNotEmpty &&
                             _diastolicController.text.isNotEmpty &&
                             double.tryParse(_systolicController.text) != null &&
-                            double.tryParse(_diastolicController.text) != null) ...[
+                            double.tryParse(_diastolicController.text) !=
+                                null) ...[
                           const SizedBox(height: 12),
                           Row(
                             children: [
@@ -480,29 +483,37 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                                 decoration: BoxDecoration(
                                   color: _getHealthStatusColor(
                                     double.parse(_systolicController.text),
-                                    _healthyRanges['Blood Pressure']!['systolic']['min'],
-                                    _healthyRanges['Blood Pressure']!['systolic']['max'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'systolic']['min'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'systolic']['max'],
                                   ).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: _getHealthStatusColor(
                                       double.parse(_systolicController.text),
-                                      _healthyRanges['Blood Pressure']!['systolic']['min'],
-                                      _healthyRanges['Blood Pressure']!['systolic']['max'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'systolic']['min'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'systolic']['max'],
                                     ),
                                   ),
                                 ),
                                 child: Text(
                                   'Systolic: ${_getHealthStatusText(
                                     double.parse(_systolicController.text),
-                                    _healthyRanges['Blood Pressure']!['systolic']['min'],
-                                    _healthyRanges['Blood Pressure']!['systolic']['max'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'systolic']['min'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'systolic']['max'],
                                   )}',
                                   style: TextStyle(
                                     color: _getHealthStatusColor(
                                       double.parse(_systolicController.text),
-                                      _healthyRanges['Blood Pressure']!['systolic']['min'],
-                                      _healthyRanges['Blood Pressure']!['systolic']['max'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'systolic']['min'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'systolic']['max'],
                                     ),
                                     fontSize: 12,
                                   ),
@@ -517,29 +528,37 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                                 decoration: BoxDecoration(
                                   color: _getHealthStatusColor(
                                     double.parse(_diastolicController.text),
-                                    _healthyRanges['Blood Pressure']!['diastolic']['min'],
-                                    _healthyRanges['Blood Pressure']!['diastolic']['max'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'diastolic']['min'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'diastolic']['max'],
                                   ).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: _getHealthStatusColor(
                                       double.parse(_diastolicController.text),
-                                      _healthyRanges['Blood Pressure']!['diastolic']['min'],
-                                      _healthyRanges['Blood Pressure']!['diastolic']['max'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'diastolic']['min'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'diastolic']['max'],
                                     ),
                                   ),
                                 ),
                                 child: Text(
                                   'Diastolic: ${_getHealthStatusText(
                                     double.parse(_diastolicController.text),
-                                    _healthyRanges['Blood Pressure']!['diastolic']['min'],
-                                    _healthyRanges['Blood Pressure']!['diastolic']['max'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'diastolic']['min'],
+                                    _healthyRanges['Blood Pressure']![
+                                        'diastolic']['max'],
                                   )}',
                                   style: TextStyle(
                                     color: _getHealthStatusColor(
                                       double.parse(_diastolicController.text),
-                                      _healthyRanges['Blood Pressure']!['diastolic']['min'],
-                                      _healthyRanges['Blood Pressure']!['diastolic']['max'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'diastolic']['min'],
+                                      _healthyRanges['Blood Pressure']![
+                                          'diastolic']['max'],
                                     ),
                                     fontSize: 12,
                                   ),
@@ -575,7 +594,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                           },
                         ),
                         if (_heartRateController.text.isNotEmpty &&
-                            double.tryParse(_heartRateController.text) != null) ...[
+                            double.tryParse(_heartRateController.text) !=
+                                null) ...[
                           const SizedBox(height: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -663,7 +683,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                           },
                         ),
                         if (_glucoseController.text.isNotEmpty &&
-                            double.tryParse(_glucoseController.text) != null) ...[
+                            double.tryParse(_glucoseController.text) !=
+                                null) ...[
                           const SizedBox(height: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -729,7 +750,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                           },
                         ),
                         if (_temperatureController.text.isNotEmpty &&
-                            double.tryParse(_temperatureController.text) != null) ...[
+                            double.tryParse(_temperatureController.text) !=
+                                null) ...[
                           const SizedBox(height: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -799,7 +821,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                           },
                         ),
                         if (_oxygenController.text.isNotEmpty &&
-                            double.tryParse(_oxygenController.text) != null) ...[
+                            double.tryParse(_oxygenController.text) !=
+                                null) ...[
                           const SizedBox(height: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -916,7 +939,7 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                             vertical: 12,
                           ),
                         ),
-                        value: _selectedDevice,
+                        initialValue: _selectedDevice,
                         items: _deviceTypes.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -952,7 +975,8 @@ class _HealthTrackerInputScreenState extends State<HealthTrackerInputScreen> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => context.go('/patient/health-tracker-dashboard'),
+                      onPressed: () =>
+                          context.push('/patient/health-tracker-dashboard'),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

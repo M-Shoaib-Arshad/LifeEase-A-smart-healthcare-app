@@ -113,7 +113,7 @@ class LanguageSelectorWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? theme.colorScheme.primary.withOpacity(0.1)
-                        : theme.colorScheme.surfaceVariant,
+                        : theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
@@ -149,7 +149,7 @@ class LanguageSelectorWidget extends StatelessWidget {
                 },
               ),
             );
-          }).toList(),
+          }),
 
           const SizedBox(height: 16),
 

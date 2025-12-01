@@ -9,30 +9,30 @@ class TelemedicineService {
   RtcEngine? _engine;
   bool _isInitialized = false;
   bool _isInCall = false;
-  
+
   // Agora configuration - loaded from environment variables
   static String get appId => EnvConfig.agoraAppId;
-  
+
   // Call state
   int? _remoteUid;
   bool _isMuted = false;
   bool _isVideoEnabled = true;
-  
+
   // Getters
   bool get isInitialized => _isInitialized;
   bool get isInCall => _isInCall;
   bool get isMuted => _isMuted;
   bool get isVideoEnabled => _isVideoEnabled;
   int? get remoteUid => _remoteUid;
-  
+
   /// Initialize Agora RTC Engine
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       // Request necessary permissions
       await _requestPermissions();
-      
+
       // Create RTC engine
       _engine = createAgoraRtcEngine();
       final agoraAppId = appId;
@@ -40,7 +40,7 @@ class TelemedicineService {
         appId: agoraAppId,
         channelProfile: ChannelProfileType.channelProfileCommunication,
       ));
-      
+
       // Set up event handlers
       _engine!.registerEventHandler(
         RtcEngineEventHandler(
@@ -52,7 +52,8 @@ class TelemedicineService {
             debugPrint('Remote user joined: $remoteUid');
             _remoteUid = remoteUid;
           },
-          onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
+          onUserOffline: (RtcConnection connection, int remoteUid,
+              UserOfflineReasonType reason) {
             debugPrint('Remote user offline: $remoteUid');
             _remoteUid = null;
           },
@@ -66,11 +67,11 @@ class TelemedicineService {
           },
         ),
       );
-      
+
       // Enable video
       await _engine!.enableVideo();
       await _engine!.startPreview();
-      
+
       _isInitialized = true;
       debugPrint('Agora RTC Engine initialized successfully');
     } catch (e) {
@@ -78,7 +79,7 @@ class TelemedicineService {
       rethrow;
     }
   }
-  
+
   /// Request necessary permissions for video calls
   Future<void> _requestPermissions() async {
     await [
@@ -86,7 +87,7 @@ class TelemedicineService {
       Permission.microphone,
     ].request();
   }
-  
+
   /// Join a video call channel
   Future<void> joinCall({
     required String channelName,
@@ -96,7 +97,7 @@ class TelemedicineService {
     if (!_isInitialized) {
       throw Exception('Agora RTC Engine not initialized');
     }
-    
+
     try {
       await _engine!.joinChannel(
         token: token,
@@ -107,18 +108,18 @@ class TelemedicineService {
           channelProfile: ChannelProfileType.channelProfileCommunication,
         ),
       );
-      
+
       debugPrint('Joining channel: $channelName with uid: $uid');
     } catch (e) {
       debugPrint('Failed to join channel: $e');
       rethrow;
     }
   }
-  
+
   /// Leave the current call
   Future<void> leaveCall() async {
     if (!_isInitialized || !_isInCall) return;
-    
+
     try {
       await _engine!.leaveChannel();
       _isInCall = false;
@@ -129,11 +130,11 @@ class TelemedicineService {
       rethrow;
     }
   }
-  
+
   /// Toggle microphone mute/unmute
   Future<void> toggleMute() async {
     if (!_isInitialized) return;
-    
+
     try {
       _isMuted = !_isMuted;
       await _engine!.muteLocalAudioStream(_isMuted);
@@ -143,11 +144,11 @@ class TelemedicineService {
       rethrow;
     }
   }
-  
+
   /// Toggle video on/off
   Future<void> toggleVideo() async {
     if (!_isInitialized) return;
-    
+
     try {
       _isVideoEnabled = !_isVideoEnabled;
       await _engine!.muteLocalVideoStream(!_isVideoEnabled);
@@ -157,11 +158,11 @@ class TelemedicineService {
       rethrow;
     }
   }
-  
+
   /// Switch camera (front/back)
   Future<void> switchCamera() async {
     if (!_isInitialized) return;
-    
+
     try {
       await _engine!.switchCamera();
       debugPrint('Camera switched');
@@ -170,11 +171,11 @@ class TelemedicineService {
       rethrow;
     }
   }
-  
+
   /// Set audio route to speaker
   Future<void> setSpeakerOn(bool enabled) async {
     if (!_isInitialized) return;
-    
+
     try {
       await _engine!.setEnableSpeakerphone(enabled);
       debugPrint('Speaker ${enabled ? "on" : "off"}');
@@ -183,16 +184,16 @@ class TelemedicineService {
       rethrow;
     }
   }
-  
+
   /// Get the RTC engine instance for custom operations
   RtcEngine? get engine => _engine;
-  
+
   /// Dispose and cleanup resources
   Future<void> dispose() async {
     if (_isInCall) {
       await leaveCall();
     }
-    
+
     if (_isInitialized) {
       await _engine!.release();
       _isInitialized = false;
@@ -200,7 +201,7 @@ class TelemedicineService {
       debugPrint('Agora RTC Engine disposed');
     }
   }
-  
+
   /// Generate a temporary token for testing
   /// Note: In production, tokens should be generated on the server
   static String generateTestToken() {
@@ -208,7 +209,7 @@ class TelemedicineService {
     // on your backend server using Agora's token generation library
     return '';
   }
-  
+
   /// Create a unique channel name for a consultation
   static String createChannelName(String appointmentId) {
     return 'consultation_$appointmentId';

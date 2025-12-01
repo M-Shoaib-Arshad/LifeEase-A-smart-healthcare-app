@@ -56,15 +56,21 @@ class _ProfileViewScreenState extends State<ProfileViewScreen>
   Future<void> _loadProfileData() async {
     final prefs = await SharedPreferences.getInstance();
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    
+
     setState(() {
-      _name = prefs.getString('patient_name') ?? userProvider.profile?.name ?? _name;
+      _name = prefs.getString('patient_name') ??
+          userProvider.profile?.name ??
+          _name;
       _email = userProvider.profile?.email ?? '';
-      _phone = prefs.getString('patient_phone') ?? userProvider.profile?.phone ?? '';
+      _phone =
+          prefs.getString('patient_phone') ?? userProvider.profile?.phone ?? '';
       _dob = prefs.getString('patient_dob') ?? _dob;
       _gender = prefs.getString('patient_gender') ?? _gender;
-      _address = prefs.getString('patient_address') ?? userProvider.profile?.address ?? '';
-      _medicalHistory = prefs.getString('patient_medical_history') ?? _medicalHistory;
+      _address = prefs.getString('patient_address') ??
+          userProvider.profile?.address ??
+          '';
+      _medicalHistory =
+          prefs.getString('patient_medical_history') ?? _medicalHistory;
       _profileImagePath = prefs.getString('patient_profile_image');
       _isLoading = false;
     });
@@ -133,10 +139,14 @@ class _ProfileViewScreenState extends State<ProfileViewScreen>
                       icon: Icons.person_outline,
                       children: [
                         _buildInfoRow(Icons.person, 'Name', _name),
-                        _buildInfoRow(Icons.email_outlined, 'Email', _email.isNotEmpty ? _email : 'Not set'),
-                        _buildInfoRow(Icons.phone_outlined, 'Phone', _phone.isNotEmpty ? _phone : 'Not set'),
-                        _buildInfoRow(Icons.calendar_today, 'Date of Birth', _dob),
-                        _buildInfoRow(Icons.person_outline, 'Gender', _gender.isNotEmpty ? _gender : 'Not set'),
+                        _buildInfoRow(Icons.email_outlined, 'Email',
+                            _email.isNotEmpty ? _email : 'Not set'),
+                        _buildInfoRow(Icons.phone_outlined, 'Phone',
+                            _phone.isNotEmpty ? _phone : 'Not set'),
+                        _buildInfoRow(
+                            Icons.calendar_today, 'Date of Birth', _dob),
+                        _buildInfoRow(Icons.person_outline, 'Gender',
+                            _gender.isNotEmpty ? _gender : 'Not set'),
                       ],
                     ),
 
@@ -147,7 +157,8 @@ class _ProfileViewScreenState extends State<ProfileViewScreen>
                       title: 'Address',
                       icon: Icons.location_on_outlined,
                       children: [
-                        _buildInfoRow(Icons.home_outlined, 'Full Address', _address.isNotEmpty ? _address : 'Not set'),
+                        _buildInfoRow(Icons.home_outlined, 'Full Address',
+                            _address.isNotEmpty ? _address : 'Not set'),
                       ],
                     ),
 
@@ -158,7 +169,8 @@ class _ProfileViewScreenState extends State<ProfileViewScreen>
                       title: 'Medical Information',
                       icon: Icons.medical_services_outlined,
                       children: [
-                        _buildInfoRow(Icons.history, 'Medical History', _medicalHistory),
+                        _buildInfoRow(
+                            Icons.history, 'Medical History', _medicalHistory),
                       ],
                     ),
 
@@ -185,9 +197,11 @@ class _ProfileViewScreenState extends State<ProfileViewScreen>
                               borderRadius: BorderRadius.circular(16),
                             ),
                             elevation: 2,
-                            shadowColor: const Color(0xFF667eea).withOpacity(0.3),
+                            shadowColor:
+                                const Color(0xFF667eea).withOpacity(0.3),
                           ),
-                          onPressed: () => context.go('/patient/edit-profile'),
+                          onPressed: () =>
+                              context.push('/patient/edit-profile'),
                         ),
                       ),
                     ),
@@ -262,7 +276,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen>
                 bottom: 0,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () => context.go('/patient/edit-profile'),
+                  onTap: () => context.push('/patient/edit-profile'),
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(

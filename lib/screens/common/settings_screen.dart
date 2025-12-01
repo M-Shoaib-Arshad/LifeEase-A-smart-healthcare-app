@@ -68,7 +68,8 @@ class SettingsScreen extends StatelessWidget {
                     Text(
                       'Manage your account and preferences',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8),
+                        color: theme.colorScheme.onPrimaryContainer
+                            .withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -103,8 +104,8 @@ class SettingsScreen extends StatelessWidget {
                       context.go(userProvider.role == 'patient'
                           ? '/patient/profile'
                           : userProvider.role == 'doctor'
-                          ? '/doctor/profile'
-                          : '/admin/user-management');
+                              ? '/doctor/profile'
+                              : '/admin/user-management');
                     },
                   ),
                 ],
@@ -126,7 +127,8 @@ class SettingsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const NotificationSettingsWidget(),
+                          builder: (context) =>
+                              const NotificationSettingsWidget(),
                         ),
                       );
                     },
@@ -225,29 +227,36 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
+        currentIndex: 3,
         onTap: (index) {
           if (index == 0) {
             context.go(userProvider.role == 'patient'
                 ? '/patient/home'
                 : userProvider.role == 'doctor'
-                ? '/doctor/home'
-                : '/admin/dashboard');
+                    ? '/doctor/home'
+                    : '/admin/dashboard');
           }
           if (index == 1) {
             context.go(userProvider.role == 'patient'
                 ? '/patient/profile'
                 : userProvider.role == 'doctor'
-                ? '/doctor/profile'
-                : '/admin/user-management');
+                    ? '/doctor/profile'
+                    : '/admin/user-management');
           }
-          if (index == 2) context.go('/settings');
+          if (index == 2) {
+            // Navigate to schedule/appointments
+            context.go(userProvider.role == 'patient'
+                ? '/patient/appointments'
+                : '/doctor/schedule');
+          }
+          if (index == 3) context.go('/settings');
         },
       ),
     );
   }
 
-  Widget _buildSection(BuildContext context, {
+  Widget _buildSection(
+    BuildContext context, {
     required String title,
     required List<Widget> children,
   }) {
@@ -282,13 +291,13 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildSettingsTile(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required String subtitle,
-        Widget? trailing,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    Widget? trailing,
+    required VoidCallback onTap,
+  }) {
     final theme = Theme.of(context);
 
     return ListTile(
@@ -316,10 +325,11 @@ class SettingsScreen extends StatelessWidget {
           color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
-      trailing: trailing ?? Icon(
-        Icons.chevron_right,
-        color: theme.colorScheme.onSurfaceVariant,
-      ),
+      trailing: trailing ??
+          Icon(
+            Icons.chevron_right,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -343,18 +353,20 @@ class SettingsScreen extends StatelessWidget {
             FilledButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                
+
                 // Get providers
-                final userProvider = Provider.of<UserProvider>(context, listen: false);
-                final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-                
+                final userProvider =
+                    Provider.of<UserProvider>(context, listen: false);
+                final settingsProvider =
+                    Provider.of<SettingsProvider>(context, listen: false);
+
                 try {
                   // Clear settings
                   await settingsProvider.clearSettings();
-                  
+
                   // Logout user
                   await userProvider.logout();
-                  
+
                   // Navigate to login
                   if (context.mounted) {
                     context.go('/login');

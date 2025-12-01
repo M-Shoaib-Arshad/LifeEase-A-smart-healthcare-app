@@ -20,8 +20,8 @@ void main() {
           ChangeNotifierProvider(create: (_) => SettingsProvider()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ],
-        child: MaterialApp(
-          home: const SettingsScreen(),
+        child: const MaterialApp(
+          home: SettingsScreen(),
         ),
       );
     }

@@ -59,7 +59,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'Interventional Cardiology',
       'Heart Failure Management',
     ],
-    'about': 'Dr. Sarah Wilson is a highly experienced cardiologist with over 15 years of practice in preventive and interventional cardiology. She specializes in comprehensive heart care, from prevention to advanced treatment of cardiovascular diseases. Dr. Wilson is known for her patient-centered approach and commitment to using the latest medical technologies to provide the best possible outcomes for her patients.',
+    'about':
+        'Dr. Sarah Wilson is a highly experienced cardiologist with over 15 years of practice in preventive and interventional cardiology. She specializes in comprehensive heart care, from prevention to advanced treatment of cardiovascular diseases. Dr. Wilson is known for her patient-centered approach and commitment to using the latest medical technologies to provide the best possible outcomes for her patients.',
     'achievements': [
       'Top Doctor Award 2023',
       'Excellence in Patient Care 2022',
@@ -106,7 +107,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'patientName': 'John D.',
       'rating': 5,
       'date': DateTime(2024, 12, 10),
-      'comment': 'Dr. Wilson is exceptional! She took the time to explain my condition thoroughly and made me feel comfortable throughout the entire process. Highly recommend!',
+      'comment':
+          'Dr. Wilson is exceptional! She took the time to explain my condition thoroughly and made me feel comfortable throughout the entire process. Highly recommend!',
       'verified': true,
       'helpful': 12,
     },
@@ -115,7 +117,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'patientName': 'Maria S.',
       'rating': 5,
       'date': DateTime(2024, 12, 5),
-      'comment': 'Outstanding care and professionalism. Dr. Wilson\'s expertise in cardiology is evident, and her bedside manner is wonderful.',
+      'comment':
+          'Outstanding care and professionalism. Dr. Wilson\'s expertise in cardiology is evident, and her bedside manner is wonderful.',
       'verified': true,
       'helpful': 8,
     },
@@ -124,7 +127,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'patientName': 'Robert K.',
       'rating': 4,
       'date': DateTime(2024, 11, 28),
-      'comment': 'Very knowledgeable doctor. The appointment was on time and she answered all my questions patiently.',
+      'comment':
+          'Very knowledgeable doctor. The appointment was on time and she answered all my questions patiently.',
       'verified': true,
       'helpful': 5,
     },
@@ -133,7 +137,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'patientName': 'Lisa M.',
       'rating': 5,
       'date': DateTime(2024, 11, 20),
-      'comment': 'Dr. Wilson saved my life! Her quick diagnosis and treatment plan were exactly what I needed. Forever grateful.',
+      'comment':
+          'Dr. Wilson saved my life! Her quick diagnosis and treatment plan were exactly what I needed. Forever grateful.',
       'verified': true,
       'helpful': 15,
     },
@@ -224,7 +229,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
         content: Text(
           _isFavorite ? 'Added to favorites' : 'Removed from favorites',
         ),
-        backgroundColor: _isFavorite ? Colors.red.shade600 : Colors.grey.shade600,
+        backgroundColor:
+            _isFavorite ? Colors.red.shade600 : Colors.grey.shade600,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -279,7 +285,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
   }
 
   void _bookAppointment() {
-    context.go('/patient/appointment-booking');
+    context.push('/patient/appointment-booking');
   }
 
   @override
@@ -407,12 +413,16 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _isFavorite ? Colors.red.shade50 : Colors.grey.shade50,
+                      color: _isFavorite
+                          ? Colors.red.shade50
+                          : Colors.grey.shade50,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       _isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: _isFavorite ? Colors.red.shade700 : Colors.grey.shade700,
+                      color: _isFavorite
+                          ? Colors.red.shade700
+                          : Colors.grey.shade700,
                     ),
                   ),
                 );
@@ -549,7 +559,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildHeaderStat('Experience', '${_doctorData['experience']} years'),
+                _buildHeaderStat(
+                    'Experience', '${_doctorData['experience']} years'),
                 _buildHeaderStat('Fee', '\$${_doctorData['consultationFee']}'),
                 _buildHeaderStat('Distance', '${_doctorData['distance']} km'),
               ],
@@ -562,7 +573,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                 _buildFeatureBadge('Video Call', Icons.video_call),
               if (_doctorData['emergencyAvailable'])
                 _buildFeatureBadge('Emergency', Icons.emergency),
-              _buildFeatureBadge('${_doctorData['languages'].length} Languages', Icons.language),
+              _buildFeatureBadge('${_doctorData['languages'].length} Languages',
+                  Icons.language),
             ],
           ),
         ],
@@ -790,7 +802,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             runSpacing: 8,
             children: (_doctorData['specialties'] as List).map((specialty) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(20),
@@ -1086,9 +1099,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: (_doctorData['insuranceAccepted'] as List).map((insurance) {
+            children:
+                (_doctorData['insuranceAccepted'] as List).map((insurance) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.teal.shade50,
                   borderRadius: BorderRadius.circular(16),
@@ -1154,7 +1169,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                   Row(
                     children: List.generate(5, (index) {
                       return Icon(
-                        index < _doctorData['rating'].floor() ? Icons.star : Icons.star_border,
+                        index < _doctorData['rating'].floor()
+                            ? Icons.star
+                            : Icons.star_border,
                         color: Colors.amber,
                         size: 20,
                       );
@@ -1274,7 +1291,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                         if (review['verified'])
                           Container(
                             margin: const EdgeInsets.only(left: 8),
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(8),
@@ -1294,7 +1312,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                       children: [
                         ...List.generate(5, (index) {
                           return Icon(
-                            index < review['rating'] ? Icons.star : Icons.star_border,
+                            index < review['rating']
+                                ? Icons.star
+                                : Icons.star_border,
                             color: Colors.amber,
                             size: 14,
                           );
@@ -1398,10 +1418,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             ],
           ),
           const SizedBox(height: 16),
-          ...(_doctorData['workingHours'] as Map<String, String>).entries.map((entry) {
+          ...(_doctorData['workingHours'] as Map<String, String>)
+              .entries
+              .map((entry) {
             final day = entry.key;
             final hours = entry.value;
-            final isToday = DateFormat('EEEE').format(DateTime.now()).toLowerCase() == day;
+            final isToday =
+                DateFormat('EEEE').format(DateTime.now()).toLowerCase() == day;
 
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
@@ -1409,7 +1432,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
               decoration: BoxDecoration(
                 color: isToday ? Colors.blue.shade50 : Colors.grey.shade50,
                 borderRadius: BorderRadius.circular(8),
-                border: isToday ? Border.all(color: Colors.blue.shade200) : null,
+                border:
+                    isToday ? Border.all(color: Colors.blue.shade200) : null,
               ),
               child: Row(
                 children: [
@@ -1420,7 +1444,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
-                        color: isToday ? Colors.blue.shade700 : Colors.grey.shade700,
+                        color: isToday
+                            ? Colors.blue.shade700
+                            : Colors.grey.shade700,
                       ),
                     ),
                   ),
@@ -1429,14 +1455,16 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                       hours,
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: isToday ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight:
+                            isToday ? FontWeight.w600 : FontWeight.normal,
                         color: isToday ? Colors.blue.shade700 : Colors.black87,
                       ),
                     ),
                   ),
                   if (isToday)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.blue.shade600,
                         borderRadius: BorderRadius.circular(8),
@@ -1522,7 +1550,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                     runSpacing: 8,
                     children: (daySlots['slots'] as List).map((slot) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: Colors.green.shade50,
                           borderRadius: BorderRadius.circular(8),
@@ -1608,16 +1637,19 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _buildContactItem(Icons.phone, 'Phone', contact['phone'], _callDoctor),
+          _buildContactItem(
+              Icons.phone, 'Phone', contact['phone'], _callDoctor),
           _buildContactItem(Icons.email, 'Email', contact['email'], () {}),
           _buildContactItem(Icons.web, 'Website', contact['website'], () {}),
-          _buildContactItem(Icons.message, 'Message', 'Send a message', _messageDoctor),
+          _buildContactItem(
+              Icons.message, 'Message', 'Send a message', _messageDoctor),
         ],
       ),
     );
   }
 
-  Widget _buildContactItem(IconData icon, String label, String value, VoidCallback onTap) {
+  Widget _buildContactItem(
+      IconData icon, String label, String value, VoidCallback onTap) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -1655,7 +1687,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, color: Colors.grey.shade400, size: 16),
+              Icon(Icons.arrow_forward_ios,
+                  color: Colors.grey.shade400, size: 16),
             ],
           ),
         ),
@@ -1813,7 +1846,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    context.go('/patient/doctor-map');
+                    context.push('/patient/doctor-map');
                   },
                   icon: const Icon(Icons.map, size: 16),
                   label: const Text('View on Map'),
@@ -1888,7 +1921,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             onPressed: () {
               Navigator.of(context).pop();
               // In a real app, this would launch the URL
-              // url_launcher can be used here: 
+              // url_launcher can be used here:
               // launchUrl(Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lng'))
               ScaffoldMessenger.of(this.context).showSnackBar(
                 SnackBar(

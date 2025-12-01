@@ -84,8 +84,10 @@ class _SideDrawerState extends State<SideDrawer>
               Provider.of<UserProvider>(context, listen: false).logout();
               context.go('/login');
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentCoral),
-            child: const Text('Logout', style: TextStyle(color: AppColors.textLight)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accentCoral),
+            child: const Text('Logout',
+                style: TextStyle(color: AppColors.textLight)),
           ),
         ],
       ),
@@ -96,44 +98,71 @@ class _SideDrawerState extends State<SideDrawer>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        contentPadding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
         title: const Row(
-          children: [
-            Icon(Icons.emergency, color: AppColors.accentCoral),
-            SizedBox(width: 8),
-            Text('Emergency Protocols'),
-          ],
-        ),
-        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.local_hospital, color: AppColors.accentCoral),
-              title: const Text('Code Blue'),
-              subtitle: const Text('Cardiac/Respiratory Arrest'),
-              onTap: () {
-                Navigator.pop(context);
-                // Handle Code Blue
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.warning, color: AppColors.warning),
-              title: const Text('Code Yellow'),
-              subtitle: const Text('Missing Patient'),
-              onTap: () {
-                Navigator.pop(context);
-                // Handle Code Yellow
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.security, color: AppColors.accentPurple),
-              title: const Text('Code Silver'),
-              subtitle: const Text('Security Threat'),
-              onTap: () {
-                Navigator.pop(context);
-                // Handle Code Silver
-              },
+            Icon(Icons.emergency, color: AppColors.accentCoral, size: 22),
+            SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Emergency Protocols',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                  leading: const Icon(Icons.local_hospital,
+                      color: AppColors.accentCoral, size: 20),
+                  title:
+                      const Text('Code Blue', style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('Cardiac/Respiratory Arrest',
+                      style: TextStyle(fontSize: 12)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Handle Code Blue
+                  },
+                ),
+                ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                  leading: const Icon(Icons.warning,
+                      color: AppColors.warning, size: 20),
+                  title:
+                      const Text('Code Yellow', style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('Missing Patient',
+                      style: TextStyle(fontSize: 12)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Handle Code Yellow
+                  },
+                ),
+                ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                  leading: const Icon(Icons.security,
+                      color: AppColors.accentPurple, size: 20),
+                  title:
+                      const Text('Code Silver', style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('Security Threat',
+                      style: TextStyle(fontSize: 12)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Handle Code Silver
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
         actions: [
           TextButton(
@@ -197,7 +226,10 @@ class _SideDrawerState extends State<SideDrawer>
 
   Widget _buildDrawerHeader(String role) {
     return Container(
-      height: 280,
+      constraints: const BoxConstraints(
+        minHeight: 220,
+        maxHeight: 280,
+      ),
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         boxShadow: [
@@ -209,7 +241,7 @@ class _SideDrawerState extends State<SideDrawer>
         ],
       ),
       child: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +253,8 @@ class _SideDrawerState extends State<SideDrawer>
                       Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.textLight, width: 3),
+                          border:
+                              Border.all(color: AppColors.textLight, width: 3),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.2),
@@ -245,7 +278,8 @@ class _SideDrawerState extends State<SideDrawer>
                             decoration: BoxDecoration(
                               color: AppColors.accentMint,
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.textLight, width: 2),
+                              border: Border.all(
+                                  color: AppColors.textLight, width: 2),
                             ),
                             child: const Icon(
                               Icons.verified,
@@ -292,7 +326,8 @@ class _SideDrawerState extends State<SideDrawer>
               ),
               const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppColors.textLight.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -308,19 +343,19 @@ class _SideDrawerState extends State<SideDrawer>
                         _buildHeaderStat('Experience', _userData['experience']),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Icon(
                           Icons.access_time,
                           color: AppColors.textLight.withOpacity(0.8),
-                          size: 14,
+                          size: 12,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'Last login: ${_getTimeAgo(_userData['lastLogin'])}',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: AppColors.textLight.withOpacity(0.8),
                           ),
                         ),
@@ -463,7 +498,7 @@ class _SideDrawerState extends State<SideDrawer>
         _buildDrawerItem(
           Icons.person_rounded,
           'Profile',
-          () => context.go(role == 'patient'
+          () => context.push(role == 'patient'
               ? '/patient/profile'
               : role == 'doctor'
                   ? '/doctor/profile'
@@ -476,24 +511,24 @@ class _SideDrawerState extends State<SideDrawer>
           _buildDrawerItem(
             Icons.people_rounded,
             'Patients',
-            () => context.go('/doctor/patients'),
+            () => context.push('/doctor/patients'),
           ),
           _buildDrawerItem(
             Icons.calendar_today_rounded,
             'Schedule',
-            () => context.go('/doctor/schedule'),
+            () => context.push('/doctor/schedule'),
           ),
         ],
         if (role == 'patient') ...[
           _buildDrawerItem(
             Icons.calendar_today_rounded,
             'Appointments',
-            () => context.go('/patient/appointments'),
+            () => context.push('/patient/appointments'),
           ),
           _buildDrawerItem(
             Icons.medical_services_rounded,
             'Medical Records',
-            () => context.go('/patient/medical-records'),
+            () => context.push('/patient/medical-records'),
           ),
         ],
       ],
@@ -510,45 +545,45 @@ class _SideDrawerState extends State<SideDrawer>
           _buildDrawerItem(
             Icons.video_call_rounded,
             'Telemedicine',
-            () => context.go('/doctor/telemedicine'),
+            () => context.push('/doctor/telemedicine'),
           ),
           _buildDrawerItem(
             Icons.medication_rounded,
             'Prescriptions',
-            () => context.go('/doctor/prescriptions'),
+            () => context.push('/doctor/prescriptions'),
           ),
           _buildDrawerItem(
             Icons.science_rounded,
             'Lab Results',
-            () => context.go('/doctor/lab-results'),
+            () => context.push('/doctor/lab-results'),
           ),
           _buildDrawerItem(
             Icons.image_rounded,
             'Medical Imaging',
-            () => context.go('/doctor/imaging'),
+            () => context.push('/doctor/imaging'),
           ),
         ],
         if (role == 'patient') ...[
           _buildDrawerItem(
             Icons.medication_rounded,
             'My Medications',
-            () => context.go('/patient/medications'),
+            () => context.push('/patient/medications'),
           ),
           _buildDrawerItem(
             Icons.favorite_rounded,
             'Vital Signs',
-            () => context.go('/patient/vitals'),
+            () => context.push('/patient/vitals'),
           ),
           _buildDrawerItem(
             Icons.chat_rounded,
             'Messages',
-            () => context.go('/patient/messages'),
+            () => context.push('/patient/messages'),
           ),
         ],
         _buildDrawerItem(
           Icons.health_and_safety_rounded,
           'Health Records',
-          () => context.go('/health-records'),
+          () => context.push('/health-records'),
         ),
       ],
     );
@@ -563,12 +598,12 @@ class _SideDrawerState extends State<SideDrawer>
         _buildDrawerItem(
           Icons.settings_rounded,
           'Settings',
-          () => context.go('/settings'),
+          () => context.push('/settings'),
         ),
         _buildDrawerItem(
           Icons.notifications_rounded,
           'Notifications',
-          () => context.go('/notifications'),
+          () => context.push('/notifications'),
           badge: _userData['notifications'] > 0
               ? _userData['notifications']
               : null,
@@ -576,17 +611,17 @@ class _SideDrawerState extends State<SideDrawer>
         _buildDrawerItem(
           Icons.help_rounded,
           'Help & Support',
-          () => context.go('/support'),
+          () => context.push('/support'),
         ),
         _buildDrawerItem(
           Icons.privacy_tip_rounded,
           'Privacy Policy',
-          () => context.go('/privacy'),
+          () => context.push('/privacy'),
         ),
         _buildDrawerItem(
           Icons.info_rounded,
           'About',
-          () => context.go('/about'),
+          () => context.push('/about'),
         ),
       ],
     );
@@ -607,13 +642,13 @@ class _SideDrawerState extends State<SideDrawer>
         _buildDrawerItem(
           Icons.local_hospital_rounded,
           'Emergency Contacts',
-          () => context.go('/emergency-contacts'),
+          () => context.push('/emergency-contacts'),
           textColor: AppColors.accentCoral,
         ),
         _buildDrawerItem(
           Icons.warning_rounded,
           'Safety Guidelines',
-          () => context.go('/safety-guidelines'),
+          () => context.push('/safety-guidelines'),
           textColor: AppColors.accentCoral,
         ),
       ],

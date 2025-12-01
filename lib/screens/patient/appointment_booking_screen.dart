@@ -10,7 +10,8 @@ class AppointmentBookingScreen extends StatefulWidget {
   const AppointmentBookingScreen({super.key});
 
   @override
-  State<AppointmentBookingScreen> createState() => _AppointmentBookingScreenState();
+  State<AppointmentBookingScreen> createState() =>
+      _AppointmentBookingScreenState();
 }
 
 class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
@@ -45,7 +46,13 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
       'hospital': 'City General Hospital',
       'consultationFee': 150,
       'nextAvailable': DateTime.now().add(const Duration(days: 2)),
-      'availableSlots': ['09:00 AM', '10:30 AM', '02:00 PM', '03:30 PM', '05:00 PM'],
+      'availableSlots': [
+        '09:00 AM',
+        '10:30 AM',
+        '02:00 PM',
+        '03:30 PM',
+        '05:00 PM'
+      ],
     },
     {
       'id': 'D002',
@@ -156,30 +163,57 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
         _selectedDoctor != null &&
         _selectedDate != null &&
         _selectedTimeSlot != null) {
-
       // Show confirmation dialog
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
           title: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle, color: Colors.green.shade600),
+              Icon(Icons.check_circle, color: Colors.green.shade600, size: 22),
               const SizedBox(width: 8),
-              const Text('Confirm Appointment'),
+              const Flexible(
+                child: Text(
+                  'Confirm Appointment',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Doctor: ${_selectedDoctor!['name']}'),
-              Text('Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate!)}'),
-              Text('Time: $_selectedTimeSlot'),
-              Text('Type: ${_selectedAppointmentType.toUpperCase()}'),
-              Text('Fee: \$${_selectedDoctor!['consultationFee']}'),
-              if (_isUrgent)
-                Text('Priority: URGENT', style: TextStyle(color: Colors.red.shade600, fontWeight: FontWeight.bold)),
-            ],
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Doctor: ${_selectedDoctor!['name']}',
+                      style: const TextStyle(fontSize: 14)),
+                  const SizedBox(height: 6),
+                  Text(
+                      'Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate!)}',
+                      style: const TextStyle(fontSize: 14)),
+                  const SizedBox(height: 6),
+                  Text('Time: $_selectedTimeSlot',
+                      style: const TextStyle(fontSize: 14)),
+                  const SizedBox(height: 6),
+                  Text('Type: ${_selectedAppointmentType.toUpperCase()}',
+                      style: const TextStyle(fontSize: 14)),
+                  const SizedBox(height: 6),
+                  Text('Fee: \$${_selectedDoctor!['consultationFee']}',
+                      style: const TextStyle(fontSize: 14)),
+                  if (_isUrgent) ...[
+                    const SizedBox(height: 6),
+                    Text('Priority: URGENT',
+                        style: TextStyle(
+                            color: Colors.red.shade600,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
+                  ],
+                ],
+              ),
+            ),
           ),
           actions: [
             TextButton(
@@ -189,10 +223,11 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                context.go('/patient/appointment-confirmation');
+                context.push('/patient/appointment-confirmation');
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text('Confirm Booking', style: TextStyle(color: Colors.white)),
+              child: const Text('Confirm Booking',
+                  style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -321,13 +356,11 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text('Booking Help'),
-                  content: const Text(
-                      'Follow these steps:\n'
-                          '1. Select a doctor\n'
-                          '2. Choose date and time\n'
-                          '3. Fill appointment details\n'
-                          '4. Confirm booking'
-                  ),
+                  content: const Text('Follow these steps:\n'
+                      '1. Select a doctor\n'
+                      '2. Choose date and time\n'
+                      '3. Fill appointment details\n'
+                      '4. Confirm booking'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -434,7 +467,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                                 decoration: BoxDecoration(
                                   color: Colors.blue.shade600,
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.white, width: 2),
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
                                 ),
                                 child: const Icon(
                                   Icons.check,
@@ -483,7 +517,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 16),
+                              const Icon(Icons.star,
+                                  color: Colors.amber, size: 16),
                               const SizedBox(width: 4),
                               Text(
                                 doctor['rating'].toString(),
@@ -516,7 +551,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.access_time, color: Colors.grey.shade600, size: 16),
+                        Icon(Icons.access_time,
+                            color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 8),
                         Text(
                           'Experience: ${doctor['experience']}',
@@ -526,7 +562,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                           ),
                         ),
                         const Spacer(),
-                        Icon(Icons.calendar_today, color: Colors.grey.shade600, size: 16),
+                        Icon(Icons.calendar_today,
+                            color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 4),
                         Text(
                           'Next: ${DateFormat('MMM d').format(doctor['nextAvailable'])}',
@@ -644,15 +681,19 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                   Expanded(
                     child: Text(
                       _selectedDate != null
-                          ? DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate!)
+                          ? DateFormat('EEEE, MMMM d, yyyy')
+                              .format(_selectedDate!)
                           : 'Select appointment date',
                       style: TextStyle(
                         fontSize: 16,
-                        color: _selectedDate != null ? Colors.black87 : Colors.grey.shade600,
+                        color: _selectedDate != null
+                            ? Colors.black87
+                            : Colors.grey.shade600,
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Colors.grey.shade400, size: 16),
+                  Icon(Icons.arrow_forward_ios,
+                      color: Colors.grey.shade400, size: 16),
                 ],
               ),
             ),
@@ -694,7 +735,9 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                       color: isSelected ? Colors.blue.shade600 : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected ? Colors.blue.shade600 : Colors.grey.shade300,
+                        color: isSelected
+                            ? Colors.blue.shade600
+                            : Colors.grey.shade300,
                       ),
                     ),
                     child: Center(
@@ -726,7 +769,9 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Appointment summary
-            if (_selectedDoctor != null && _selectedDate != null && _selectedTimeSlot != null)
+            if (_selectedDoctor != null &&
+                _selectedDate != null &&
+                _selectedTimeSlot != null)
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -746,7 +791,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                     ),
                     const SizedBox(height: 8),
                     Text('Doctor: ${_selectedDoctor!['name']}'),
-                    Text('Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate!)}'),
+                    Text(
+                        'Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate!)}'),
                     Text('Time: $_selectedTimeSlot'),
                     Text('Fee: \$${_selectedDoctor!['consultationFee']}'),
                   ],
@@ -765,12 +811,13 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _selectedAppointmentType,
+              initialValue: _selectedAppointmentType,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               items: _appointmentTypes.map((type) {
                 return DropdownMenuItem(
@@ -803,7 +850,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               maxLines: 3,
               validator: (value) {
@@ -832,7 +880,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               maxLines: 2,
             ),
@@ -849,7 +898,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                 children: [
                   CheckboxListTile(
                     title: const Text('Mark as Urgent'),
-                    subtitle: const Text('Priority scheduling (additional fee may apply)'),
+                    subtitle: const Text(
+                        'Priority scheduling (additional fee may apply)'),
                     value: _isUrgent,
                     onChanged: (value) {
                       setState(() {
@@ -860,7 +910,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                   ),
                   CheckboxListTile(
                     title: const Text('Follow-up Appointment'),
-                    subtitle: const Text('This is a follow-up to a previous visit'),
+                    subtitle:
+                        const Text('This is a follow-up to a previous visit'),
                     value: _isFollowUp,
                     onChanged: (value) {
                       setState(() {
@@ -922,9 +973,11 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen>
                     );
                     return;
                   }
-                  if (_tabController.index == 1 && (_selectedDate == null || _selectedTimeSlot == null)) {
+                  if (_tabController.index == 1 &&
+                      (_selectedDate == null || _selectedTimeSlot == null)) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please select date and time')),
+                      const SnackBar(
+                          content: Text('Please select date and time')),
                     );
                     return;
                   }

@@ -106,7 +106,7 @@ class PatientHomeScreen extends StatelessWidget {
               subtitle: 'Find and schedule with doctors',
               icon: Icons.calendar_today,
               color: AppColors.primary,
-              onTap: () => context.go('/patient/doctor-search'),
+              onTap: () => context.push('/patient/doctor-search'),
             ),
 
             const SizedBox(height: 12),
@@ -117,7 +117,7 @@ class PatientHomeScreen extends StatelessWidget {
               subtitle: 'Monitor your health metrics',
               icon: Icons.favorite,
               color: AppColors.accentCoral,
-              onTap: () => context.go('/patient/health-tracker-input'),
+              onTap: () => context.push('/patient/health-tracker-input'),
             ),
 
             const SizedBox(height: 12),
@@ -128,7 +128,7 @@ class PatientHomeScreen extends StatelessWidget {
               subtitle: 'View your health history',
               icon: Icons.folder_outlined,
               color: AppColors.accentMint,
-              onTap: () => context.go('/patient/medical-records'),
+              onTap: () => context.push('/patient/medical-records'),
             ),
 
             const SizedBox(height: 32),
@@ -157,7 +157,7 @@ class PatientHomeScreen extends StatelessWidget {
                   'Lab Reports',
                   Icons.science_outlined,
                   AppColors.accentPurple,
-                      () {
+                  () {
                     // Navigate to lab reports
                   },
                 ),
@@ -165,7 +165,7 @@ class PatientHomeScreen extends StatelessWidget {
                   'Prescriptions',
                   Icons.medication_outlined,
                   AppColors.warning,
-                      () {
+                  () {
                     // Navigate to prescriptions
                   },
                 ),
@@ -173,7 +173,7 @@ class PatientHomeScreen extends StatelessWidget {
                   'Health Tips',
                   Icons.lightbulb_outline,
                   AppColors.accentMint,
-                      () {
+                  () {
                     // Navigate to health tips
                   },
                 ),
@@ -181,7 +181,7 @@ class PatientHomeScreen extends StatelessWidget {
                   'Emergency',
                   Icons.emergency,
                   AppColors.accentCoral,
-                      () {
+                  () {
                     // Handle emergency
                   },
                 ),
@@ -257,13 +257,13 @@ class PatientHomeScreen extends StatelessWidget {
   }
 
   Widget _buildActionCard(
-      BuildContext context, {
-        required String title,
-        required String subtitle,
-        required IconData icon,
-        required Color color,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bgCard,
@@ -335,11 +335,11 @@ class PatientHomeScreen extends StatelessWidget {
   }
 
   Widget _buildServiceCard(
-      String title,
-      IconData icon,
-      Color color,
-      VoidCallback onTap,
-      ) {
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bgCard,

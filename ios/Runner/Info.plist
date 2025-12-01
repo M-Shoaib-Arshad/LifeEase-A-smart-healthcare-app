@@ -45,6 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Google Maps API Key -->
+	<key>GoogleMapsApiKey</key>
+	<string>AIzaSyASPEPbF1cUmWZQmePDCQNSaHL__NmJMnA</string>
 	<!-- Location Permissions for Google Maps -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>LifeEase needs access to your location to find nearby doctors and healthcare facilities.</string>

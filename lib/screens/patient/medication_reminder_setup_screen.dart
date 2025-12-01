@@ -494,7 +494,7 @@ class _MedicationReminderSetupScreenState extends State<MedicationReminderSetupS
     required void Function(String?) onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
@@ -649,7 +649,7 @@ class _MedicationReminderSetupScreenState extends State<MedicationReminderSetupS
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.blue[600],
+            activeThumbColor: Colors.blue[600],
           ),
         ],
       ),

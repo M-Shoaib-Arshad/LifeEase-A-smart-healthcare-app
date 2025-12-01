@@ -88,7 +88,7 @@ final ThemeData appTheme = ThemeData(
     labelStyle: const TextStyle(color: AppColors.textSecondary),
     hintStyle: const TextStyle(color: AppColors.textSecondary),
   ),
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: AppColors.bgCard,
     elevation: 2,
     shape: RoundedRectangleBorder(
@@ -247,7 +247,7 @@ final ThemeData darkTheme = ThemeData(
     labelStyle: const TextStyle(color: AppColors.darkTextSecondary),
     hintStyle: const TextStyle(color: AppColors.darkTextSecondary),
   ),
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: AppColors.darkCard,
     elevation: 2,
     shape: RoundedRectangleBorder(

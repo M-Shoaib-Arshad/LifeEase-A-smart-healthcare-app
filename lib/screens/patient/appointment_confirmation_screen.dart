@@ -10,11 +10,12 @@ class AppointmentConfirmationScreen extends StatefulWidget {
   const AppointmentConfirmationScreen({super.key});
 
   @override
-  State<AppointmentConfirmationScreen> createState() => _AppointmentConfirmationScreenState();
+  State<AppointmentConfirmationScreen> createState() =>
+      _AppointmentConfirmationScreenState();
 }
 
-class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationScreen>
-    with TickerProviderStateMixin {
+class _AppointmentConfirmationScreenState
+    extends State<AppointmentConfirmationScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late AnimationController _pulseController;
   late Animation<double> _fadeAnimation;
@@ -195,8 +196,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           ],
         ),
         content: const Text(
-            'Are you sure you want to reschedule this appointment? You will be redirected to the booking screen.'
-        ),
+            'Are you sure you want to reschedule this appointment? You will be redirected to the booking screen.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -205,10 +205,11 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              context.go('/patient/appointment-booking');
+              context.push('/patient/appointment-booking');
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            child: const Text('Reschedule', style: TextStyle(color: Colors.white)),
+            child:
+                const Text('Reschedule', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -227,8 +228,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           ],
         ),
         content: const Text(
-            'Are you sure you want to cancel this appointment? This action cannot be undone and cancellation fees may apply.'
-        ),
+            'Are you sure you want to cancel this appointment? This action cannot be undone and cancellation fees may apply.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -246,7 +246,8 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
               context.go('/patient/home');
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Cancel Appointment', style: TextStyle(color: Colors.white)),
+            child: const Text('Cancel Appointment',
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -503,16 +504,22 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
                   ],
                 ),
                 const SizedBox(height: 16),
-                _buildDetailRow('Date', DateFormat('EEEE, MMMM d, yyyy').format(appointment['date'])),
-                _buildDetailRow('Time', DateFormat('h:mm a').format(appointment['date'])),
-                _buildDetailRow('Duration', '${appointment['duration']} minutes'),
+                _buildDetailRow(
+                    'Date',
+                    DateFormat('EEEE, MMMM d, yyyy')
+                        .format(appointment['date'])),
+                _buildDetailRow(
+                    'Time', DateFormat('h:mm a').format(appointment['date'])),
+                _buildDetailRow(
+                    'Duration', '${appointment['duration']} minutes'),
                 _buildDetailRow('Type', appointment['type']),
                 _buildDetailRow('Location', appointment['location']),
                 _buildDetailRow('Reason', appointment['reason']),
                 if (appointment['isUrgent'])
                   Container(
                     margin: const EdgeInsets.only(top: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.red.shade100,
                       borderRadius: BorderRadius.circular(20),
@@ -628,7 +635,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
                   Icons.phone,
                   'Call',
                   Colors.green,
-                      () {
+                  () {
                     // In real app, would initiate phone call
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Calling ${doctor['phone']}')),
@@ -642,10 +649,11 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
                   Icons.email,
                   'Email',
                   Colors.blue,
-                      () {
+                  () {
                     // In real app, would open email client
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Opening email to ${doctor['email']}')),
+                      SnackBar(
+                          content: Text('Opening email to ${doctor['email']}')),
                     );
                   },
                 ),
@@ -722,7 +730,8 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           _buildDetailRow('Consultation Fee', '\$${appointment['fee']}'),
           _buildDetailRow('Payment Method', booking['paymentMethod']),
           _buildDetailRow('Transaction ID', booking['transactionId']),
-          _buildDetailRow('Payment Date', DateFormat('MMM d, yyyy • h:mm a').format(booking['bookedAt'])),
+          _buildDetailRow('Payment Date',
+              DateFormat('MMM d, yyyy • h:mm a').format(booking['bookedAt'])),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -788,32 +797,32 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           ),
           const SizedBox(height: 16),
           ...instructions.map((instruction) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 6),
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade600,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    instruction,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      height: 1.4,
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade600,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        instruction,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -1001,7 +1010,8 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
     );
   }
 
-  Widget _buildContactButton(IconData icon, String label, Color color, VoidCallback onTap) {
+  Widget _buildContactButton(
+      IconData icon, String label, Color color, VoidCallback onTap) {
     return OutlinedButton.icon(
       onPressed: onTap,
       icon: Icon(icon, size: 16),

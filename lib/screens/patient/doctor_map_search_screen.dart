@@ -223,8 +223,8 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
           Marker(
             markerId: const MarkerId('user_location'),
             position: _currentPosition,
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueBlue),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             infoWindow: const InfoWindow(title: 'Your Location'),
           ),
         );
@@ -430,7 +430,7 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
                 color: Colors.green.shade700,
               ),
             ),
-            onPressed: () => context.go('/patient/doctor-list'),
+            onPressed: () => context.push('/patient/doctor-list'),
           ),
         ],
       ),
@@ -750,7 +750,7 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => context.go('/patient/doctor-profile'),
+                    onPressed: () => context.push('/patient/doctor-profile'),
                     icon: const Icon(Icons.info, size: 16),
                     label: const Text('View Profile'),
                     style: OutlinedButton.styleFrom(
@@ -762,7 +762,8 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => context.go('/patient/appointment-booking'),
+                    onPressed: () =>
+                        context.push('/patient/appointment-booking'),
                     icon: const Icon(Icons.calendar_today, size: 16),
                     label: const Text('Book Now'),
                     style: ElevatedButton.styleFrom(

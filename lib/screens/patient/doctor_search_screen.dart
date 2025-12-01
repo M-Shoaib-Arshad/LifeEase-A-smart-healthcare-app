@@ -63,17 +63,37 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
   ];
 
   final List<Map<String, dynamic>> recentSearches = [
-    {'query': 'Cardiologist near me', 'specialty': 'Cardiology', 'location': 'Current Location'},
-    {'query': 'Dr. Sarah Johnson', 'specialty': 'Dermatology', 'location': 'New York'},
-    {'query': 'Pediatrician Manhattan', 'specialty': 'Pediatrics', 'location': 'Manhattan'},
+    {
+      'query': 'Cardiologist near me',
+      'specialty': 'Cardiology',
+      'location': 'Current Location'
+    },
+    {
+      'query': 'Dr. Sarah Johnson',
+      'specialty': 'Dermatology',
+      'location': 'New York'
+    },
+    {
+      'query': 'Pediatrician Manhattan',
+      'specialty': 'Pediatrics',
+      'location': 'Manhattan'
+    },
   ];
 
   final List<Map<String, dynamic>> popularSpecialties = [
-    {'name': 'General Medicine', 'icon': Icons.medical_services, 'color': Colors.blue},
+    {
+      'name': 'General Medicine',
+      'icon': Icons.medical_services,
+      'color': Colors.blue
+    },
     {'name': 'Cardiology', 'icon': Icons.favorite, 'color': Colors.red},
     {'name': 'Dermatology', 'icon': Icons.face, 'color': Colors.orange},
     {'name': 'Pediatrics', 'icon': Icons.child_care, 'color': Colors.green},
-    {'name': 'Orthopedics', 'icon': Icons.accessibility, 'color': Colors.purple},
+    {
+      'name': 'Orthopedics',
+      'icon': Icons.accessibility,
+      'color': Colors.purple
+    },
     {'name': 'Neurology', 'icon': Icons.psychology, 'color': Colors.indigo},
   ];
 
@@ -124,7 +144,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
     }
 
     // Navigate to doctor list with search parameters
-    context.go('/patient/doctor-list?search=${_searchController.text}&specialty=$selectedSpecialty&location=${_locationController.text}');
+    context.push(
+        '/patient/doctor-list?search=${_searchController.text}&specialty=$selectedSpecialty&location=${_locationController.text}');
   }
 
   void _clearFilters() {
@@ -169,7 +190,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
               ),
             ),
             onPressed: () {
-              context.go('/patient/doctor-map');
+              context.push('/patient/doctor-map');
             },
             tooltip: 'Map View',
           ),
@@ -253,15 +274,16 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                         controller: _searchController,
                         decoration: InputDecoration(
                           labelText: 'Search doctors, specialties...',
-                          prefixIcon: const Icon(Icons.search, color: Colors.blue),
+                          prefixIcon:
+                              const Icon(Icons.search, color: Colors.blue),
                           suffixIcon: _searchController.text.isNotEmpty
                               ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {});
-                            },
-                          )
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {});
+                                  },
+                                )
                               : null,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -269,7 +291,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Colors.blue, width: 2),
+                            borderSide:
+                                const BorderSide(color: Colors.blue, width: 2),
                           ),
                           filled: true,
                           fillColor: Colors.grey[50],
@@ -285,9 +308,11 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                         controller: _locationController,
                         decoration: InputDecoration(
                           labelText: 'Location (City, ZIP code)',
-                          prefixIcon: const Icon(Icons.location_on, color: Colors.red),
+                          prefixIcon:
+                              const Icon(Icons.location_on, color: Colors.red),
                           suffixIcon: IconButton(
-                            icon: const Icon(Icons.my_location, color: Colors.blue),
+                            icon: const Icon(Icons.my_location,
+                                color: Colors.blue),
                             onPressed: () {
                               _locationController.text = 'Current Location';
                               setState(() {});
@@ -299,7 +324,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Colors.blue, width: 2),
+                            borderSide:
+                                const BorderSide(color: Colors.blue, width: 2),
                           ),
                           filled: true,
                           fillColor: Colors.grey[50],
@@ -382,7 +408,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
 
                         // Specialty Dropdown
                         DropdownButtonFormField<String>(
-                          value: selectedSpecialty,
+                          initialValue: selectedSpecialty,
                           decoration: InputDecoration(
                             labelText: 'Specialty',
                             prefixIcon: const Icon(Icons.medical_services),
@@ -410,7 +436,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                           children: [
                             Expanded(
                               child: DropdownButtonFormField<String>(
-                                value: selectedGender,
+                                initialValue: selectedGender,
                                 decoration: InputDecoration(
                                   labelText: 'Gender',
                                   prefixIcon: const Icon(Icons.person),
@@ -434,7 +460,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                             const SizedBox(width: 16),
                             Expanded(
                               child: DropdownButtonFormField<String>(
-                                value: selectedLanguage,
+                                initialValue: selectedLanguage,
                                 decoration: InputDecoration(
                                   labelText: 'Language',
                                   prefixIcon: const Icon(Icons.language),
@@ -501,7 +527,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                         // Filter Switches
                         SwitchListTile(
                           title: const Text('Available Today'),
-                          subtitle: const Text('Show only doctors available today'),
+                          subtitle:
+                              const Text('Show only doctors available today'),
                           value: availableToday,
                           onChanged: (value) {
                             setState(() {
@@ -512,7 +539,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
 
                         SwitchListTile(
                           title: const Text('Accepts Insurance'),
-                          subtitle: const Text('Show doctors who accept insurance'),
+                          subtitle:
+                              const Text('Show doctors who accept insurance'),
                           value: acceptsInsurance,
                           onChanged: (value) {
                             setState(() {
@@ -523,7 +551,8 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
 
                         SwitchListTile(
                           title: const Text('Telemedicine Available'),
-                          subtitle: const Text('Show doctors offering virtual consultations'),
+                          subtitle: const Text(
+                              'Show doctors offering virtual consultations'),
                           value: telemedicineAvailable,
                           onChanged: (value) {
                             setState(() {
@@ -621,7 +650,6 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -631,10 +659,13 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen>
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
-                          leading: const Icon(Icons.history, color: Colors.grey),
+                          leading:
+                              const Icon(Icons.history, color: Colors.grey),
                           title: Text(search['query']),
-                          subtitle: Text('${search['specialty']} • ${search['location']}'),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                          subtitle: Text(
+                              '${search['specialty']} • ${search['location']}'),
+                          trailing:
+                              const Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () {
                             _searchController.text = search['query'];
                             selectedSpecialty = search['specialty'];

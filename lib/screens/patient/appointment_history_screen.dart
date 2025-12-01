@@ -10,7 +10,8 @@ class AppointmentHistoryScreen extends StatefulWidget {
   const AppointmentHistoryScreen({super.key});
 
   @override
-  State<AppointmentHistoryScreen> createState() => _AppointmentHistoryScreenState();
+  State<AppointmentHistoryScreen> createState() =>
+      _AppointmentHistoryScreenState();
 }
 
 class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
@@ -171,7 +172,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((appointment) {
         final doctorName = appointment['doctor']['name'].toLowerCase();
-        final specialization = appointment['doctor']['specialization'].toLowerCase();
+        final specialization =
+            appointment['doctor']['specialization'].toLowerCase();
         final reason = appointment['reason'].toLowerCase();
         final query = _searchQuery.toLowerCase();
 
@@ -211,7 +213,9 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
 
   List<Map<String, dynamic>> _getAppointmentsByStatus(String status) {
     if (status == 'all') return _getFilteredAppointments();
-    return _getFilteredAppointments().where((apt) => apt['status'] == status).toList();
+    return _getFilteredAppointments()
+        .where((apt) => apt['status'] == status)
+        .toList();
   }
 
   void _showFilterDialog() {
@@ -223,7 +227,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<String>(
-              value: _selectedFilter,
+              initialValue: _selectedFilter,
               decoration: const InputDecoration(
                 labelText: 'Filter by Status',
                 border: OutlineInputBorder(),
@@ -238,17 +242,22 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedSort,
+              initialValue: _selectedSort,
               decoration: const InputDecoration(
                 labelText: 'Sort by',
                 border: OutlineInputBorder(),
               ),
               items: const [
-                DropdownMenuItem(value: 'date_desc', child: Text('Date (Newest First)')),
-                DropdownMenuItem(value: 'date_asc', child: Text('Date (Oldest First)')),
-                DropdownMenuItem(value: 'doctor_name', child: Text('Doctor Name')),
-                DropdownMenuItem(value: 'fee_high', child: Text('Fee (High to Low)')),
-                DropdownMenuItem(value: 'fee_low', child: Text('Fee (Low to High)')),
+                DropdownMenuItem(
+                    value: 'date_desc', child: Text('Date (Newest First)')),
+                DropdownMenuItem(
+                    value: 'date_asc', child: Text('Date (Oldest First)')),
+                DropdownMenuItem(
+                    value: 'doctor_name', child: Text('Doctor Name')),
+                DropdownMenuItem(
+                    value: 'fee_high', child: Text('Fee (High to Low)')),
+                DropdownMenuItem(
+                    value: 'fee_low', child: Text('Fee (Low to High)')),
               ],
               onChanged: (value) => setState(() => _selectedSort = value!),
             ),
@@ -344,9 +353,12 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                       controller: _tabController,
                       children: [
                         _buildAppointmentList(_getAppointmentsByStatus('all')),
-                        _buildAppointmentList(_getAppointmentsByStatus('upcoming')),
-                        _buildAppointmentList(_getAppointmentsByStatus('completed')),
-                        _buildAppointmentList(_getAppointmentsByStatus('cancelled')),
+                        _buildAppointmentList(
+                            _getAppointmentsByStatus('upcoming')),
+                        _buildAppointmentList(
+                            _getAppointmentsByStatus('completed')),
+                        _buildAppointmentList(
+                            _getAppointmentsByStatus('cancelled')),
                       ],
                     ),
                   ),
@@ -367,7 +379,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.go('/patient/appointment-booking'),
+        onPressed: () => context.push('/patient/appointment-booking'),
         backgroundColor: Colors.blue.shade600,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
@@ -454,14 +466,14 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {
-                      _searchQuery = '';
-                    });
-                  },
-                )
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
                     : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
@@ -469,7 +481,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 ),
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               ),
             ),
           ),
@@ -505,7 +518,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 const Text('All'),
                 const SizedBox(width: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(10),
@@ -525,13 +539,17 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 const Text('Upcoming'),
                 const SizedBox(width: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade100,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    _appointments.where((apt) => apt['status'] == 'upcoming').length.toString(),
+                    _appointments
+                        .where((apt) => apt['status'] == 'upcoming')
+                        .length
+                        .toString(),
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
@@ -545,13 +563,17 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 const Text('Completed'),
                 const SizedBox(width: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.green.shade100,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    _appointments.where((apt) => apt['status'] == 'completed').length.toString(),
+                    _appointments
+                        .where((apt) => apt['status'] == 'completed')
+                        .length
+                        .toString(),
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
@@ -565,13 +587,17 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                 const Text('Cancelled'),
                 const SizedBox(width: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.red.shade100,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    _appointments.where((apt) => apt['status'] == 'cancelled').length.toString(),
+                    _appointments
+                        .where((apt) => apt['status'] == 'cancelled')
+                        .length
+                        .toString(),
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
@@ -711,7 +737,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusBgColor,
                       borderRadius: BorderRadius.circular(12),
@@ -745,17 +772,20 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, color: Colors.grey.shade600, size: 16),
+                        Icon(Icons.calendar_today,
+                            color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 8),
                         Text(
-                          DateFormat('EEEE, MMM d, yyyy').format(appointment['date']),
+                          DateFormat('EEEE, MMM d, yyyy')
+                              .format(appointment['date']),
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         const Spacer(),
-                        Icon(Icons.access_time, color: Colors.grey.shade600, size: 16),
+                        Icon(Icons.access_time,
+                            color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 4),
                         Text(
                           DateFormat('h:mm a').format(appointment['date']),
@@ -769,7 +799,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(Icons.medical_services, color: Colors.grey.shade600, size: 16),
+                        Icon(Icons.medical_services,
+                            color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -800,7 +831,9 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                     const Text('Rating: ', style: TextStyle(fontSize: 12)),
                     ...List.generate(5, (index) {
                       return Icon(
-                        index < appointment['rating'] ? Icons.star : Icons.star_border,
+                        index < appointment['rating']
+                            ? Icons.star
+                            : Icons.star_border,
                         color: Colors.amber,
                         size: 16,
                       );
@@ -811,7 +844,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
               if (appointment['followUp'] != null) ...[
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.orange.shade50,
                     borderRadius: BorderRadius.circular(8),
@@ -819,7 +853,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.event_repeat, color: Colors.orange.shade600, size: 14),
+                      Icon(Icons.event_repeat,
+                          color: Colors.orange.shade600, size: 14),
                       const SizedBox(width: 4),
                       Text(
                         'Follow-up: ${DateFormat('MMM d').format(appointment['followUp'])}',
@@ -904,8 +939,10 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
         const SizedBox(height: 16),
 
         // Appointment Info
-        _buildDetailRow('Date', DateFormat('EEEE, MMMM d, yyyy').format(appointment['date'])),
-        _buildDetailRow('Time', DateFormat('h:mm a').format(appointment['date'])),
+        _buildDetailRow('Date',
+            DateFormat('EEEE, MMMM d, yyyy').format(appointment['date'])),
+        _buildDetailRow(
+            'Time', DateFormat('h:mm a').format(appointment['date'])),
         _buildDetailRow('Type', appointment['type']),
         _buildDetailRow('Duration', '${appointment['duration']} minutes'),
         _buildDetailRow('Reason', appointment['reason']),
@@ -942,7 +979,8 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen>
                   onPressed: () {
                     // Download prescription
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Downloading prescription...')),
+                      const SnackBar(
+                          content: Text('Downloading prescription...')),
                     );
                   },
                   icon: const Icon(Icons.download, size: 16),

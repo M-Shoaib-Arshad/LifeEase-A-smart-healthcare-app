@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import '../../providers/user_provider.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
@@ -55,16 +53,18 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
 
     return Scaffold(
       backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           'Admin Dashboard',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
         ),
         elevation: 0,
         backgroundColor: isDark ? Colors.grey[800] : Colors.white,
@@ -77,14 +77,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         child: SlideTransition(
           position: _slideAnimation,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(isMobile ? 16.0 : 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Welcome Header
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(isMobile ? 20 : 24),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: isDark
@@ -96,8 +95,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blue.withOpacity(0.3),
-                        blurRadius: 10,
+                        color: Colors.blue.withOpacity(0.25),
+                        blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
                     ],
@@ -108,10 +107,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white.withOpacity(0.25),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
                               Icons.admin_panel_settings,
@@ -120,111 +119,127 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            'Welcome Back!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              'Welcome Back!',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isMobile ? 14 : 16,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "Admin Dashboard",
-                        style: const TextStyle(
+                        'Admin Dashboard',
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 28,
+                          fontSize: isMobile ? 24 : 28,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 0.3,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Manage your healthcare platform with ease',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.95),
+                          fontSize: isMobile ? 12 : 14,
+                          height: 1.4,
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 32),
-
-                // Quick Stats Section
+                const SizedBox(height: 28),
                 Text(
                   'Quick Overview',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: isMobile ? 18 : 20,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
+                    letterSpacing: 0.3,
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard(
-                        icon: Icons.people,
-                        title: 'Total Users',
-                        value: '1,234',
-                        color: Colors.green,
-                        isDark: isDark,
+                const SizedBox(height: 14),
+                isMobile
+                    ? Column(
+                        children: [
+                          _buildStatCard(
+                            icon: Icons.people,
+                            title: 'Total Users',
+                            value: '1,234',
+                            color: Colors.green,
+                            isDark: isDark,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildStatCard(
+                            icon: Icons.article,
+                            title: 'Content Items',
+                            value: '89',
+                            color: Colors.orange,
+                            isDark: isDark,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatCard(
+                              icon: Icons.people,
+                              title: 'Total Users',
+                              value: '1,234',
+                              color: Colors.green,
+                              isDark: isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: _buildStatCard(
+                              icon: Icons.article,
+                              title: 'Content Items',
+                              value: '89',
+                              color: Colors.orange,
+                              isDark: isDark,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildStatCard(
-                        icon: Icons.article,
-                        title: 'Content Items',
-                        value: '89',
-                        color: Colors.orange,
-                        isDark: isDark,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 32),
-
-                // Management Cards Section
+                const SizedBox(height: 28),
                 Text(
                   'Management Tools',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: isMobile ? 18 : 20,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
+                    letterSpacing: 0.3,
                   ),
                 ),
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 14),
                 _buildManagementCard(
                   context: context,
                   icon: Icons.group,
                   title: 'User Management',
                   subtitle: 'Manage user accounts, roles, and permissions',
                   color: Colors.blue,
-                  onTap: () => context.go('/admin/user-management'),
+                  onTap: () => context.push('/admin/user-management'),
                   isDark: isDark,
+                  isMobile: isMobile,
                 ),
-
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 12),
                 _buildManagementCard(
                   context: context,
                   icon: Icons.content_paste,
                   title: 'Content Management',
                   subtitle: 'Manage articles, resources, and medical content',
                   color: Colors.purple,
-                  onTap: () => context.go('/admin/content-management'),
+                  onTap: () => context.push('/admin/content-management'),
                   isDark: isDark,
+                  isMobile: isMobile,
                 ),
-
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 12),
                 _buildManagementCard(
                   context: context,
                   icon: Icons.analytics,
@@ -232,26 +247,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   subtitle: 'View platform statistics and generate reports',
                   color: Colors.teal,
                   onTap: () {
-                    // Navigate to analytics screen
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Analytics feature coming soon!')),
+                      const SnackBar(
+                          content: Text('Analytics feature coming soon!')),
                     );
                   },
                   isDark: isDark,
+                  isMobile: isMobile,
                 ),
-
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 12),
                 _buildManagementCard(
                   context: context,
                   icon: Icons.settings,
                   title: 'System Settings',
                   subtitle: 'Configure system preferences and security',
                   color: Colors.red,
-                  onTap: () => context.go('/settings'),
+                  onTap: () => context.push('/settings'),
                   isDark: isDark,
+                  isMobile: isMobile,
                 ),
-
                 const SizedBox(height: 20),
               ],
             ),
@@ -277,48 +291,55 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     required bool isDark,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(
+          color: (isDark ? Colors.grey[700] : Colors.grey[100])!,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               icon,
               color: color,
-              size: 20,
+              size: 22,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
+              letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
+              letterSpacing: 0.2,
             ),
           ),
         ],
@@ -334,38 +355,45 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     required Color color,
     required VoidCallback onTap,
     required bool isDark,
+    required bool isMobile,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(
+          color: (isDark ? Colors.grey[700] : Colors.grey[100])!,
+          width: 1,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
+          highlightColor: color.withOpacity(0.05),
+          splashColor: color.withOpacity(0.1),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(isMobile ? 14 : 18),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
                     color: color,
-                    size: 24,
+                    size: 26,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -376,9 +404,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       Text(
                         title,
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontSize: isMobile ? 15 : 16,
+                          fontWeight: FontWeight.w700,
                           color: isDark ? Colors.white : Colors.black87,
+                          letterSpacing: 0.2,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -387,15 +416,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         style: TextStyle(
                           fontSize: 13,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          height: 1.4,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 Icon(
                   Icons.arrow_forward_ios,
-                  size: 16,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  size: 18,
+                  color: isDark ? Colors.grey[500] : Colors.grey[400],
                 ),
               ],
             ),

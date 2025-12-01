@@ -584,7 +584,7 @@ class _DoctorProfileSetupScreenState extends State<DoctorProfileSetupScreen>
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 ),
-                value: _selectedSpecialization,
+                initialValue: _selectedSpecialization,
                 items: _specializations.map((specialization) {
                   return DropdownMenuItem(
                     value: specialization,

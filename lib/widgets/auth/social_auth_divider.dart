@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 /// A divider widget with text in the middle, typically used to separate
 /// social authentication options from email/password login.
 class SocialAuthDivider extends StatelessWidget {

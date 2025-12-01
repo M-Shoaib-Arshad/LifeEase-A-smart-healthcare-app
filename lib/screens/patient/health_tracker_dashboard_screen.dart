@@ -28,7 +28,8 @@ class HealthTrackerDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Health Vitals', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('Health Vitals',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             SizedBox(
               height: 200,
@@ -46,7 +47,7 @@ class HealthTrackerDashboardScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => context.go('/patient/health-tracker-input'),
+              onPressed: () => context.push('/patient/health-tracker-input'),
               child: const Text('Add New Vitals'),
             ),
           ],

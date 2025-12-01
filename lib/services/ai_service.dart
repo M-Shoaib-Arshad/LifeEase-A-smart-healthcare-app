@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/ai_recommendation.dart';
-import '../models/user.dart';
-import '../models/health_data.dart';
 
 /// AI Service for handling chatbot interactions and health recommendations
 /// Implements SRS UC-06 and FR-07 requirements:

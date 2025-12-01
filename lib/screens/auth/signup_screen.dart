@@ -467,7 +467,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         fillColor: AppColors.bgMain,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
-      value: _selectedRole,
+      initialValue: _selectedRole,
       items: const [
         DropdownMenuItem(
           value: 'patient',

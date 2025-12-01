@@ -10,7 +10,8 @@ class DoctorProfileViewScreen extends StatefulWidget {
   const DoctorProfileViewScreen({super.key});
 
   @override
-  State<DoctorProfileViewScreen> createState() => _DoctorProfileViewScreenState();
+  State<DoctorProfileViewScreen> createState() =>
+      _DoctorProfileViewScreenState();
 }
 
 class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
@@ -35,7 +36,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
     'languages': ['English', 'Spanish', 'French'],
     'workingDays': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     'workingHours': '9:00 AM - 5:00 PM',
-    'bio': 'Dr. Jane Smith is a board-certified cardiologist with over 10 years of experience in treating cardiovascular diseases. She specializes in preventive cardiology, heart failure management, and interventional procedures.',
+    'bio':
+        'Dr. Jane Smith is a board-certified cardiologist with over 10 years of experience in treating cardiovascular diseases. She specializes in preventive cardiology, heart failure management, and interventional procedures.',
     'education': [
       {
         'degree': 'MD - Doctor of Medicine',
@@ -76,7 +78,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         'patientImage': 'https://randomuser.me/api/portraits/women/32.jpg',
         'rating': 5,
         'date': DateTime(2024, 12, 15),
-        'review': 'Dr. Smith is absolutely wonderful! She took the time to explain my condition thoroughly and made me feel comfortable throughout the entire process. Her expertise in cardiology is evident, and I highly recommend her to anyone needing cardiac care.',
+        'review':
+            'Dr. Smith is absolutely wonderful! She took the time to explain my condition thoroughly and made me feel comfortable throughout the entire process. Her expertise in cardiology is evident, and I highly recommend her to anyone needing cardiac care.',
         'isVerified': true,
         'helpfulCount': 12,
         'treatmentType': 'Heart Checkup',
@@ -87,7 +90,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         'patientImage': 'https://randomuser.me/api/portraits/men/45.jpg',
         'rating': 5,
         'date': DateTime(2024, 12, 10),
-        'review': 'Excellent doctor with great bedside manner. She diagnosed my heart condition quickly and provided a comprehensive treatment plan. The follow-up care has been exceptional.',
+        'review':
+            'Excellent doctor with great bedside manner. She diagnosed my heart condition quickly and provided a comprehensive treatment plan. The follow-up care has been exceptional.',
         'isVerified': true,
         'helpfulCount': 8,
         'treatmentType': 'Cardiac Consultation',
@@ -98,7 +102,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         'patientImage': 'https://randomuser.me/api/portraits/women/67.jpg',
         'rating': 4,
         'date': DateTime(2024, 12, 5),
-        'review': 'Dr. Smith is very knowledgeable and professional. The appointment was thorough, though the wait time was a bit longer than expected. Overall, very satisfied with the care received.',
+        'review':
+            'Dr. Smith is very knowledgeable and professional. The appointment was thorough, though the wait time was a bit longer than expected. Overall, very satisfied with the care received.',
         'isVerified': true,
         'helpfulCount': 5,
         'treatmentType': 'Follow-up Visit',
@@ -109,7 +114,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         'patientImage': 'https://randomuser.me/api/portraits/men/23.jpg',
         'rating': 5,
         'date': DateTime(2024, 11, 28),
-        'review': 'Outstanding cardiologist! Dr. Smith performed my cardiac catheterization with precision and care. Her post-procedure follow-up was excellent. I feel confident in her expertise.',
+        'review':
+            'Outstanding cardiologist! Dr. Smith performed my cardiac catheterization with precision and care. Her post-procedure follow-up was excellent. I feel confident in her expertise.',
         'isVerified': true,
         'helpfulCount': 15,
         'treatmentType': 'Cardiac Procedure',
@@ -120,7 +126,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         'patientImage': 'https://randomuser.me/api/portraits/women/89.jpg',
         'rating': 5,
         'date': DateTime(2024, 11, 20),
-        'review': 'Dr. Smith saved my life! She quickly identified my heart condition and provided immediate treatment. Her compassionate care and medical expertise are unmatched. Forever grateful!',
+        'review':
+            'Dr. Smith saved my life! She quickly identified my heart condition and provided immediate treatment. Her compassionate care and medical expertise are unmatched. Forever grateful!',
         'isVerified': true,
         'helpfulCount': 23,
         'treatmentType': 'Emergency Care',
@@ -258,7 +265,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(20),
@@ -336,7 +344,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                         if (review['isVerified'])
                           Container(
                             margin: const EdgeInsets.only(left: 6),
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(8),
@@ -370,7 +379,9 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: List.generate(5, (index) {
                       return Icon(
-                        index < review['rating'] ? Icons.star : Icons.star_border,
+                        index < review['rating']
+                            ? Icons.star
+                            : Icons.star_border,
                         color: Colors.amber.shade600,
                         size: 16,
                       );
@@ -419,7 +430,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                   // Mark as helpful functionality
                 },
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -487,7 +499,7 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.go('/doctor/profile-setup'),
+        onPressed: () => context.push('/doctor/profile-setup'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.edit),
@@ -593,7 +605,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                     ),
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(_doctorData['profileImage']),
+                      backgroundImage:
+                          NetworkImage(_doctorData['profileImage']),
                     ),
                   ),
                   if (_doctorData['isVerified'])
@@ -688,7 +701,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem('Experience', '${_doctorData['experience']} years'),
+                _buildStatItem(
+                    'Experience', '${_doctorData['experience']} years'),
                 _buildStatItem('Patients', '${_doctorData['totalPatients']}+'),
                 _buildStatItem('Fee', '\$${_doctorData['consultationFee']}'),
               ],
@@ -758,7 +772,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
     );
   }
 
-  Widget _buildStatsCard(String title, dynamic value, IconData icon, Color color) {
+  Widget _buildStatsCard(
+      String title, dynamic value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -940,7 +955,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                 child: Column(
                   children: [
                     for (int i = 5; i >= 1; i--)
-                      _buildRatingBar(i, ratingBreakdown[i] ?? 0, _doctorData['totalReviews']),
+                      _buildRatingBar(i, ratingBreakdown[i] ?? 0,
+                          _doctorData['totalReviews']),
                   ],
                 ),
               ),
@@ -972,7 +988,10 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
 
           // Review Cards
           Column(
-            children: reviews.take(3).map((review) => _buildReviewCard(review)).toList(),
+            children: reviews
+                .take(3)
+                .map((review) => _buildReviewCard(review))
+                .toList(),
           ),
         ],
       ),
@@ -1064,7 +1083,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                         if (review['isVerified'])
                           Container(
                             margin: const EdgeInsets.only(left: 6),
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 1),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(6),
@@ -1097,7 +1117,9 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: List.generate(5, (index) {
                       return Icon(
-                        index < review['rating'] ? Icons.star : Icons.star_border,
+                        index < review['rating']
+                            ? Icons.star
+                            : Icons.star_border,
                         color: Colors.amber.shade600,
                         size: 14,
                       );
@@ -1156,7 +1178,8 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
         _buildInfoRow(Icons.email, 'Email', _doctorData['email']),
         _buildInfoRow(Icons.phone, 'Phone', _doctorData['phone']),
         _buildInfoRow(Icons.badge, 'License', _doctorData['licenseNumber']),
-        _buildInfoRow(Icons.language, 'Languages', _doctorData['languages'].join(', ')),
+        _buildInfoRow(
+            Icons.language, 'Languages', _doctorData['languages'].join(', ')),
       ],
     );
   }
@@ -1166,10 +1189,14 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
       'Professional Information',
       Icons.work,
       [
-        _buildInfoRow(Icons.medical_services, 'Specialization', _doctorData['specialization']),
-        _buildInfoRow(Icons.timeline, 'Experience', '${_doctorData['experience']} years'),
-        _buildInfoRow(Icons.attach_money, 'Consultation Fee', '\$${_doctorData['consultationFee']}'),
-        _buildInfoRow(Icons.verified_user, 'Status', _doctorData['isVerified'] ? 'Verified' : 'Pending'),
+        _buildInfoRow(Icons.medical_services, 'Specialization',
+            _doctorData['specialization']),
+        _buildInfoRow(
+            Icons.timeline, 'Experience', '${_doctorData['experience']} years'),
+        _buildInfoRow(Icons.attach_money, 'Consultation Fee',
+            '\$${_doctorData['consultationFee']}'),
+        _buildInfoRow(Icons.verified_user, 'Status',
+            _doctorData['isVerified'] ? 'Verified' : 'Pending'),
       ],
     );
   }
@@ -1179,9 +1206,12 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
       'Availability',
       Icons.schedule,
       [
-        _buildInfoRow(Icons.calendar_today, 'Working Days', _doctorData['workingDays'].join(', ')),
-        _buildInfoRow(Icons.access_time, 'Working Hours', _doctorData['workingHours']),
-        _buildInfoRow(Icons.date_range, 'Member Since', DateFormat('MMMM yyyy').format(_doctorData['joinDate'])),
+        _buildInfoRow(Icons.calendar_today, 'Working Days',
+            _doctorData['workingDays'].join(', ')),
+        _buildInfoRow(
+            Icons.access_time, 'Working Hours', _doctorData['workingHours']),
+        _buildInfoRow(Icons.date_range, 'Member Since',
+            DateFormat('MMMM yyyy').format(_doctorData['joinDate'])),
       ],
     );
   }
@@ -1254,7 +1284,9 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen>
     return _buildInfoCard(
       'Achievements & Certifications',
       Icons.emoji_events,
-      achievements.map((achievement) => _buildAchievementItem(achievement)).toList(),
+      achievements
+          .map((achievement) => _buildAchievementItem(achievement))
+          .toList(),
     );
   }
 
