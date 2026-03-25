@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../models/user.dart' as model;
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
+import 'settings_provider.dart';
+import 'theme_provider.dart';
 
 class UserProvider extends ChangeNotifier {
   final AuthService _auth = AuthService();
@@ -12,18 +14,41 @@ class UserProvider extends ChangeNotifier {
   model.User? _profile;
   bool _loading = true;
 
+  SettingsProvider? _settingsProvider;
+  ThemeProvider? _themeProvider;
+
   UserProvider() {
     // Listen to auth state
     _auth.authStateChanges.listen((fb.User? user) async {
       _firebaseUser = user;
       if (user != null) {
         _profile = await _userService.getUserProfile(user.uid);
+        // Capture provider references before async gap to avoid race condition
+        final settingsProvider = _settingsProvider;
+        final themeProvider = _themeProvider;
+        // Sync settings to Firestore on login
+        if (settingsProvider != null) {
+          try {
+            await settingsProvider.syncSettings(
+              user.uid,
+              themeMode: themeProvider?.themeModeString ?? 'system',
+            );
+          } catch (e) {
+            debugPrint('Failed to sync settings after login: $e');
+          }
+        }
       } else {
         _profile = null;
       }
       _loading = false;
       notifyListeners();
     });
+  }
+
+  /// Called by [ChangeNotifierProxyProvider2] whenever upstream providers update.
+  void updateProviders(SettingsProvider settingsProvider, ThemeProvider themeProvider) {
+    _settingsProvider = settingsProvider;
+    _themeProvider = themeProvider;
   }
 
   bool get isLoading => _loading;
