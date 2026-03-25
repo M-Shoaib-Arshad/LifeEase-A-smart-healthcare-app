@@ -30,12 +30,18 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => AppointmentProvider()), // Added
-        ChangeNotifierProvider(create: (_) => HealthRecordProvider()), // Added
-        ChangeNotifierProvider(create: (_) => NotificationProvider()), // Added
-        ChangeNotifierProvider(create: (_) => ThemeProvider()), // Added
-        ChangeNotifierProvider(create: (_) => SettingsProvider()), // Added
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+        ChangeNotifierProvider(create: (_) => HealthRecordProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProxyProvider2<SettingsProvider, ThemeProvider, UserProvider>(
+          create: (_) => UserProvider(),
+          update: (_, settingsProvider, themeProvider, userProvider) {
+            userProvider!.updateProviders(settingsProvider, themeProvider);
+            return userProvider;
+          },
+        ),
       ],
       child: const MyApp(),
     ),

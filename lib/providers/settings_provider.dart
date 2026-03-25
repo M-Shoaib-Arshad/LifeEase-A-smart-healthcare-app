@@ -69,9 +69,9 @@ class SettingsProvider extends ChangeNotifier {
     await _settingsService.setNotificationSettings(_notificationSettings);
   }
 
-  Future<void> syncSettings(String userId) async {
+  Future<void> syncSettings(String userId, {String themeMode = 'system'}) async {
     await _settingsService.syncSettingsToFirestore(userId, {
-      'themeMode': '', // This will be handled by ThemeProvider
+      'themeMode': themeMode,
       'language': _language,
       'notifications': _notificationSettings,
     });

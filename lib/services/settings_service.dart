@@ -58,7 +58,12 @@ class SettingsService {
   // Sync settings to Firestore for backup and cross-device sync
   Future<void> syncSettingsToFirestore(String userId, Map<String, dynamic> settings) async {
     try {
-      await _firestore.collection('user_settings').doc(userId).set({
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('settings')
+          .doc('app_preferences')
+          .set({
         'themeMode': settings['themeMode'],
         'language': settings['language'],
         'notifications': settings['notifications'],
@@ -73,7 +78,12 @@ class SettingsService {
   // Load settings from Firestore
   Future<Map<String, dynamic>?> loadSettingsFromFirestore(String userId) async {
     try {
-      final doc = await _firestore.collection('user_settings').doc(userId).get();
+      final doc = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('settings')
+          .doc('app_preferences')
+          .get();
       if (doc.exists) {
         return doc.data();
       }

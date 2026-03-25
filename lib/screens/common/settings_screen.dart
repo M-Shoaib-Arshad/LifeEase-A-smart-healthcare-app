@@ -361,11 +361,11 @@ class SettingsScreen extends StatelessWidget {
                     Provider.of<SettingsProvider>(context, listen: false);
 
                 try {
-                  // Clear settings
-                  await settingsProvider.clearSettings();
-
-                  // Logout user
+                  // Sign out user (clears Firebase auth + Google session)
                   await userProvider.logout();
+
+                  // Clear local settings after sign-out
+                  await settingsProvider.clearSettings();
 
                   // Navigate to login
                   if (context.mounted) {
