@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'config/env_config.dart';
+import 'widgets/common/offline_banner.dart';
 import 'providers/user_provider.dart';
 import 'providers/appointment_provider.dart'; // New provider
 import 'providers/health_record_provider.dart'; // New provider
@@ -13,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'services/local_notification_service.dart';
 import 'services/fcm_service.dart';
+import 'services/sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
@@ -25,6 +28,16 @@ void main() async {
     runApp(EnvConfigErrorApp(error: e.toString()));
     return;
   }
+
+  // Hive local database (Sprint 5 – Offline Support)
+  await Hive.initFlutter();
+  await Hive.openBox('appointments');
+  await Hive.openBox('health_records');
+  await Hive.openBox('user_profile');
+  await Hive.openBox('sync_queue');
+
+  // Start background sync listener so queued writes are flushed when online
+  SyncService().startListening();
   
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Uses config from CLI
@@ -143,6 +156,7 @@ class MyApp extends StatelessWidget {
           darkTheme: darkTheme,
           themeMode: themeProvider.themeMode,
           routerConfig: router,
+          builder: (context, child) => OfflineBanner(child: child ?? const SizedBox()),
         );
       },
     );
