@@ -11,6 +11,8 @@ import 'routes/app_routes.dart';
 import 'utils/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'services/local_notification_service.dart';
+import 'services/fcm_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
@@ -27,6 +29,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Uses config from CLI
   );
+  await LocalNotificationService.init();
+  await FcmService().init();
   runApp(
     MultiProvider(
       providers: [

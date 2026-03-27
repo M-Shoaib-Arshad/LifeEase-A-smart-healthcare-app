@@ -55,5 +55,11 @@
 	<string>LifeEase needs access to your location to find nearby doctors and provide navigation directions.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>LifeEase needs access to your location to find nearby doctors and provide navigation directions.</string>
+	<!-- Background modes for FCM remote notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>
