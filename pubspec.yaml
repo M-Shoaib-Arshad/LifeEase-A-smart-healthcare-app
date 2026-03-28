@@ -44,6 +44,9 @@ dependencies:
   connectivity_plus: ^6.1.3
   cached_network_image: ^3.4.1
 
+  # Sprint 4 – Emergency SOS
+  url_launcher: ^6.3.1
+
   # Security (Sprint 7)
   local_auth: ^2.3.0
   encrypt: ^5.0.3

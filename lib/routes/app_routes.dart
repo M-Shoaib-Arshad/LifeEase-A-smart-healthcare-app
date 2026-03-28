@@ -22,6 +22,8 @@ import '../screens/patient/health_tracker_dashboard_screen.dart';
 import '../screens/patient/medication_reminder_setup_screen.dart';
 import '../screens/patient/medical_records_screen.dart';
 import '../screens/patient/telemedicine_call_screen.dart';
+import '../screens/patient/emergency_screen.dart';
+import '../screens/patient/emergency_contacts_screen.dart';
 import '../screens/doctor/doctor_home_screen.dart';
 import '../screens/doctor/doctor_profile_setup_screen.dart';
 import '../screens/doctor/doctor_profile_view_screen.dart';
@@ -95,6 +97,12 @@ final GoRouter router = GoRouter(
     GoRoute(
         path: '/patient/telemedicine-call',
         builder: (context, state) => const TelemedicineCallScreen()),
+    GoRoute(
+        path: '/patient/emergency',
+        builder: (context, state) => const EmergencyScreen()),
+    GoRoute(
+        path: '/patient/emergency-contacts',
+        builder: (context, state) => const EmergencyContactsScreen()),
     GoRoute(
         path: '/doctor/home',
         builder: (context, state) => const DoctorHomeScreen()),

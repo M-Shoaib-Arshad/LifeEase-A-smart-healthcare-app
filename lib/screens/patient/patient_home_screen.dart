@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/sos_button.dart';
 import '../../utils/app_colors.dart';
 
 class PatientHomeScreen extends StatelessWidget {
@@ -181,9 +182,7 @@ class PatientHomeScreen extends StatelessWidget {
                   'Emergency',
                   Icons.emergency,
                   AppColors.accentCoral,
-                  () {
-                    // Handle emergency
-                  },
+                  () => context.push('/patient/emergency'),
                 ),
               ],
             ),
@@ -244,6 +243,9 @@ class PatientHomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
           ],
         ),
+      ),
+      floatingActionButton: SosButton(
+        onPressed: () => context.push('/patient/emergency'),
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: 0,
