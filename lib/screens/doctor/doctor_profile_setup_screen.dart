@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../providers/user_provider.dart';
+import '../../services/location_service.dart';
+import '../../services/user_service.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
@@ -33,12 +35,20 @@ class _DoctorProfileSetupScreenState extends State<DoctorProfileSetupScreen>
   // State variables
   int _currentStep = 0;
   bool _isLoading = false;
+  bool _isGeocodingLocation = false;
   File? _profileImage;
   String? _selectedSpecialization;
   final List<String> _selectedLanguages = [];
   final List<String> _workingDays = [];
   TimeOfDay _startTime = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
+
+  // Clinic lat/lng – populated by geocoding the location text or via GPS
+  double? _clinicLatitude;
+  double? _clinicLongitude;
+
+  final LocationService _locationService = LocationService();
+  final UserService _userService = UserService();
 
   // Animation controllers
   late AnimationController _animationController;
@@ -177,32 +187,109 @@ class _DoctorProfileSetupScreenState extends State<DoctorProfileSetupScreen>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Geocode the clinic address to get lat/lng if not already set
+        if ((_clinicLatitude == null || _clinicLongitude == null) &&
+            _locationController.text.isNotEmpty) {
+          final loc = await _locationService
+              .getCoordinatesFromAddress(_locationController.text);
+          if (loc != null) {
+            _clinicLatitude = loc.latitude;
+            _clinicLongitude = loc.longitude;
+          }
+        }
 
-      if (mounted) {
-        setState(() => _isLoading = false);
+        final userProvider =
+            Provider.of<UserProvider>(context, listen: false);
+        final uid = userProvider.user?.id;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Profile saved successfully!'),
-              ],
+        if (uid != null) {
+          await _userService.updateUserProfile(
+            uid: uid,
+            name: _fullNameController.text.trim(),
+            phone: _phoneController.text.trim(),
+            address: _locationController.text.trim(),
+            latitude: _clinicLatitude,
+            longitude: _clinicLongitude,
+          );
+        }
+
+        if (mounted) {
+          setState(() => _isLoading = false);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text('Profile saved successfully!'),
+                ],
+              ),
+              backgroundColor: Colors.green.shade600,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(16),
             ),
-            backgroundColor: Colors.green.shade600,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            margin: const EdgeInsets.all(16),
-          ),
-        );
+          );
 
-        context.go('/doctor/profile');
+          context.go('/doctor/profile');
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to save profile: $e'),
+              backgroundColor: Colors.red.shade600,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
+    }
+  }
+
+  /// Use GPS to fill in the current location address and coordinates.
+  Future<void> _useCurrentLocation() async {
+    setState(() => _isGeocodingLocation = true);
+    try {
+      final position = await _locationService.getCurrentPosition();
+      if (position == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Could not get current location.'),
+                behavior: SnackBarBehavior.floating),
+          );
+        }
+        return;
+      }
+      final address = await _locationService.getAddressFromCoordinates(
+          position.latitude, position.longitude);
+      if (mounted) {
+        setState(() {
+          _clinicLatitude = position.latitude;
+          _clinicLongitude = position.longitude;
+          if (address != null) {
+            _locationController.text = address;
+          }
+        });
+        if (address == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                  'Location pinned. Could not resolve address – please type it manually.'),
+              backgroundColor: Colors.amber.shade700,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    } finally {
+      if (mounted) setState(() => _isGeocodingLocation = false);
     }
   }
 
@@ -520,6 +607,56 @@ class _DoctorProfileSetupScreenState extends State<DoctorProfileSetupScreen>
                 validator: (value) =>
                 value?.isEmpty == true ? 'Please enter your location' : null,
               ),
+
+              const SizedBox(height: 8),
+
+              // GPS button to auto-fill location
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _isGeocodingLocation ? null : _useCurrentLocation,
+                  icon: _isGeocodingLocation
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.my_location, size: 18),
+                  label: Text(
+                    _isGeocodingLocation
+                        ? 'Detecting location…'
+                        : 'Use Current Location',
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.blue.shade700,
+                    side: BorderSide(color: Colors.blue.shade300),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              if (_clinicLatitude != null && _clinicLongitude != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle,
+                          color: Colors.green.shade600, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Location pinned: '
+                        '${_clinicLatitude!.toStringAsFixed(4)}, '
+                        '${_clinicLongitude!.toStringAsFixed(4)}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),

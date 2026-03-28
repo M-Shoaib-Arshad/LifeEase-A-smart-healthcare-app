@@ -270,7 +270,8 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
       }
 
       // Filter by distance using actual calculated distance
-      if ((doctor['distance'] as double) > _searchRadius) {
+      final distance = doctor['distance'] as num?;
+      if (distance != null && distance.toDouble() > _searchRadius) {
         return false;
       }
 
@@ -525,7 +526,7 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
       markers: _markers,
       circles: _circles,
       myLocationEnabled: _isLocationEnabled,
-      myLocationButtonEnabled: false,
+      myLocationButtonEnabled: true,
       zoomControlsEnabled: false,
       compassEnabled: true,
       onMapCreated: (GoogleMapController controller) {
@@ -767,7 +768,10 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => context.push('/patient/doctor-profile'),
+                    onPressed: () => context.push(
+                      '/patient/doctor-profile',
+                      extra: doctor,
+                    ),
                     icon: const Icon(Icons.info, size: 16),
                     label: const Text('View Profile'),
                     style: OutlinedButton.styleFrom(

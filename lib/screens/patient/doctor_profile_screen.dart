@@ -8,7 +8,12 @@ import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
-  const DoctorProfileScreen({super.key});
+  /// Optional doctor data map passed via GoRouter `extra`.
+  /// When provided it overrides the built-in sample data so the correct
+  /// doctor's information is displayed (e.g. when navigating from the map).
+  final Map<String, dynamic>? doctorData;
+
+  const DoctorProfileScreen({super.key, this.doctorData});
 
   @override
   State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
@@ -26,8 +31,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
   bool _isFavorite = false;
   bool _showFullBio = false;
 
-  // Sample doctor data - in real app, this would come from API or route parameters
-  final Map<String, dynamic> _doctorData = {
+  // Default sample doctor data – overridden field-by-field by widget.doctorData
+  late final Map<String, dynamic> _doctorData = {
     'id': 'D001',
     'name': 'Dr. Sarah Wilson',
     'specialization': 'Cardiologist',
@@ -99,6 +104,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'email': 'sarah.wilson@cityhospital.com',
       'website': 'www.drwilsoncardiology.com',
     },
+    // Merge any non-null fields passed from the map / list screen
+    if (widget.doctorData != null)
+      ...{
+        for (final e in widget.doctorData!.entries)
+          if (e.value != null) e.key: e.value
+      },
   };
 
   // Sample reviews data

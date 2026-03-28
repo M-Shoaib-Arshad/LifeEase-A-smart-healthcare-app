@@ -52,6 +52,8 @@ class UserService {
     DateTime? dateOfBirth,
     String? address,
     String? photoURL,
+    double? latitude,
+    double? longitude,
   }) async {
     final doc = _db.collection(usersCollection).doc(uid);
     final Map<String, dynamic> updates = {
@@ -63,7 +65,22 @@ class UserService {
     if (dateOfBirth != null) updates['dateOfBirth'] = dateOfBirth.toIso8601String();
     if (address != null) updates['address'] = address;
     if (photoURL != null) updates['photoURL'] = photoURL;
+    if (latitude != null) updates['latitude'] = latitude;
+    if (longitude != null) updates['longitude'] = longitude;
 
     await doc.update(updates);
+  }
+
+  /// Fetch all users with role == 'doctor' from Firestore.
+  /// Only returns doctors that have [latitude] and [longitude] set.
+  Future<List<model.User>> getDoctors() async {
+    final snapshot = await _db
+        .collection(usersCollection)
+        .where('role', isEqualTo: 'doctor')
+        .get();
+    return snapshot.docs
+        .map((doc) => model.User.fromMap(doc.data()))
+        .where((u) => u.latitude != null && u.longitude != null)
+        .toList();
   }
 }
