@@ -372,6 +372,15 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           tooltip: 'Call ${contact.name}',
         ),
       ),
+
+class EmergencyScreen extends StatelessWidget {
+  const EmergencyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Emergency')),
+      body: const Center(child: Text('Emergency Placeholder')),
     );
   }
 }
