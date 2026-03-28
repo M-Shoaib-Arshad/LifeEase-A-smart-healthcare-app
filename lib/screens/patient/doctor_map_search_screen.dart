@@ -190,6 +190,7 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
         _currentPosition = LatLng(position.latitude, position.longitude);
         _isLocationEnabled = true;
       });
+      _recalculateDistances();
       _updateMarkers();
       _moveCamera(_currentPosition);
     } else {
@@ -205,6 +206,22 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
       _isLocationEnabled = false;
     });
     _updateMarkers();
+  }
+
+  /// Recalculate distances from current position to each doctor
+  void _recalculateDistances() {
+    for (final doctor in _doctors) {
+      final lat = doctor['latitude'] as double?;
+      final lng = doctor['longitude'] as double?;
+      if (lat != null && lng != null) {
+        doctor['distance'] = _locationService.calculateDistance(
+          _currentPosition.latitude,
+          _currentPosition.longitude,
+          lat,
+          lng,
+        );
+      }
+    }
   }
 
   void _updateMarkers() {
@@ -252,8 +269,8 @@ class _DoctorMapSearchScreenState extends State<DoctorMapSearchScreen>
         return false;
       }
 
-      // Filter by distance (simplified - in real app would calculate actual distance)
-      if (doctor['distance'] > _searchRadius) {
+      // Filter by distance using actual calculated distance
+      if ((doctor['distance'] as double) > _searchRadius) {
         return false;
       }
 
