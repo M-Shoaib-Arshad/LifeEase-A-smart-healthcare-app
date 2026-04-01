@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
-  const DoctorProfileScreen({super.key});
+  /// Optional doctor data map passed via GoRouter `extra`.
+  /// When provided it overrides the built-in sample data so the correct
+  /// doctor's information is displayed (e.g. when navigating from the map).
+  final Map<String, dynamic>? doctorData;
+
+  const DoctorProfileScreen({super.key, this.doctorData});
 
   @override
   State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
@@ -25,8 +31,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
   bool _isFavorite = false;
   bool _showFullBio = false;
 
-  // Sample doctor data - in real app, this would come from API or route parameters
-  final Map<String, dynamic> _doctorData = {
+  // Default sample doctor data – overridden field-by-field by widget.doctorData
+  late final Map<String, dynamic> _doctorData = {
     'id': 'D001',
     'name': 'Dr. Sarah Wilson',
     'specialization': 'Cardiologist',
@@ -98,6 +104,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       'email': 'sarah.wilson@cityhospital.com',
       'website': 'www.drwilsoncardiology.com',
     },
+    // Merge any non-null fields passed from the map / list screen
+    if (widget.doctorData != null)
+      ...{
+        for (final e in widget.doctorData!.entries)
+          if (e.value != null) e.key: e.value
+      },
   };
 
   // Sample reviews data
@@ -1879,15 +1891,32 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
     );
   }
 
-  void _navigateToDoctor() {
+  Future<void> _navigateToDoctor() async {
     final lat = _doctorData['latitude'];
     final lng = _doctorData['longitude'];
     final location = _doctorData['location'];
 
+    if (lat == null || lng == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Location not available for this doctor.'),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final googleMapsUrl =
+        Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lng');
+    final appleMapsUrl =
+        Uri.parse('https://maps.apple.com/?daddr=$lat,$lng');
+
     // Show a dialog with navigation options
+    if (!mounted) return;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -1914,30 +1943,28 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: const Text('Cancel'),
           ),
           ElevatedButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // In a real app, this would launch the URL
-              // url_launcher can be used here:
-              // launchUrl(Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lng'))
-              ScaffoldMessenger.of(this.context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(Icons.navigation, color: Colors.white),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text('Opening directions to $location'),
-                      ),
-                    ],
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              if (await canLaunchUrl(googleMapsUrl)) {
+                await launchUrl(googleMapsUrl,
+                    mode: LaunchMode.externalApplication);
+              } else if (await canLaunchUrl(appleMapsUrl)) {
+                await launchUrl(appleMapsUrl,
+                    mode: LaunchMode.externalApplication);
+              } else {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Could not open maps for $location'),
+                    backgroundColor: Colors.red.shade600,
+                    behavior: SnackBarBehavior.floating,
                   ),
-                  backgroundColor: Colors.green.shade600,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+                );
+              }
             },
             icon: const Icon(Icons.navigation, size: 16),
             label: const Text('Get Directions'),

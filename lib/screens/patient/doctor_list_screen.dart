@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../services/location_service.dart';
 import '../../widgets/side_drawer.dart';
 import '../../widgets/bottom_nav_bar.dart';
 
@@ -27,6 +28,9 @@ class _DoctorListScreenState extends State<DoctorListScreen>
   String _sortBy = 'rating';
   bool _showFilters = false;
 
+  final LocationService _locationService = LocationService();
+  bool _locationReady = false;
+
   // Sample doctor data - in real app, this would come from API
   final List<Map<String, dynamic>> _doctors = [
     {
@@ -41,6 +45,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'consultationFee': 150,
       'location': 'Downtown',
       'distance': 2.5,
+      'latitude': 40.7580,
+      'longitude': -73.9855,
       'languages': ['English', 'Spanish'],
       'education': 'MD from Harvard Medical School',
       'certifications': ['Board Certified Cardiologist', 'FACC'],
@@ -68,6 +74,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'consultationFee': 180,
       'location': 'Midtown',
       'distance': 4.2,
+      'latitude': 40.7489,
+      'longitude': -73.9680,
       'languages': ['English', 'Mandarin'],
       'education': 'MD from Johns Hopkins University',
       'certifications': ['Board Certified Neurologist', 'Epilepsy Specialist'],
@@ -91,6 +99,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'consultationFee': 120,
       'location': 'Uptown',
       'distance': 6.8,
+      'latitude': 40.7614,
+      'longitude': -73.9776,
       'languages': ['English', 'Spanish', 'French'],
       'education': 'MD from Stanford University',
       'certifications': ['Board Certified Dermatologist', 'Mohs Surgery'],
@@ -118,6 +128,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'consultationFee': 200,
       'location': 'Downtown',
       'distance': 3.1,
+      'latitude': 40.7527,
+      'longitude': -73.9772,
       'languages': ['English'],
       'education': 'MD from Mayo Clinic',
       'certifications': [
@@ -148,6 +160,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'consultationFee': 100,
       'location': 'Midtown',
       'distance': 5.5,
+      'latitude': 40.7459,
+      'longitude': -73.9866,
       'languages': ['English', 'Spanish'],
       'education': 'MD from UCLA Medical School',
       'certifications': ['Board Certified Pediatrician', 'Adolescent Medicine'],
@@ -171,6 +185,8 @@ class _DoctorListScreenState extends State<DoctorListScreen>
       'consultationFee': 80,
       'location': 'Uptown',
       'distance': 7.2,
+      'latitude': 40.7549,
+      'longitude': -73.9840,
       'languages': ['English', 'Korean'],
       'education': 'MD from University of Washington',
       'certifications': ['Board Certified Family Medicine'],
@@ -209,6 +225,30 @@ class _DoctorListScreenState extends State<DoctorListScreen>
   void initState() {
     super.initState();
     _setupAnimations();
+    _initLocation();
+  }
+
+  /// Request location and recompute distances for each doctor.
+  Future<void> _initLocation() async {
+    final position = await _locationService.getCurrentPosition();
+    if (position == null) return;
+    if (!mounted) return;
+
+    setState(() {
+      for (final doctor in _doctors) {
+        final lat = doctor['latitude'] as double?;
+        final lng = doctor['longitude'] as double?;
+        if (lat != null && lng != null) {
+          doctor['distance'] = _locationService.distanceInKm(
+            position.latitude,
+            position.longitude,
+            lat,
+            lng,
+          );
+        }
+      }
+      _locationReady = true;
+    });
   }
 
   void _setupAnimations() {
@@ -941,7 +981,14 @@ class _DoctorListScreenState extends State<DoctorListScreen>
                             color: Colors.grey.shade600, size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          '${doctor['distance']} km away',
+                          () {
+                            final dist =
+                                (doctor['distance'] as num?)?.toDouble();
+                            if (dist == null) return 'Distance unknown';
+                            return _locationReady
+                                ? _locationService.formatDistance(dist)
+                                : '$dist km away';
+                          }(),
                           style: const TextStyle(fontSize: 12),
                         ),
                       ],

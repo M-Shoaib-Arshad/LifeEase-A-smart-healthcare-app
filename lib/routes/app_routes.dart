@@ -69,7 +69,12 @@ final GoRouter router = GoRouter(
         builder: (context, state) => const DoctorListScreen()),
     GoRoute(
         path: '/patient/doctor-profile',
-        builder: (context, state) => const DoctorProfileScreen()),
+        builder: (context, state) {
+          final extra = state.extra;
+          final doctorData =
+              extra is Map<String, dynamic> ? extra : null;
+          return DoctorProfileScreen(doctorData: doctorData);
+        }),
     GoRoute(
         path: '/patient/doctor-map',
         builder: (context, state) => const DoctorMapSearchScreen()),

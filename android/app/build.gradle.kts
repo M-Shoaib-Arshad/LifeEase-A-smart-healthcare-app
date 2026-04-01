@@ -53,8 +53,11 @@ android {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
         }
 
-        // Google Maps API key placeholder for manifest
-        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = project.findProperty("GOOGLE_MAPS_API_KEY") ?: "YOUR_GOOGLE_MAPS_API_KEY"
+        // Google Maps API key – reads from environment variable first,
+        // then falls back to a Gradle project property (local.properties)
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] =
+            System.getenv("GOOGLE_MAPS_API_KEY")
+                ?: (project.findProperty("GOOGLE_MAPS_API_KEY") as String? ?: "")
     }
 
     // Ensure C++ runtime is packaged (needed by some native plugins)

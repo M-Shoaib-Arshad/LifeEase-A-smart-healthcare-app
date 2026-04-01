@@ -127,6 +127,11 @@ class LocationService {
         1000; // Convert meters to kilometers
   }
 
+  /// Distance in km – convenience alias matching spec naming
+  double distanceInKm(
+          double lat1, double lon1, double lat2, double lon2) =>
+      calculateDistance(lat1, lon1, lat2, lon2);
+
   /// Calculate distance from current position to a point
   double? calculateDistanceFromCurrent(double latitude, double longitude) {
     if (_currentPosition == null) return null;
