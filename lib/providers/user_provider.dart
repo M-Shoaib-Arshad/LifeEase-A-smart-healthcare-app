@@ -3,12 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../models/user.dart' as model;
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
+import '../services/cache_service.dart';
 import 'settings_provider.dart';
 import 'theme_provider.dart';
 
 class UserProvider extends ChangeNotifier {
   final AuthService _auth = AuthService();
   final UserService _userService = UserService();
+  final CacheService _cache = CacheService();
 
   fb.User? _firebaseUser;
   model.User? _profile;
@@ -22,7 +24,20 @@ class UserProvider extends ChangeNotifier {
     _auth.authStateChanges.listen((fb.User? user) async {
       _firebaseUser = user;
       if (user != null) {
-        _profile = await _userService.getUserProfile(user.uid);
+        try {
+          _profile = await _userService.getUserProfile(user.uid);
+          // Cache the profile for offline access
+          if (_profile != null) {
+            await _cache.cacheUserProfile(_profile!.toMap());
+          }
+        } catch (e) {
+          debugPrint('UserProvider: offline fallback for profile – $e');
+          // Fall back to cached profile when offline
+          final cached = _cache.getCachedUserProfile();
+          if (cached != null) {
+            _profile = model.User.fromMap(cached);
+          }
+        }
         // Capture provider references before async gap to avoid race condition
         final settingsProvider = _settingsProvider;
         final themeProvider = _themeProvider;
@@ -59,7 +74,18 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> refreshProfile() async {
     if (_firebaseUser == null) return;
-    _profile = await _userService.getUserProfile(_firebaseUser!.uid);
+    try {
+      _profile = await _userService.getUserProfile(_firebaseUser!.uid);
+      if (_profile != null) {
+        await _cache.cacheUserProfile(_profile!.toMap());
+      }
+    } catch (e) {
+      debugPrint('UserProvider.refreshProfile: offline fallback – $e');
+      final cached = _cache.getCachedUserProfile();
+      if (cached != null) {
+        _profile = model.User.fromMap(cached);
+      }
+    }
     notifyListeners();
   }
 
@@ -87,6 +113,8 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await _auth.signOut();
+    // Clear all cached data so stale data is not shown on next login
+    await _cache.clearAll();
     _firebaseUser = null;
     _profile = null;
     notifyListeners();
