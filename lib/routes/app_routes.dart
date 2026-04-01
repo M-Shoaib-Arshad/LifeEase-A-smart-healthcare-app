@@ -36,6 +36,7 @@ import '../screens/admin/user_management_screen.dart';
 import '../screens/admin/content_management_screen.dart';
 import '../screens/common/settings_screen.dart';
 import '../screens/common/support_screen.dart';
+import '../screens/common/security_settings_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/splash',
@@ -137,6 +138,9 @@ final GoRouter router = GoRouter(
         path: '/settings', builder: (context, state) => const SettingsScreen()),
     GoRoute(
         path: '/support', builder: (context, state) => const SupportScreen()),
+    GoRoute(
+        path: '/security-settings',
+        builder: (context, state) => const SecuritySettingsScreen()),
   ],
   redirect: (context, state) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);

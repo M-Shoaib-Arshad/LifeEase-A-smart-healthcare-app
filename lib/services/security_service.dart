@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Role-based access control levels
 /// (Moved out of class to comply with Dart: enums must be top-level)
@@ -299,18 +301,33 @@ class SecurityService {
     }
   }
 
-  /// Log security event (for audit trail)
+  /// Collect basic device information for audit logs.
+  Map<String, String> _getDeviceInfo() {
+    try {
+      return {
+        'platform': Platform.operatingSystem,
+        'osVersion': Platform.operatingSystemVersion,
+      };
+    } catch (_) {
+      return {'platform': 'unknown'};
+    }
+  }
+
+  /// Log security event to Firestore `security_logs` collection.
   Future<void> logSecurityEvent(
       String event, Map<String, dynamic> details) async {
-    // In a production app, this would log to a secure backend
-    // For now, we'll just print to debug console
     final userId = getCurrentUserId() ?? 'anonymous';
-    final timestamp = DateTime.now().toIso8601String();
-
-    // ignore: avoid_print
-    print(
-        'Security Event [$timestamp]: $event - User: $userId - Details: $details');
-
-    // TODO: Implement proper logging to Firestore or analytics service
+    try {
+      await FirebaseFirestore.instance.collection('security_logs').add({
+        'userId': userId,
+        'event': event,
+        'timestamp': FieldValue.serverTimestamp(),
+        'deviceInfo': _getDeviceInfo(),
+        ...details,
+      });
+    } catch (e) {
+      // ignore: avoid_print
+      print('Failed to write security log: $e');
+    }
   }
 }

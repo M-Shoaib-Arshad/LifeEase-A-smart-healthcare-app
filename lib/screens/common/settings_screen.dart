@@ -97,6 +97,13 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   _buildSettingsTile(
                     context,
+                    icon: Icons.security,
+                    title: 'Security Settings',
+                    subtitle: 'Biometric login, auto-logout and encryption',
+                    onTap: () => context.go('/security-settings'),
+                  ),
+                  _buildSettingsTile(
+                    context,
                     icon: Icons.person_outline,
                     title: 'Profile Settings',
                     subtitle: 'Manage your personal information',
