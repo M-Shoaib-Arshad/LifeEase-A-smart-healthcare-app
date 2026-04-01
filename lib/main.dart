@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:async';
 import 'config/env_config.dart';
 import 'widgets/common/offline_banner.dart';
 import 'providers/user_provider.dart';
@@ -16,6 +17,7 @@ import 'firebase_options.dart';
 import 'services/local_notification_service.dart';
 import 'services/fcm_service.dart';
 import 'services/sync_service.dart';
+import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
@@ -156,9 +158,64 @@ class MyApp extends StatelessWidget {
           darkTheme: darkTheme,
           themeMode: themeProvider.themeMode,
           routerConfig: router,
-          builder: (context, child) => OfflineBanner(child: child ?? const SizedBox()),
+          builder: (context, child) => InactivityDetector(
+            child: OfflineBanner(child: child ?? const SizedBox()),
+          ),
         );
       },
+    );
+  }
+}
+
+/// Detects user inactivity and signs out after [timeout] (default 30 minutes).
+/// Any pointer event on the app resets the inactivity timer.
+class InactivityDetector extends StatefulWidget {
+  final Widget child;
+  final Duration timeout;
+
+  const InactivityDetector({
+    super.key,
+    required this.child,
+    this.timeout = const Duration(minutes: 30),
+  });
+
+  @override
+  State<InactivityDetector> createState() => _InactivityDetectorState();
+}
+
+class _InactivityDetectorState extends State<InactivityDetector> {
+  late final AuthService _authService;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = AuthService();
+    _resetTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _resetTimer() {
+    _timer?.cancel();
+    _timer = Timer(widget.timeout, _onInactive);
+  }
+
+  void _onInactive() {
+    _authService.signOut();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => _resetTimer(),
+      onPointerUp: (_) => _resetTimer(),
+      child: widget.child,
     );
   }
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../providers/user_provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/biometric_service.dart';
+import '../../services/encryption_service.dart';
+import '../../services/security_service.dart';
 import '../../services/user_service.dart';
 import '../../widgets/auth/google_signin_button.dart';
 import '../../widgets/auth/social_auth_divider.dart';
@@ -22,9 +26,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   bool _obscurePassword = true;
   bool _isLoading = false;
   bool _isGoogleLoading = false;
+  bool _isBiometricLoading = false;
+  bool _biometricAvailable = false;
   String? _selectedRole = 'patient';
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+
+  static const _storage = FlutterSecureStorage();
+  final _biometricService = BiometricService();
+  final _encryptionService = EncryptionService();
+  final _securityService = SecurityService();
 
   @override
   void initState() {
@@ -40,6 +51,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       ),
     );
     _animationController.forward();
+    _checkBiometricAvailability();
+  }
+
+  Future<void> _checkBiometricAvailability() async {
+    final available = await _biometricService.isAvailable();
+    final biometricEnabledStr =
+        await _storage.read(key: 'biometric_login_enabled');
+    final savedEmail = await _storage.read(key: 'saved_email');
+    if (mounted) {
+      setState(() {
+        _biometricAvailable =
+            available && biometricEnabledStr == 'true' && savedEmail != null;
+      });
+    }
   }
 
   @override
@@ -67,10 +92,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       // You currently allow "Email or Phone" — if phone, handle via phone auth flow instead.
       await AuthService().signInWithEmail(email: email, password: password);
 
+      // Save credentials for biometric login (password encrypted with AES)
+      final encryptedPassword = await _encryptionService.encrypt(password);
+      await _storage.write(key: 'saved_email', value: email);
+      await _storage.write(key: 'saved_password', value: encryptedPassword);
+
+      // Log successful login
+      await _securityService.logSecurityEvent('login_success', {});
+
       // Ensure provider has loaded profile (role)
       // A short wait allows the auth listener to fetch Firestore profile
       await Future.delayed(const Duration(milliseconds: 300));
 
+      if (!mounted) return;
       final userProv = context.read<UserProvider>();
       final role = userProv.role ?? 'patient';
 
@@ -85,11 +119,61 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           context.go('/patient/home');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign-in failed: ${e.toString()}')),
-      );
+      await _securityService.logSecurityEvent('login_failed', {'errorType': e.runtimeType.toString()});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign-in failed: ${e.toString()}')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _loginWithSavedCredentials() async {
+    setState(() => _isBiometricLoading = true);
+    try {
+      final email = await _storage.read(key: 'saved_email');
+      final encryptedPassword = await _storage.read(key: 'saved_password');
+      if (email == null || encryptedPassword == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'No saved credentials found. Please sign in with email first.')),
+          );
+        }
+        return;
+      }
+
+      final password = await _encryptionService.decrypt(encryptedPassword);
+      await AuthService().signInWithEmail(email: email, password: password);
+      await _securityService.logSecurityEvent('login_success_biometric', {});
+
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      if (!mounted) return;
+      final userProv = context.read<UserProvider>();
+      final role = userProv.role ?? 'patient';
+
+      switch (role) {
+        case 'doctor':
+          context.go('/doctor/home');
+          break;
+        case 'admin':
+          context.go('/admin/home');
+          break;
+        default:
+          context.go('/patient/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Biometric sign-in failed: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isBiometricLoading = false);
     }
   }
 
@@ -393,6 +477,43 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
                         // Social Auth Divider
                         const SocialAuthDivider(),
+
+                        // Biometric Login Button (shown when available)
+                        if (_biometricAvailable)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: SizedBox(
+                              height: 56,
+                              child: ElevatedButton.icon(
+                                onPressed: _isBiometricLoading
+                                    ? null
+                                    : () async {
+                                        final ok = await _biometricService
+                                            .authenticate();
+                                        if (ok) _loginWithSavedCredentials();
+                                      },
+                                icon: _isBiometricLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2),
+                                      )
+                                    : const Icon(Icons.fingerprint),
+                                label: const Text('Use Biometrics'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryLight,
+                                  foregroundColor: AppColors.primaryDark,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: const BorderSide(
+                                        color: AppColors.primary),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
 
                         // Google Sign-In Button
                         GoogleSignInButton(
